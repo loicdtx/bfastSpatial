@@ -3,12 +3,10 @@
 \alias{bfastSpatial}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+Utilities for change monitoring on spatio-temporal data
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+Pre-process gridded time-series data in order for them to be analyzed with change detection algorithms such as bfast. Uses classes from the raster package and includes utilities to run the algorithms and post-process the results.
 }
 \details{
 \tabular{ll}{
@@ -16,27 +14,23 @@ Package: \tab bfastSpatial\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
 Date: \tab 2014-04-06\cr
-License: \tab What license is it under?\cr
+License: \tab tbd\cr
 }
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
+
 }
 \author{
-Who wrote it
+Loic Dutrieux, Ben DeVries
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+Maintainer: <loic.dutrieux@gmail.com>
 }
 \references{
-~~ Literature or other references for background information ~~
+Add publications here
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
-~~ the R documentation directory ~~
-\keyword{ package }
+
+\keyword{ Landsat }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
+bfast
 }
 \examples{
-~~ simple examples of the most important functions ~~
+Add exemples here
 }
