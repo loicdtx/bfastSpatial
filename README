@@ -1,7 +1,9 @@
-Package to ...
+Package to pre-process gridded time-series data in order for them to be analyzed with change detection algorithms such as bfast. Uses classes from the raster package and includes utilities to run the algorithms and post-process the results.
 
 The package can be installed directly from github using devtools
 
 ##
 library(devtools)
 install_github(repos='bfastSpatial', username='dutri001)
+
+Feedback on the package is very much welcome. Send your feedback to Ben or Loic
