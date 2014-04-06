@@ -1,3 +1,16 @@
+#' mc.calc
+#' 
+#' Multicore implementation of the raster::\code{\link{calc}} function.
+#' 
+#' @description Allows functions to be applied to raster objects, with multicore support.
+#' 
+#' @param x Raster* object
+#' @param fun Function to be applied to the raster object.
+#' @param ... Arguments to be passed to \code{link{writeRaster}}; only filename and overwrite are supported at the moment.
+#' @details For further help, see \code{\link{calc}}. Warnings of the parallel package (see \code{\link{mclapply}} for instance) apply to this function.
+#' @seealso \code{\link{calc}}
+#' 
+
 # Author: Loic Dutrieux
 # June 2013
 # loic.dutrieux@wur.nl

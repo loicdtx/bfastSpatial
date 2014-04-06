@@ -1,5 +1,11 @@
 #' timeStack
-#' Create a stack of Landsat layers, reordering them chronologically
+#' 
+#' Creates a time stack of Landsat layers
+#' 
+#' @description Creates a stack of Landsat layers, reordering them chronologically
+#' 
+#' 
+#' 
 #' @param x character. dir containing the files to be stacked or character list (the files). IN the former case, it is recommended to use the \code{pattern} argument
 #' @param pattern See \link{list.files}
 #' @param ... Arguments to be passed to \link{writeRaster}. If specifying a filename, it is strongly recommended to also set a datatype.

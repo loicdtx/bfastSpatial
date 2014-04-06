@@ -1,4 +1,16 @@
-getSceneinfo <- function(sourcefile, filename="")
+#' getSceneinfo
+#' 
+#' Retrieve Landsat info from filenames
+#' 
+#' @description Parses through typical Landsat filenames and retrieves information on sensor and acquisition date. Vectorized over \code{sourcefile}.
+#' @param sourcefile Character. Filename of a landsat layer or dataset.
+#' @param filename Character or NULL. For the output dataframe to be written to a csv file.
+#' @author Ben DeVries
+#' @return a dataframe
+
+
+
+getSceneinfo <- function(sourcefile, filename=NULL)
   # returns a data.frame with sensor, path, row, and date information for each scene
   # writes to a .csv if a filename/path is specified
   
@@ -38,7 +50,7 @@ getSceneinfo <- function(sourcefile, filename="")
   row.names(info) <- sourcefile
   
   # optional: print to .csv for future reference
-  if(filename!="") 
+  if(!is.null(filename)) 
     write.csv(info, file=filename, quote=FALSE)
   
   return(info)
