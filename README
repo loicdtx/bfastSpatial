@@ -1,0 +1,7 @@
+Package to ...
+
+The package can be installed directly from github using devtools
+
+##
+library(devtools)
+install_github(repos='bfastSpatial', username='dutri001)
