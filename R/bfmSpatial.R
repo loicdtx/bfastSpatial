@@ -20,6 +20,10 @@
 #' @param ... Arguments to be passed to \code{\link{mc.calc}}
 #' @return A rasterBrick, with 2 layers. One layer is the timing of change and the other layer the magnitude of change. See \code{\link{bfastmonitor}}
 #' @author Loic Dutrieux
+#' @import bfast
+#' @import parallel
+#' @import raster
+#' @export
 #' 
 #' 
 
@@ -27,13 +31,25 @@
 # Author: Loic Dutrieux
 # January 2014
 
-bfmSpatial <- function(x, dates, pptype='irregular', start,
+bfmSpatial <- function(x, dates=NULL, pptype='irregular', start,
                        formula = response ~ trend + harmon, order = 3, lag = NULL, slag = NULL,
                        history = c("ROC", "BP", "all"),
                        type = "OLS-MOSUM", h = 0.25, end = 10, level = 0.05, mc.cores=1, ...) {
     
     if(is.character(x)) {
         x <- brick(x)
+    }
+    
+    if(is.null(dates)) {
+        if(is.null(getZ(x))) {
+            if(!all(grepl(pattern='(LT4|LT5|LE7)\\d{13}', x=names(x)))){ # Check if dates can be extracted from layernames
+                stop('A date vector must be supplied, either via the date argument, the z dimention of x or comprised in names(x)')
+            } else {
+                dates <- as.Date(getSceneinfo(names(x))$date)
+            }
+        } else {
+            dates <- getZ(x)
+        }
     }
 
     fun <- function(x) {

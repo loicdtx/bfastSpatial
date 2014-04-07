@@ -7,6 +7,7 @@
 #' @param filename Character or NULL. For the output dataframe to be written to a csv file.
 #' @author Ben DeVries
 #' @return a dataframe
+#' @export
 
 
 

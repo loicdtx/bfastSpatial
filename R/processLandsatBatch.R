@@ -14,6 +14,13 @@
 #'@author Loic Dutrieux
 #'@return Function is used for its side effect of calculating in batch Vegetation indices fron surface reflectance Lantsat data.
 #'@seealso \link{processLandsat} and \link{hdf2ndvi}
+#'@import stringr
+#' @import raster
+#' @import rgdal
+#' @import gdalUtils
+#' @import parallel
+#' @export
+#' 
 
 
 processLandsatBatch <- function(x, pattern=NULL, outdir, hdfdir, mc.cores=1, ...) {

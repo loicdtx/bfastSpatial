@@ -12,6 +12,12 @@
 #' @author Loic Dutrieux
 #' @return rasterLayer Object also written to file (in \code{outdir}) with an automatically generated filename
 #' @seealso \link{hdf2ndvi}
+#' @import stringr
+#' @import raster
+#' @import rgdal
+#' @import gdalUtils
+#' @export
+#' 
 
 processLandsat <- function(x, hdfdir, outdir, untar=TRUE, delete=FALSE, ...) {
     # x is the full path of a tarball containing the Landsat data or the path of a hdf file

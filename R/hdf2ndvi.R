@@ -11,7 +11,11 @@
 #' @param ... Arguments to be passed to \code{link{writeRaster}}
 #' @return A rasterLayer object
 #' @author Loic Dutrieux
-#' @seealso \code{link{processLandsat}} for wrapper function
+#' @seealso \code{\link{processLandsat}} for wrapper function
+#' @import gdalUtils
+#' @import raster
+#' @import rgdal
+#' @export
 
 hdf2ndvi <- function(x, e=NULL, mask=NULL, keep=c(0), ...) {      
     

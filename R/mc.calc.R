@@ -9,6 +9,9 @@
 #' @param ... Arguments to be passed to \code{link{writeRaster}}; only filename and overwrite are supported at the moment.
 #' @details For further help, see \code{\link{calc}}. Warnings of the parallel package (see \code{\link{mclapply}} for instance) apply to this function.
 #' @seealso \code{\link{calc}}
+#' @import raster
+#' @import parallel
+#' @export
 #' 
 
 # Author: Loic Dutrieux

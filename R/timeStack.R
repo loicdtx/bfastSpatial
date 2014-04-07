@@ -10,6 +10,9 @@
 #' @param pattern See \link{list.files}
 #' @param ... Arguments to be passed to \link{writeRaster}. If specifying a filename, it is strongly recommended to also set a datatype.
 #' @author Loic Dutrieux
+#' @import stringr
+#' @import raster
+#' @export
 #' 
 
 timeStack <- function(x, pattern=NULL, ...) {
