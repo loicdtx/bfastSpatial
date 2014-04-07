@@ -1,6 +1,5 @@
-#' processLandsat
-#' 
-#' Wrapper function to process Landsat data
+
+#' @title Wrapper function to process Landsat data
 #' 
 #' @description Processes a single Landsat scene, from tarball (or hdf if untar is set to FALSE) to vegetation index (only NDVI supported at the moment). Easy to batch using sapply or mclapply for parallel implementation.
 #' @param x Character. filename of the tarball or of the hdf file.

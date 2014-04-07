@@ -1,6 +1,5 @@
-#' mc.calc
-#' 
-#' Multicore implementation of the raster::\code{\link{calc}} function.
+
+#' @title Multicore implementation of the raster::\code{\link{calc}} function.
 #' 
 #' @description Allows functions to be applied to raster objects, with multicore support.
 #' 
