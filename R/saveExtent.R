@@ -3,6 +3,7 @@
 #' @description Identical to \code{\link{drawExtent}} except that the resulting extent is printed to the console with a formatted \code{extent()} command which can be copied and pasted to a script for reproducability.
 #' @param ... Arguments to be passed to \code{\link{drawExtent}}
 #' @return an object of class \code{extent} with the side effect of having the \code{extent()} command with resulting parameters printed to the console for reproducability.
+#' @author Ben DeVries
 #' @examples
 #' \dontrun{
 #' data(tura)

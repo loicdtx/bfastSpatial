@@ -14,7 +14,7 @@
 #' 
 #' @return A list with the following components: 1) $bfm - an object of class 'bfastmonitor' (see \code{\link{bfastmonitor()}}) 2) $cell - the cell index (an integer of length 1). This can be used to run \code{bfmPixel()} again on the same pixel (with different parameters) without having to click on a plot again to find the same pixel (in that case, be sure to set interactive=FALSE for subsequent trials!).
 #' 
-#' @author Ben DeVries \email{devries.br@gmail.com}
+#' @author Ben DeVries \email{devries.br@@gmail.com}
 #' 
 #' @examples
 #' 

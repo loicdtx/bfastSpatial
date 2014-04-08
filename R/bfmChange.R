@@ -6,7 +6,7 @@
 #' @param ... Additional arguments to pass to \code{\link{writeRaster}}.
 #' @details The output of this function can also be used as a parameter in the \code{\link{bfmMagn}} function to filter out pixels where no breakpoint was detected.
 #' @return RasterLayer with breakpoint timing per pixel. Breakpoint times are in the format yyyy.jjj (where y is year and j is JulianDay/365).
-#' @author Ben DeVries \email{devries.br@gmail.com}
+#' @author Ben DeVries \email{devries.br@@gmail.com}
 #' @seealso \code{\link{bfmMagn}}, \code{\link{changeMonth}}
 #' @import raster
 #' @export

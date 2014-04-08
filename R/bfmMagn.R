@@ -8,7 +8,7 @@
 #' @param ... Arguments to be passed to \code{\link{writeRaster}}.
 #' 
 #' @return RasterLayer representing the change magnitude for all pixels, unless change filter is applied, in which case only representing breakpoint pixels.
-#' @author Ben DeVries \email{devries.br@gmail.com}
+#' @author Ben DeVries \email{devries.br@@gmail.com}
 #' @seealso \code{\link{bfmChange}}
 #' @examples
 #' # load in raster brick

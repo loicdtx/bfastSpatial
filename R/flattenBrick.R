@@ -7,7 +7,7 @@
 #' @param ... Additional arguments to be bassed to \code{\link{writeRaster}}.
 #' @return RasterLayer with values representing 'earliest' encountered values not exceeding \code{thresh}.
 #' @details \code{thresh} only works on a 'greater-than' basis. To achieve the reverse, first let \code{x <- -1*x} then convert the result back by \code{y <- -1*y}.
-#' @author Ben DeVries \email{devries.br@gmail.com}
+#' @author Ben DeVries \email{devries.br@@gmail.com}
 #' @import raster
 #' @export
 

@@ -8,6 +8,7 @@
 #' 
 #' @import raster
 #' @import igraph
+#' @name Ben DeVries
 #' @export
 
 clumpSize <- function(x, f=1, ...){

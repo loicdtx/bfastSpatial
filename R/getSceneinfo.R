@@ -5,7 +5,7 @@
 #' 
 #' @param sourcefile Character. Filename of a landsat layer or dataset.
 #' @param ... Additional arguments to pass to \code{\link{write.csv}}.
-#' @author Ben DeVries \email{devries.br@gmail.com}
+#' @author Ben DeVries \email{devries.br@@gmail.com}
 #' @return a \code{data.frame} with parsed scene information from Landsat scene names
 #' @export
 

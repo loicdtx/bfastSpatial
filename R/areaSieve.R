@@ -7,7 +7,7 @@
 #' @param thresh Numeric. Areal threshold (in square metres). All pixel clumps smaller than thresh will be deleted.
 #' @param directions Numeric. Define pixel neighbours using diagonals (diagonals=8; "Queen's case") or without diagonals (diagonals=4; "Rook's case").
 #' @param ... Additional arguments to be passed to \link{overlay} (including filename to write to file).
-#' @author Ben DeVries \email{devries.br@gmail.com}
+#' @author Ben DeVries \email{devries.br@@gmail.com}
 #' @return raster with pixels in clumps smaller than that specified as thresh removed. All spatial parameters and data are otherwise identical to x.
 #' @import raster
 #' @import igraph
