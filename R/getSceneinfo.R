@@ -1,6 +1,5 @@
-#' getSceneinfo
-#' 
-#' Retrieve Landsat info from filenames
+
+#' @title Retrieve Landsat info from filenames
 #' 
 #' @description Parses through typical Landsat filenames and retrieves information on sensor and acquisition date. Vectorized over \code{sourcefile}.
 #' @param sourcefile Character. Filename of a landsat layer or dataset.
