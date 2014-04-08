@@ -5,7 +5,6 @@
 #' @param bfm. RasterBrick output from \code{\link{bfmSpatial}}. 1st layer is the breakpoint timing and the 2nd is the change magnitude.
 #' @param change. Optional: RasterLayer output from \code{\link{bfmChange}}. Used to mask out all non-breakpoints from magnitude RasterLayer.
 #' @param thresh Numeric. Optional: threshold to apply to magnitude thresholds. Any magnitude values above this threshold will be excluded.
-#' @param filename Character. Optional: write RasterLayer to file.
 #' @param ... Arguments to be passed to \code{\link{writeRaster}}.
 #' @return RasterLayer representing the change magnitude for all pixels, unless change filter is applied, in which case only representing breakpoint pixels.
 #' @author Ben DeVries
@@ -52,8 +51,8 @@ bfmMagn <- function(bfm, change=NULL, thresh=NULL, filename="", format="", overw
     magn[magn>thresh] <- NA
   
   # write to file
-  if(filename!="")
-    writeRaster(magn, filename=filename, ...)
+  if(hasArg(filename))
+    writeRaster(magn, ...)
   
   return(magn)
 }

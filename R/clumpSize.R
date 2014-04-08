@@ -4,13 +4,13 @@
 #' 
 #' @param x. RasterLayer.
 #' @param f Numeric. Optional: conversion factor for number of pixels (e.g. f=900/10000 for converting Landsat pixels to area in hectares).
+#' @param ... Additional arguments to pass to \code{\link{clump}}
 #' 
 #' @import raster
 #' @import igraph
 #' @export
 
-clumpSize <-
-function(x, f=1, ...){
+clumpSize <- function(x, f=1, ...){
   # groups raster cells into clumps using clump()
   # assigns area (as # of pixels) to each clump
   # args:
