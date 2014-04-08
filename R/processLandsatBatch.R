@@ -1,6 +1,5 @@
-#' processLandsatBatch
-#' 
-#' Process Landsat data in batch mode
+
+#' @title Process Landsat data in batch mode
 #' 
 #'@description Batcher to process Landsat data from tarball or hdf to a list of Vegetation Index files. Runs \link{processLandsat} sequentially or in parallel
 #' 

@@ -1,6 +1,5 @@
-#' timeStack
-#' 
-#' Creates a time stack of Landsat layers
+
+#' @title Creates a time stack of Landsat layers
 #' 
 #' @description Creates a stack of Landsat layers, reordering them chronologically
 #' 

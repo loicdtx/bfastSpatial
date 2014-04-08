@@ -1,6 +1,5 @@
-#' bfmSpatial
-#' 
-#' Function to run bfastmonitor on any kind of raster brick, with parallel support
+
+#' @title Function to run bfastmonitor on any kind of raster brick, with parallel support
 #' 
 #' @description Implements bfastmonitor function, from the bfast package on any kind of rasterBrick object. Time information is provided as an extra object and the time series can be regular or irregular.
 #' 
