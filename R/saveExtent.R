@@ -9,6 +9,8 @@
 #' plot(tura, 6)
 #' e <- saveExtent() # draw extent on the plot, and associated extent() command will be printed to console, while extent is saved to workspace
 #' }
+#' @import raster
+#' @export
 
 saveExtent <- function(...){
   # drawExtent() and print R code for reproducing that extent to console
