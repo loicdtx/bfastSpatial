@@ -1,6 +1,4 @@
-#' bfmMagn
-#' 
-#' Extract change magnitude bfm RasterBrick
+#' @title Extract change magnitude bfm RasterBrick
 #' 
 #' @description Creates a raster layer representing the change magnitude (median of the residuals during the monitoring period) from a resulting bfm raster brick. Magnitude is calculated for all pixels regardless of whether a breakpoint was detected or not. This function allows for filtering based on a supplied change (breakpoint) raster.
 #' 

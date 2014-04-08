@@ -1,6 +1,4 @@
-#' areaSieve
-#' 
-#' Apply a sieve to a raster layer
+#' @title Apply a sieve to a raster layer
 #' 
 #' @description Applies an areal threshold to a raster layer. A threshold is supplied in square metres (to be generalized in future) and all pixel 'clumps' smaller than this threshold are deleted.
 #' 

@@ -1,6 +1,4 @@
-#' clumpSize
-#' 
-#' Calculate size of pixel clumps in a RasterLayer
+#' @title Calculate size of pixel clumps in a RasterLayer
 #' 
 #' @description Calculate the size of pixel clumps in a RasterLayer. The clump area is assigned to each clump, and araster with identical dimensions, but values representing the clump size is output. The definition of a pixel clump follows that of \code{\link{clump}}, where diagonals are either included or ignored in defining clumps. An optional conversion factor can be supplied based on pixel size.
 #' 

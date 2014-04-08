@@ -1,6 +1,4 @@
-#' changeMonth
-#' 
-#' Extract month of change from bfmChange RasterLayer
+#' @title Extract month of change from bfmChange RasterLayer
 #' 
 #' @description Returns one RasterLayer for each year represented by the change results. Months are represted by integers from 1 to 12.
 #' 

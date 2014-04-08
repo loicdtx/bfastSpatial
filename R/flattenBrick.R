@@ -1,6 +1,4 @@
-#' flattenBrick
-#' 
-#' Convert a RasterBrick or RasterStack to a RasterLayer based on the first encountered value
+#' @title Convert a RasterBrick or RasterStack to a RasterLayer based on the first encountered value
 #' 
 #' @description Flatten a brick by iteratively masking layer values by non-NA values in preceding layers. An optional threshold can be supplied, where preceding values exceeding the threshold are ignored in the masking procedure (and are therefore themselves removed).
 #' 

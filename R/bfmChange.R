@@ -1,6 +1,4 @@
-#' bfmChange
-#' 
-#' Extract breakpoints from bfm RasterBrick
+#' @title Extract breakpoints from bfm RasterBrick
 #' 
 #' @description Creates a raster layer with breakpoint timing values from the output bfm raster brick
 #' 
