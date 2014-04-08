@@ -1,6 +1,5 @@
-#' processLandsatBatch
-#' 
-#' Process Landsat data in batch mode
+
+#' @title Process Landsat data in batch mode
 #' 
 #'@description Batcher to process Landsat data from tarball or hdf to a list of Vegetation Index files. Runs \link{processLandsat} sequentially or in parallel
 #' 
@@ -14,6 +13,13 @@
 #'@author Loic Dutrieux
 #'@return Function is used for its side effect of calculating in batch Vegetation indices fron surface reflectance Lantsat data.
 #'@seealso \link{processLandsat} and \link{hdf2ndvi}
+#'@import stringr
+#' @import raster
+#' @import rgdal
+#' @import gdalUtils
+#' @import parallel
+#' @export
+#' 
 
 
 processLandsatBatch <- function(x, pattern=NULL, outdir, hdfdir, mc.cores=1, ...) {

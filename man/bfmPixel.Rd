@@ -1,0 +1,101 @@
+\name{bfmPixel}
+\alias{bfmPixel}
+\title{Apply bfmastmonitor on a single pixel}
+\usage{
+bfmPixel(x, sceneID = NULL, dates = NULL, start = c(), monend = "full",
+  cell = c(), min.thresh = NULL, sensor = "all", interactive = FALSE,
+  plot = FALSE, ...)
+}
+\arguments{
+  \item{x}{RasterBrick with raster time series data.}
+
+  \item{start}{Numeric. Vector of length = 2 representing
+  the start of the monitoring period (in the format c(year,
+  julian day))}
+
+  \item{monend}{Numeric. Optional: the end of the
+  monitoring period (in the format c(year, julian day)), at
+  which point the time series will be trimmed.}
+
+  \item{cell}{Numeric. Can be one of: (1) a numeric of
+  length 1 indicating the raster cell to be observed; (2) a
+  numeric of length 2 representing the (x,y) coordinate of
+  the raster cell to be observed. Can also be omitted, in
+  which case 'interactive' must be set to TRUE (see below)}
+
+  \item{min.thresh}{Numeric. Optional: A minimum threshold
+  below which NA's are assigned to data points.}
+
+  \item{sensor}{Character. Optional: Limit analysis to data
+  from one or more sensors. Defaults to 'all' to use all
+  available data in the time series.}
+
+  \item{interactive}{Logical. Select cell by clicking on an
+  already plotted map? Defaults to \code{FALSE}. If
+  \code{FALSE}, a value must be assigned to \code{cell}
+  (see above).}
+
+  \item{plot}{Logical. Plot the result? Defaults to
+  \code{FALSE}.}
+
+  \item{...}{Arguments to be passed to
+  \code{\link{bfastmonitor}}}
+}
+\value{
+A list with the following components: 1) $bfm - an object
+of class 'bfastmonitor' (see \code{\link{bfastmonitor()}})
+2) $cell - the cell index (an integer of length 1). This
+can be used to run \code{bfmPixel()} again on the same
+pixel (with different parameters) without having to click
+on a plot again to find the same pixel (in that case, be
+sure to set interactive=FALSE for subsequent trials!).
+}
+\description{
+Apply bfastmonitor (bfm) on a single pixel of known cell
+index (by supplying a single numeric value for cell), xy
+coordinates (\code{cell=c(x, y)}), or interactively by
+clicking on a plot (by setting \code{interactive=TRUE}).
+Outputs a list with (1) an object of class 'bfastmonitor'
+and (2) the resulting cell number (useful for follow-up
+analysis).
+}
+\examples{
+# load in time series raster data
+data(tura)
+
+# run bfm on a pixel of known (x,y) location
+bfm <- bfmPixel(tura, cell=c(816750, 826020), start=c(2005, 1))
+print(bfm$cell) # check the corresponding cell index
+
+# get bfm results for a pixel of known cell index
+bfm <- bfmPixel(tura, cell=1068, start=c(2005, 1))
+plot(bfm$bfm)
+# try another monitoring period
+bfm <- bfmPixel(tura, cell=1068, start=c(2009, 1))
+plot(bfm$bfm)
+
+# try again using only ETM+ data (Landsat 7)
+bfm <- bfmPixel(tura, cell=1068, start=c(2005, 1), sensor="ETM+")
+
+# run bfm on a pixel chosen from the plot window
+\dontrun{
+plot(tura, 6) # a cloudless scene from 2001
+bfm <- bfmPixel(tura, start=c(2005, 1), sensor="ETM+", interactive=TRUE)
+plot(bfm$bfm)
+print(targcell <- bfm$cell) # store cell index for follow-up analysis
+}
+## change the model parameters
+# 1. harmonic order
+bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", order=3)
+plot(bfm$bfm)
+# 2. no trend
+bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", order=3, formula=response~harmon)
+plot(bfm$bfm)
+# 3. trend only
+bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", formula=response~trend)
+plot(bfm$bfm)
+}
+\author{
+Ben DeVries \email{devries.br@gmail.com}
+}
+
