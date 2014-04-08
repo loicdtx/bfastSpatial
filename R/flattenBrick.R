@@ -2,7 +2,7 @@
 #' 
 #' @description Flatten a brick by iteratively masking layer values by non-NA values in preceding layers. An optional threshold can be supplied, where preceding values exceeding the threshold are ignored in the masking procedure (and are therefore themselves removed).
 #' 
-#' @param x. RasterBrick or RasterStack.
+#' @param x RasterBrick or RasterStack.
 #' @param thresh Numeric. Optional: threshold to apply to preceding values in deciding whether to mask subsequent values.
 #' @param ... Additional arguments to be bassed to \code{\link{writeRaster}}.
 #' @return RasterLayer with values representing 'earliest' encountered values not exceeding \code{thresh}.

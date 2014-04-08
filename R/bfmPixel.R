@@ -2,7 +2,7 @@
 #' 
 #' @description Apply bfastmonitor (bfm) on a single pixel of known cell index (by supplying a single numeric value for cell), xy coordinates (\code{cell=c(x, y)}), or interactively by clicking on a plot (by setting \code{interactive=TRUE}). Outputs a list with (1) an object of class 'bfastmonitor' and (2) the resulting cell number (useful for follow-up analysis).
 #' 
-#' @param x. RasterBrick with raster time series data.
+#' @param x RasterBrick with raster time series data.
 #' @param start Numeric. Vector of length = 2 representing the start of the monitoring period (in the format c(year, julian day))
 #' @param monend Numeric. Optional: the end of the monitoring period (in the format c(year, julian day)), at which point the time series will be trimmed.
 #' @param cell Numeric. Can be one of: (1) a numeric of length 1 indicating the raster cell to be observed; (2) a numeric of length 2 representing the (x,y) coordinate of the raster cell to be observed. Can also be omitted, in which case 'interactive' must be set to TRUE (see below)
