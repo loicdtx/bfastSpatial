@@ -5,9 +5,8 @@
 #' 
 #' @param x. Input raster layer.
 #' @param thresh Numeric. Areal threshold (in square metres). All pixel clumps smaller than thresh will be deleted.
-#' @param directions Numeric. Define pixel neighbours using diagonals (diagonals=8; "Queen's case") or without diagonals (diagnoals=4; "Rook's case").
-#' @param filename Character. Optional: write resulting raster to file.
-#' @param ... Additional arguments to be passed to \link{writeRaster}
+#' @param directions Numeric. Define pixel neighbours using diagonals (diagonals=8; "Queen's case") or without diagonals (diagonals=4; "Rook's case").
+#' @param ... Additional arguments to be passed to \link{overlay} (including filename to write to file).
 #' @author Ben DeVries
 #' @return raster with pixels in clumps smaller than that specified as thresh removed. All spatial parameters and data are otherwise identical to x.
 #' @import raster
@@ -15,7 +14,7 @@
 #' @export
 #' 
 
-areaSieve <- function(x, thresh=5000, directions=8, filename=NULL, verbose=FALSE, ...)
+areaSieve <- function(x, thresh=5000, directions=8, verbose=FALSE, ...)
 {
   
   # convert thresh from area to pixel threshold
@@ -39,12 +38,8 @@ areaSieve <- function(x, thresh=5000, directions=8, filename=NULL, verbose=FALSE
       return(a)
   }
   
-  if(!is.null(filename)){
-      y <- overlay(x, clumps, fun=subNA, filename=filename, ...)
-  } else {
-      y <- overlay(x, clumps, fun=subNA, ...)
-  }
-
+  y <- overlay(x, clumps, fun=subNA, ...)
+  
   return(y)
   
 }

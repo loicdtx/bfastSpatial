@@ -4,7 +4,6 @@
 #' 
 #' @param x. RasterBrick or RasterStack.
 #' @param thresh Numeric. Optional: threshold to apply to preceding values in deciding whether to mask subsequent values.
-#' @param filename Character. Optional: write result to file.
 #' @param ... Additional arguments to be bassed to \code{\link{writeRaster}}.
 #' @return RasterLayer with values representing 'earliest' encountered values not exceeding \code{thresh}.
 #' @details \code{thresh} only works on a 'greater-than' basis. To achieve the reverse, first let \code{x <- -1*x} then convert the result back by \code{y <- -1*y}.
@@ -30,8 +29,8 @@ flattenBrick <- function(x, thresh=NULL, filename="", ...){
   }
   
   # write to file
-  if(filename!=""){
-    writeRaster(y, filename=filename, ...)
+  if(hasArg(filename)){
+    writeRaster(y, ...)
   }
   
   return(y)

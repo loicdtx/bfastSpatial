@@ -3,7 +3,6 @@
 #' @description Returns one RasterLayer for each year represented by the change results. Months are represted by integers from 1 to 12.
 #' 
 #' @param change. RasterLayer output from \code{\link{bfmChange}} representing pixel breakpoints.
-#' @param filename Character. Optional: write result to file.
 #' @param ... Additional arguments to pass to \code{\link{writeRaster}}
 #' @return either a RasterLayer with values between 1 to 12 (representing month of change), or if multiple years are represented in the input change RasterLayer, a RasterBrick with one layer for each year, and values of 1 to 12 representing change months for each year.
 #' @seealso \code{\link{bfmChange}}
@@ -44,16 +43,16 @@ changeMonth <- function(change, filename=NULL, ...){
   # if only 1 year is represented, just output that raster, otherwise create a rasterBrick and return it
   if(length(output) == 1){
     names(output[[1]]) <- paste("changeMonth", year, sep="")
-    if(!is.null(filename))
-        writeRaster(output[[1]], filename=filename, ...)
+    if(hasArg(filename))
+        writeRaster(output[[1]], ...)
     
     return(output[[1]])
     
   } else {
     output <- do.call("brick", output)
     names(output) <- paste("changeMonth", year, sep="")
-    if(!is.null(filename))
-        writeRaster(output, filename=filename, ...)
+    if(hasArg(filename))
+        writeRaster(output, ...)
     
     return(output)
   }  
