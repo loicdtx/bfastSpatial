@@ -2,10 +2,11 @@
 #' @title Retrieve Landsat info from filenames
 #' 
 #' @description Parses through typical Landsat filenames and retrieves information on sensor and acquisition date. Vectorized over \code{sourcefile}.
+#' 
 #' @param sourcefile Character. Filename of a landsat layer or dataset.
 #' @param ... Additional arguments to pass to \code{\link{write.csv}}.
 #' @author Ben DeVries \email{devries.br@gmail.com}
-#' @return a data.frame with parsed scene information from Landsat scene names
+#' @return a \code{data.frame} with parsed scene information from Landsat scene names
 #' @export
 
 

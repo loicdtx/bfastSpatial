@@ -10,7 +10,7 @@
 #' @import raster
 #' @export
 
-changeMonth <- function(change, filename=NULL, ...){
+changeMonth <- function(change, ...){
   
   # vector of all non-NA values
   x <- change[!is.na(change)]
