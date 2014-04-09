@@ -2,7 +2,8 @@
 \alias{processLandsat}
 \title{Wrapper function to process Landsat data}
 \usage{
-processLandsat(x, hdfdir, outdir, untar = TRUE, delete = FALSE, ...)
+  processLandsat(x, hdfdir, outdir, untar = TRUE,
+    delete = FALSE, ...)
 }
 \arguments{
   \item{x}{Character. filename of the tarball or of the hdf
@@ -29,19 +30,19 @@ processLandsat(x, hdfdir, outdir, untar = TRUE, delete = FALSE, ...)
   generated}
 }
 \value{
-rasterLayer Object also written to file (in \code{outdir})
-with an automatically generated filename
+  rasterLayer Object also written to file (in
+  \code{outdir}) with an automatically generated filename
 }
 \description{
-Processes a single Landsat scene, from tarball (or hdf if
-untar is set to FALSE) to vegetation index (only NDVI
-supported at the moment). Easy to batch using sapply or
-mclapply for parallel implementation.
+  Processes a single Landsat scene, from tarball (or hdf if
+  untar is set to FALSE) to vegetation index (only NDVI
+  supported at the moment). Easy to batch using sapply or
+  mclapply for parallel implementation.
 }
 \author{
-Loic Dutrieux
+  Loic Dutrieux
 }
 \seealso{
-\link{hdf2ndvi}
+  \link{hdf2ndvi}
 }
 

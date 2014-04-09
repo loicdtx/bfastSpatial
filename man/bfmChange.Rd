@@ -2,7 +2,7 @@
 \alias{bfmChange}
 \title{Extract breakpoints from bfm RasterBrick}
 \usage{
-bfmChange(bfm, ...)
+  bfmChange(bfm, ...)
 }
 \arguments{
   \item{bfm}{RasterBrick output from
@@ -13,23 +13,23 @@ bfmChange(bfm, ...)
   \code{\link{writeRaster}}.}
 }
 \value{
-RasterLayer with breakpoint timing per pixel. Breakpoint
-times are in the format yyyy.jjj (where y is year and j is
-JulianDay/365).
+  RasterLayer with breakpoint timing per pixel. Breakpoint
+  times are in the format yyyy.jjj (where y is year and j
+  is JulianDay/365).
 }
 \description{
-Creates a raster layer with breakpoint timing values from
-the output bfm raster brick
+  Creates a raster layer with breakpoint timing values from
+  the output bfm raster brick
 }
 \details{
-The output of this function can also be used as a parameter
-in the \code{\link{bfmMagn}} function to filter out pixels
-where no breakpoint was detected.
+  The output of this function can also be used as a
+  parameter in the \code{\link{bfmMagn}} function to filter
+  out pixels where no breakpoint was detected.
 }
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+  Ben DeVries \email{devries.br@gmail.com}
 }
 \seealso{
-\code{\link{bfmMagn}}, \code{\link{changeMonth}}
+  \code{\link{bfmMagn}}, \code{\link{changeMonth}}
 }
 

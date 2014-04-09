@@ -2,9 +2,9 @@
 \alias{bfmPixel}
 \title{Apply bfmastmonitor on a single pixel}
 \usage{
-bfmPixel(x, sceneID = NULL, dates = NULL, start = c(), monend = "full",
-  cell = c(), min.thresh = NULL, sensor = "all", interactive = FALSE,
-  plot = FALSE, ...)
+  bfmPixel(x, sceneID = NULL, dates = NULL, start = c(),
+    monend = "full", cell = c(), min.thresh = NULL,
+    sensor = "all", interactive = FALSE, plot = FALSE, ...)
 }
 \arguments{
   \item{x}{RasterBrick with raster time series data.}
@@ -42,22 +42,23 @@ bfmPixel(x, sceneID = NULL, dates = NULL, start = c(), monend = "full",
   \code{\link{bfastmonitor}}}
 }
 \value{
-A list with the following components: 1) $bfm - an object
-of class 'bfastmonitor' (see \code{\link{bfastmonitor()}})
-2) $cell - the cell index (an integer of length 1). This
-can be used to run \code{bfmPixel()} again on the same
-pixel (with different parameters) without having to click
-on a plot again to find the same pixel (in that case, be
-sure to set interactive=FALSE for subsequent trials!).
+  A list with the following components: 1) $bfm - an object
+  of class 'bfastmonitor' (see
+  \code{\link{bfastmonitor()}}) 2) $cell - the cell index
+  (an integer of length 1). This can be used to run
+  \code{bfmPixel()} again on the same pixel (with different
+  parameters) without having to click on a plot again to
+  find the same pixel (in that case, be sure to set
+  interactive=FALSE for subsequent trials!).
 }
 \description{
-Apply bfastmonitor (bfm) on a single pixel of known cell
-index (by supplying a single numeric value for cell), xy
-coordinates (\code{cell=c(x, y)}), or interactively by
-clicking on a plot (by setting \code{interactive=TRUE}).
-Outputs a list with (1) an object of class 'bfastmonitor'
-and (2) the resulting cell number (useful for follow-up
-analysis).
+  Apply bfastmonitor (bfm) on a single pixel of known cell
+  index (by supplying a single numeric value for cell), xy
+  coordinates (\code{cell=c(x, y)}), or interactively by
+  clicking on a plot (by setting \code{interactive=TRUE}).
+  Outputs a list with (1) an object of class 'bfastmonitor'
+  and (2) the resulting cell number (useful for follow-up
+  analysis).
 }
 \examples{
 # load in time series raster data
@@ -96,6 +97,6 @@ bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", formula=re
 plot(bfm$bfm)
 }
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+  Ben DeVries \email{devries.br@gmail.com}
 }
 

@@ -2,7 +2,7 @@
 \alias{hdf2ndvi}
 \title{Calculate NDVI from Landsat hdf file}
 \usage{
-hdf2ndvi(x, e = NULL, mask = NULL, keep = c(0), ...)
+  hdf2ndvi(x, e = NULL, mask = NULL, keep = c(0), ...)
 }
 \arguments{
   \item{x}{Character. File name of the hdf file containing
@@ -21,17 +21,17 @@ hdf2ndvi(x, e = NULL, mask = NULL, keep = c(0), ...)
   \code{\link{writeRaster}}}
 }
 \value{
-A rasterLayer object
+  A rasterLayer object
 }
 \description{
-Extract layers, apply mask (optional), crop (optional),
-calculate NDVI (possible other indices supported in the
-future) and write output to file (optional)
+  Extract layers, apply mask (optional), crop (optional),
+  calculate NDVI (possible other indices supported in the
+  future) and write output to file (optional)
 }
 \author{
-Loic Dutrieux
+  Loic Dutrieux
 }
 \seealso{
-\code{\link{processLandsat}} for wrapper function
+  \code{\link{processLandsat}} for wrapper function
 }
 
