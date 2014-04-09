@@ -17,7 +17,7 @@
 #' # Get the directory where the Landsat archives are storred
 #' dir <- system.file('external', package='bfastSpatial')
 #' hdfdir <- dirout <- rasterOptions()$tmpdir
-#' processLandsatBatch(x=dir, pattern=glob2rx('*.tar.gz'), outdir=dirout, hdfdir=hdfdir, delete=TRUE, mask=16)
+#' processLandsatBatch(x=dir, pattern=glob2rx('*.tar.gz'), outdir=dirout, hdfdir=hdfdir, delete=TRUE, mask=17)
 #' 
 #' # Visualize one of the layers produced
 #' 
