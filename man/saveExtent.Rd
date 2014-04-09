@@ -2,22 +2,22 @@
 \alias{saveExtent}
 \title{Draw an extent on a raster plot and print command to console}
 \usage{
-saveExtent(...)
+  saveExtent(...)
 }
 \arguments{
   \item{...}{Arguments to be passed to
   \code{\link{drawExtent}}}
 }
 \value{
-an object of class \code{extent} with the side effect of
-having the \code{extent()} command with resulting
-parameters printed to the console for reproducability.
+  an object of class \code{extent} with the side effect of
+  having the \code{extent()} command with resulting
+  parameters printed to the console for reproducability.
 }
 \description{
-Identical to \code{\link{drawExtent}} except that the
-resulting extent is printed to the console with a formatted
-\code{extent()} command which can be copied and pasted to a
-script for reproducability.
+  Identical to \code{\link{drawExtent}} except that the
+  resulting extent is printed to the console with a
+  formatted \code{extent()} command which can be copied and
+  pasted to a script for reproducability.
 }
 \examples{
 \dontrun{
@@ -27,6 +27,6 @@ e <- saveExtent() # draw extent on the plot, and associated extent() command wil
 }
 }
 \author{
-Ben DeVries
+  Ben DeVries
 }
 

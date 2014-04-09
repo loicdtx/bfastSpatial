@@ -2,7 +2,7 @@
 \alias{clumpSize}
 \title{Calculate size of pixel clumps in a RasterLayer}
 \usage{
-clumpSize(x, f = 1, ...)
+  clumpSize(x, f = 1, ...)
 }
 \arguments{
   \item{x}{RasterLayer.}
@@ -15,15 +15,15 @@ clumpSize(x, f = 1, ...)
   \code{\link{clump}}}
 }
 \description{
-Calculate the size of pixel clumps in a RasterLayer. The
-clump area is assigned to each clump, and araster with
-identical dimensions, but values representing the clump
-size is output. The definition of a pixel clump follows
-that of \code{\link{clump}}, where diagonals are either
-included or ignored in defining clumps. An optional
-conversion factor can be supplied based on pixel size.
+  Calculate the size of pixel clumps in a RasterLayer. The
+  clump area is assigned to each clump, and araster with
+  identical dimensions, but values representing the clump
+  size is output. The definition of a pixel clump follows
+  that of \code{\link{clump}}, where diagonals are either
+  included or ignored in defining clumps. An optional
+  conversion factor can be supplied based on pixel size.
 }
 \author{
-Ben DeVries
+  Ben DeVries
 }
 
