@@ -13,7 +13,7 @@
 #' @author Loic Dutrieux
 #' @return Function is used for its side effect of calculating in batch Vegetation indices fron surface reflectance Lantsat data.
 #' @seealso \link{processLandsat} and \link{hdf2ndvi}
-#' @example
+#' @examples
 #' # Get the directory where the Landsat archives are storred
 #' dir <- system.file('external', package='bfastSpatial')
 #' hdfdir <- dirout <- rasterOptions()$tmpdir

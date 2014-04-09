@@ -2,8 +2,7 @@
 \alias{processLandsatBatch}
 \title{Process Landsat data in batch mode}
 \usage{
-  processLandsatBatch(x, pattern = NULL, outdir, hdfdir,
-    mc.cores = 1, ...)
+processLandsatBatch(x, pattern = NULL, outdir, hdfdir, mc.cores = 1, ...)
 }
 \arguments{
   \item{x}{Character. Directory where the data is located
@@ -27,19 +26,27 @@
   \link{hdf2ndvi} (\code{e}, \code{mask}, \code{keep})}
 }
 \value{
-  Function is used for its side effect of calculating in
-  batch Vegetation indices fron surface reflectance Lantsat
-  data.
+Function is used for its side effect of calculating in
+batch Vegetation indices fron surface reflectance Lantsat
+data.
 }
 \description{
-  Batcher to process Landsat data from tarball or hdf to a
-  list of Vegetation Index files. Runs
-  \link{processLandsat} sequentially or in parallel
+Batcher to process Landsat data from tarball or hdf to a
+list of Vegetation Index files. Runs \link{processLandsat}
+sequentially or in parallel
+}
+\examples{
+# Get the directory where the Landsat archives are storred
+dir <- system.file('external', package='bfastSpatial')
+hdfdir <- dirout <- rasterOptions()$tmpdir
+processLandsatBatch(x=dir, pattern=glob2rx('*.tar.gz'), outdir=dirout, hdfdir=hdfdir, delete=TRUE, mask=16)
+
+# Visualize one of the layers produced
 }
 \author{
-  Loic Dutrieux
+Loic Dutrieux
 }
 \seealso{
-  \link{processLandsat} and \link{hdf2ndvi}
+\link{processLandsat} and \link{hdf2ndvi}
 }
 

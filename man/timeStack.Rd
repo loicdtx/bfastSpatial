@@ -2,7 +2,7 @@
 \alias{timeStack}
 \title{Creates a time stack of Landsat layers}
 \usage{
-  timeStack(x, pattern = NULL, ...)
+timeStack(x, pattern = NULL, ...)
 }
 \arguments{
   \item{x}{character. dir containing the files to be
@@ -17,10 +17,10 @@
   also set a datatype.}
 }
 \description{
-  Creates a stack of Landsat layers, reordering them
-  chronologically
+Creates a stack of Landsat layers, reordering them
+chronologically
 }
 \author{
-  Loic Dutrieux
+Loic Dutrieux
 }
 
