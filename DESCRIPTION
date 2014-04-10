@@ -17,20 +17,3 @@ Depends:
     gdalUtils,
     stringr
 License: tbd
-Collate:
-    'areaSieve.R'
-    'bfmChange.R'
-    'bfmMagn.R'
-    'bfmPixel.R'
-    'bfmSpatial.R'
-    'changeMonth.R'
-    'clumpSize.R'
-    'flattenBrick.R'
-    'getSceneinfo.R'
-    'hdf2ndvi.R'
-    'mc.calc.R'
-    'processLandsat.R'
-    'processLandsatBatch.R'
-    'saveExtent.R'
-    'test_data.R'
-    'timeStack.R'

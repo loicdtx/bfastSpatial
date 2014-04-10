@@ -2,11 +2,10 @@
 \alias{bfmSpatial}
 \title{Function to run bfastmonitor on any kind of raster brick, with parallel support}
 \usage{
-  bfmSpatial(x, dates = NULL, pptype = "irregular", start,
-    formula = response ~ trend + harmon, order = 3,
-    lag = NULL, slag = NULL,
-    history = c("ROC", "BP", "all"), type = "OLS-MOSUM",
-    h = 0.25, end = 10, level = 0.05, mc.cores = 1, ...)
+bfmSpatial(x, dates = NULL, pptype = "irregular", start,
+  formula = response ~ trend + harmon, order = 3, lag = NULL,
+  slag = NULL, history = c("ROC", "BP", "all"), type = "OLS-MOSUM",
+  h = 0.25, end = 10, level = 0.05, mc.cores = 1, ...)
 }
 \arguments{
   \item{x}{rasterBrick or rasterStack object, or file name
@@ -45,17 +44,17 @@
   \code{\link{mc.calc}}}
 }
 \value{
-  A rasterBrick, with 2 layers. One layer is the timing of
-  change and the other layer the magnitude of change. See
-  \code{\link{bfastmonitor}}
+A rasterBrick, with 2 layers. One layer is the timing of
+change and the other layer the magnitude of change. See
+\code{\link{bfastmonitor}}
 }
 \description{
-  Implements bfastmonitor function, from the bfast package
-  on any kind of rasterBrick object. Time information is
-  provided as an extra object and the time series can be
-  regular or irregular.
+Implements bfastmonitor function, from the bfast package on
+any kind of rasterBrick object. Time information is
+provided as an extra object and the time series can be
+regular or irregular.
 }
 \author{
-  Loic Dutrieux
+Loic Dutrieux
 }
 

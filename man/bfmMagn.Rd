@@ -2,7 +2,7 @@
 \alias{bfmMagn}
 \title{Extract change magnitude bfm RasterBrick}
 \usage{
-  bfmMagn(bfm, change = NULL, thresh = NULL, ...)
+bfmMagn(bfm, change = NULL, thresh = NULL, ...)
 }
 \arguments{
   \item{bfm}{RasterBrick output from
@@ -21,17 +21,17 @@
   \code{\link{writeRaster}}.}
 }
 \value{
-  RasterLayer representing the change magnitude for all
-  pixels, unless change filter is applied, in which case
-  only representing breakpoint pixels.
+RasterLayer representing the change magnitude for all
+pixels, unless change filter is applied, in which case only
+representing breakpoint pixels.
 }
 \description{
-  Creates a raster layer representing the change magnitude
-  (median of the residuals during the monitoring period)
-  from a resulting bfm raster brick. Magnitude is
-  calculated for all pixels regardless of whether a
-  breakpoint was detected or not. This function allows for
-  filtering based on a supplied change (breakpoint) raster.
+Creates a raster layer representing the change magnitude
+(median of the residuals during the monitoring period) from
+a resulting bfm raster brick. Magnitude is calculated for
+all pixels regardless of whether a breakpoint was detected
+or not. This function allows for filtering based on a
+supplied change (breakpoint) raster.
 }
 \examples{
 # load in raster brick
@@ -59,9 +59,9 @@ if("rasterVis" \%in\% row.names(installed.packages())){
 }
 }
 \author{
-  Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries \email{devries.br@gmail.com}
 }
 \seealso{
-  \code{\link{bfmChange}}
+\code{\link{bfmChange}}
 }
 

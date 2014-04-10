@@ -2,7 +2,7 @@
 \alias{getSceneinfo}
 \title{Retrieve Landsat info from filenames}
 \usage{
-  getSceneinfo(sourcefile, filename = NULL, ...)
+getSceneinfo(sourcefile, filename = NULL, ...)
 }
 \arguments{
   \item{sourcefile}{Character. Filename of a landsat layer
@@ -12,15 +12,15 @@
   \code{\link{write.csv}}.}
 }
 \value{
-  a \code{data.frame} with parsed scene information from
-  Landsat scene names
+a \code{data.frame} with parsed scene information from
+Landsat scene names
 }
 \description{
-  Parses through typical Landsat filenames and retrieves
-  information on sensor and acquisition date. Vectorized
-  over \code{sourcefile}.
+Parses through typical Landsat filenames and retrieves
+information on sensor and acquisition date. Vectorized over
+\code{sourcefile}.
 }
 \author{
-  Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries \email{devries.br@gmail.com}
 }
 
