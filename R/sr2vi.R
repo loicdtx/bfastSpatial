@@ -27,11 +27,14 @@ sr2vi <- function(x, e=NULL, mask=NULL, keep=c(0), ...) {
         x <- get_subdatasets(x)
     }
     
-    s0 <- stack(x)
-    s <- subset(s0, c(3,4))
+    ind <- c(3,4) # To facilitate introduction of other indices later
+    x0 <- x[ind]
+    
+    bands <- sapply(X=x0, FUN=raster)
+    
     
     if(!is.null(mask)) {
-        mask <- subset(s0, mask)
+        mask <- raster(x[mask])
     }
     
     
@@ -47,9 +50,8 @@ sr2vi <- function(x, e=NULL, mask=NULL, keep=c(0), ...) {
     
     
     # NDVI function for calc
-    fun <- function(x){
-        out <- 10000 * (x[2]-x[1])/(x[2]+x[1]) # Watch the scaling factor here
-        return(out)
+    fun <- function(x, y){
+        10000 * (y - x)/(y + x) # Watch the scaling factor here
     }
     
     # Masking function for overlay
@@ -59,9 +61,9 @@ sr2vi <- function(x, e=NULL, mask=NULL, keep=c(0), ...) {
     }
     
     if(is.null(mask)) {
-        ndvi <- calc(x=s, fun=fun, ...)
+        ndvi <- overlay(x=bands[1], y=bands[2], fun=fun, ...)
     } else {
-        prendvi <- calc(x=s, fun=fun, ...)
+        prendvi <- overlay(x=bands[1], y=bands[2], fun=fun, ...)
         ndvi <- overlay(x=prendvi, y=mask, fun=clean, ...)
     }
     
