@@ -3,7 +3,7 @@
 #' 
 #' @description Extract layers, apply mask (optional), crop (optional), calculate NDVI (possible other indices supported in the future) and write output to file (optional)
 #' 
-#' @param x Character. File name of the hdf file containing the bands.
+#' @param x Character. File name of the hdf file containing the bands, or list of filenames (geoTiffs).
 #' @param e Extent object or object that can be coerced as extent.
 #' @param mask Numeric or NULL. The subdataset number of the mask to be applied to the bands.
 #' @param keep umeric. Can take multiple values. Which values of the mask layer should be kept?
@@ -23,8 +23,8 @@ sr2vi <- function(x, e=NULL, mask=NULL, keep=c(0), ...) {
     # The function depends on the MODIS package + raster
     # mask is a numeric, the sds number of the mask to use
     # if filename is used, I recommend also setting datatype to 'INT2S'
-    if(extension(x) == '.hdf') {
-        x <- get_subdatasets(x)
+    if(extension(x) == '.hdf') { # Also should be the only case when length(x) == 1
+        x <- get_subdatasets(x[1])
     }
     
     ind <- c(3,4) # To facilitate introduction of other indices later
