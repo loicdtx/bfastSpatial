@@ -5,7 +5,8 @@
 #' 
 #' @param x Input raster layer.
 #' @param thresh Numeric. Areal threshold (in square metres). All pixel clumps smaller than thresh will be deleted.
-#' @param directions Numeric. Define pixel neighbours using diagonals (diagonals=8; "Queen's case") or without diagonals (diagonals=4; "Rook's case").
+#' @param directions Numeric. Define pixel neighbours using diagonals (diagonals=8; "Queen's case") or without diagonals (diagonals=4; "Rook's case")
+#' @param keepzeros Logical. Treat zeros as NA's (default option for \code{\link{clump}}) or as actual pixel values? If \code{FALSE} (default), the default method used in \code{\link{clump}} is used. If \code{TRUE}, an intermediate unit raster is first created, \code{areaSieve} is run on that raster, and the sieved unit raster is used to mask the input raster.
 #' @param ... Additional arguments to be passed to \link{overlay} (including filename to write to file).
 #' @author Ben DeVries \email{devries.br@@gmail.com}
 #' @return raster with pixels in clumps smaller than that specified as thresh removed. All spatial parameters and data are otherwise identical to x.
@@ -13,8 +14,43 @@
 #' @import igraph
 #' @export
 #' 
+#' @examples
+#' # load test raster
+#' data(tura)
+#' # extract the first layer
+#' r <- raster(tura, 1)
+#' 
+#' # create pixel 'islands' by reassigning some values to NA
+#' r[r < 7500] <- NA
+#' # zoom into extent where pixel islands were generated
+#' e <- extent(c(821958, 822697, 830504, 831070))
+#' plot(r, ext=e)
+#' 
+#' # apply areaSieve with default threshold of 5000 square metres
+#' rs <- areaSieve(r)
+#' 
+#' # compare two rasters
+#' op <- par(mfrow=c(1, 2))
+#' plot(r, ext=e, legend=FALSE)
+#' plot(rs, ext=e, legend=FALSE)
+#' par(op)
+#' 
+#' # same as above, but assign 0 instead of NA
+#' # (ie. simulate a situation where 0's are valid pixel values)
+#' r <- raster(tura, 1)
+#' r[r < 7500] <- 0
+#' 
+#' # apply areaSieve with default threshold of 5000 square metres and keep zeros
+#' rs <- areaSieve(r, keepzeros = TRUE)
+#' 
+#' # compare two rasters
+#' op <- par(mfrow=c(1, 2))
+#' plot(r, ext=e, legend=FALSE)
+#' plot(rs, ext=e, legend=FALSE)
+#' par(op)
+#' 
 
-areaSieve <- function(x, thresh=5000, directions=8, verbose=FALSE, ...)
+areaSieve <- function(x, thresh=5000, directions=8, verbose=FALSE, keepzeros=FALSE, ...)
 {
   
   # convert thresh from area to pixel threshold
@@ -23,23 +59,47 @@ areaSieve <- function(x, thresh=5000, directions=8, verbose=FALSE, ...)
   if(verbose)
     cat("Converted threshold to ", thresh, " pixels.\n", sep="")
   
-  # derive a forest clump raster from x
-  clumps <- clump(x, directions=directions)
-  
-  # calculate pixel frequency for each clumpID
-  clumpFreq <- as.data.frame(freq(clumps))
-  
-  # clumpID to be excluded from output raster
-  excludeID <- clumpFreq$value[which(clumpFreq$count < thresh)]
-  
-  # function to assign NA to x wherever a clump with ID %in% excludeID is found
-  subNA <- function(a, b){
-      a[b %in% excludeID] <- NA
-      return(a)
+  # generic sieve function
+  sieve <- function(inp, ...){
+      # derive a forest clump raster from unitRaster
+      clumps <- clump(inp, directions=directions)
+      
+      # calculate pixel frequency for each clumpID
+      clumpFreq <- as.data.frame(freq(clumps))
+      
+      # clumpID to be excluded from output raster
+      excludeID <- clumpFreq$value[which(clumpFreq$count < thresh)]
+      
+      # function to assign NA to x wherever a clump with ID %in% excludeID is found
+      subNA <- function(a, b){
+          a[b %in% excludeID] <- NA
+          return(a)
+      }
+      
+      # apply sieve to unitRaster
+      if(!keepzeros){
+          y <- overlay(inp, clumps, fun=subNA, ...)
+      } else {
+          y <- overlay(inp, clumps, fun=subNA)
+      }
+      
+      return(y)
   }
   
-  y <- overlay(x, clumps, fun=subNA, ...)
-  
+  # create a unit raster if keepzeros==TRUE
+  if(keepzeros){
+      unitRaster <- x
+      unitRaster[!is.na(unitRaster)] <- 1
+      
+      # apply sieve on unitRaster
+      y <- sieve(unitRaster)
+      
+      # use sieved unitRaster to mask input raster
+      y <- mask(x, y, ...)
+      
+  } else {
+      y <- sieve(x, ...)
+  }
+
   return(y)
-  
 }
