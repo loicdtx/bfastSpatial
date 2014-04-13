@@ -22,18 +22,20 @@
 #' data(tura)
 #' 
 #' # run bfm on a pixel of known (x,y) location
-#' bfm <- bfmPixel(tura, cell=c(816750, 826020), start=c(2005, 1))
+#' bfm <- bfmPixel(tura, cell=c(820900, 831340), start=c(2005, 1))
 #' print(bfm$cell) # check the corresponding cell index
 #' 
 #' # get bfm results for a pixel of known cell index
-#' bfm <- bfmPixel(tura, cell=1068, start=c(2005, 1))
+#' targcell <- 4064
+#' bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1))
 #' plot(bfm$bfm)
 #' # try another monitoring period
-#' bfm <- bfmPixel(tura, cell=1068, start=c(2009, 1))
+#' bfm <- bfmPixel(tura, cell=targcell, start=c(2009, 1))
 #' plot(bfm$bfm)
 #' 
 #' # try again using only ETM+ data (Landsat 7)
 #' bfm <- bfmPixel(tura, cell=1068, start=c(2005, 1), sensor="ETM+")
+#' plot(bfm$bfm) 
 #' 
 #' # run bfm on a pixel chosen from the plot window
 #' \dontrun{
