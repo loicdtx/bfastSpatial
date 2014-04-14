@@ -8,6 +8,8 @@
 #' @param sensor Character. Optional: limit calculation to images from a particular sensor. Defaults to "all", but can take any of "TM", "ETM+", "ETM+ SLC-off" or "ETM+ SLC-on"
 #' @param ... Arguments to be passed to \link{\code{mc.calc}}
 #' 
+#' @author Ben DeVries \email{devries.br@@gmail.com}
+#' 
 
 annualSummary <- function(x, fun, sceneID=NULL, sensor="all", ...){
 
@@ -37,7 +39,18 @@ annualSummary <- function(x, fun, sceneID=NULL, sensor="all", ...){
     pixStat <- function(b){
         ps <- numeric()
         for(i in 1:length(years)){
-            ps[i] <- 
+            tmp <- list(b[which(s$year == years[i])])
+            if(hasArg(na.rm))
+                tmp$na.rm <- na.rm
+            ps[i] <- do.call(fun, tmp)
         }
+        
+        names(ps) <- years
+        return(ps)
     }
+    
+    out <- mc.calc(x, fun=pixStat, ...)
+    
+    return(out)
+    
 }
