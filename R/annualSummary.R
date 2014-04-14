@@ -10,8 +10,16 @@
 #' 
 #' @author Ben DeVries \email{devries.br@@gmail.com}
 #' 
+#' @examples
+#' # load tura RasterBrick
+#' data(tura)
+#' 
+#' # calculate mean value per year for ETM+ data only
+#' annualMean <- annualSummary(tura, fun=mean)
+#' 
 
-annualSummary <- function(x, fun, sceneID=NULL, sensor="all", ...){
+annualSummary <- function(x, fun, sceneID=NULL, sensor="all", na.rm=NULL, ...){
+    ###### na.rm doesn't work now for sum() or mean(), etc...!
 
     # get scene information from layer names
     if(is.null(sceneID)){
@@ -33,14 +41,14 @@ annualSummary <- function(x, fun, sceneID=NULL, sensor="all", ...){
     
     # add year column to s
     s$year <- as.numeric(substr(s$date, 1, 4))
-    years <- unique(s$year)
+    years <- sort(unique(s$year))
     
     # function to be applied over each pixel in the RasterBrickStack
     pixStat <- function(b){
         ps <- numeric()
         for(i in 1:length(years)){
             tmp <- list(b[which(s$year == years[i])])
-            if(hasArg(na.rm))
+            if(!is.null(na.rm))
                 tmp$na.rm <- na.rm
             ps[i] <- do.call(fun, tmp)
         }
