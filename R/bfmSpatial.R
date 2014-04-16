@@ -60,10 +60,12 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start,
                                 type=type, h=h,
                                 end=end, level=level), silent=TRUE)
         if(class(bfm) == 'try-error') {
-            return(cbind(NA, NA))
+            res <- cbind(NA, NA, 1)
         } else {
-            return(cbind(bfm$breakpoint, bfm$magnitude))
+            res <- cbind(bfm$breakpoint, bfm$magnitude, NA)
         }
+        names(res) <- c("breakpoint", "magnitude", "error")
+        return(res)
     }
     
     out <- mc.calc(x=x, fun=fun, mc.cores=mc.cores, ...)
