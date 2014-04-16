@@ -4,6 +4,7 @@
 #' @description Extract layers, apply mask (optional), crop (optional), calculate NDVI (possible other indices supported in the future) and write output to file (optional)
 #' 
 #' @param x Character. File name of the hdf file containing the bands, or list of filenames (geoTiffs).
+#' @param vi Character. Vegetation index to be computed. Can be either 'ndvi' or 'evi'
 #' @param e Extent object or object that can be coerced as extent.
 #' @param mask Numeric or NULL. The subdataset number of the mask to be applied to the bands.
 #' @param keep umeric. Can take multiple values. Which values of the mask layer should be kept?
@@ -39,7 +40,7 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), ...) {
     ind <- viFormula$ind
     x0 <- x[ind]
     
-    bands <- sapply(X=x0, FUN=raster)
+    bands <- lapply(X=x0, FUN=raster)
     
     
     if(!is.null(mask)) {
@@ -73,9 +74,9 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), ...) {
     
     
     if(is.null(mask)) {
-        vi <- do.call(what=overlay, args=doListDots)
+        vi <- do.call(what=raster::overlay, args=doListDots)
     } else {
-        previ <- do.call(what=overlay, args=doList)
+        previ <- do.call(what=raster::overlay, args=doList)
         vi <- overlay(x=previ, y=mask, fun=clean, ...)
     }
     
