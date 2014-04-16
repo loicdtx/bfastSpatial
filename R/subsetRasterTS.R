@@ -7,7 +7,7 @@
 #' @param sensor Character. Limit time series to specified sensor(s). Can take any combination of "ETM+ SLC-off", "ETM+ SLC-on", "ETM+", "TM", "OLI". Defaults to "all" (use all sensors).
 #' @param minDate Numeric. Optional: minumum date (in format c(year, julian day)) before which all layers will be removed from the RasterBrickStack.
 #' @param maxDate Numeric. Optional: maximum date (in format c(year, julian day)) after which all layers will be removed form the RasterBrickStack.
-#' @param ... Additional arguments to be passed to \link{\code{writeRaster}}
+#' @param ... Additional arguments to be passed to \link{\code{raster::subset}}
 #' @author Ben DeVries \email{devries.br@@gmail.com}
 #' @import raster
 #' @export
@@ -47,15 +47,15 @@ trimRasterTS <- function(x, sceneID=NULL, sensor="all", minDate=NULL, maxDate=NU
     
     # select scenes that correspond to conditions
     sel <- which(s$sensor %in% sensor & s$date >= minDate & s$date <= maxDate)
+    sel <- sort(unique(sel))
+    if(all(c(1:nrow(s)) %in% sel))
+        stop("All scenes satisfy given criteria, so no trim is necessary.")
     if(is.null(sel))
         stop("No scenes found which apply to trim criteria")
     sel <- sort(sel)
+        
+    # subset x based on sel
+    y <- subset(x, subset=sel, ...)
     
-    cat(sel)
-    
-    # if no conditions supplied, return error
-    #if(sel == c(1:nrow(s)))
-    #    stop("No conditions for trim supplied.\n")
-    
-    return(sel)
+    return(y)
 }
