@@ -7,6 +7,8 @@
 #' @param dates A date vector. The number of dates must match the number of layers of x.
 #' @param pptype Character. Type of preprocessing to be applied to individual time series vectors. The two options are 'irregular' and '16-days'. See bfastts for more details.
 #' @param start See \code{\link{bfastmonitor}}
+#' @param monend Numeric. End of the monitoring period in the format c(year, julian day). All raster data after this time will be removed before running \code{bfastmonitor}
+#' @param sensor Character. Limit analysis to a particular sensor. Defaults to "all". See \link{\code{subsetRasterTS}} for more information on allowed values.
 #' @param formula See \code{\link{bfastmonitor}}
 #' @param order See \code{\link{bfastmonitor}}
 #' @param lag See \code{\link{bfastmonitor}}
@@ -22,6 +24,18 @@
 #' @import bfast
 #' @import parallel
 #' @import raster
+#' 
+#' @examples
+#' # load tura dataset
+#' data(tura)
+#' 
+#' # run BFM over entire time series with a monitoring period of c(2009, 1)
+#' t1 <- system.time(bfm <- bfmSpatial(tura, start=c(2005, 1)))
+#' plot(t1)
+#' 
+#' # with multi-core support
+#' t2 <- system.time(bfm <- bfmSpatial(tura, start=c(2005, 1), mc.cores=2))
+#' t1 - t2
 #' @export
 #' 
 #' 
@@ -30,7 +44,7 @@
 # Author: Loic Dutrieux
 # January 2014
 
-bfmSpatial <- function(x, dates=NULL, pptype='irregular', start,
+bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL, sensor="all",
                        formula = response ~ trend + harmon, order = 3, lag = NULL, slag = NULL,
                        history = c("ROC", "BP", "all"),
                        type = "OLS-MOSUM", h = 0.25, end = 10, level = 0.05, mc.cores=1, ...) {
@@ -49,6 +63,15 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start,
         } else {
             dates <- getZ(x)
         }
+    }
+    
+    # check that monend < max(dates) (and ignore if not)
+    if(as.Date(paste(monend, collapse="-"), format="%Y-%j") >= max(dates))
+        monend <-  NULL
+    
+    # subset rasterTS if sensor or monend are supplied
+    if(sensor != "all" | !is.null(monend)){
+        x <- subsetRasterTS(x, sensor=sensor, maxDate=monend)
     }
 
     fun <- function(x) {
