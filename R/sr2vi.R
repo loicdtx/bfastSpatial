@@ -36,7 +36,7 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), ...) {
     }
         
     
-    ind <- c(3,4) # To facilitate introduction of other indices later
+    ind <- viFormula$ind
     x0 <- x[ind]
     
     bands <- sapply(X=x0, FUN=raster)
@@ -57,11 +57,8 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), ...) {
         }
     }
     
-    
-    # NDVI function for calc
-    fun <- function(x, y){
-        10000 * (y - x)/(y + x) # Watch the scaling factor here
-    }
+    # VI function
+    fun <- viFormula$fun
     
     # Masking function for overlay
     clean <- function(x,y) {
@@ -69,12 +66,18 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), ...) {
         return(x)
     }
     
+    # Prepare the list to be passed to do.call-overlay
+    dots <- list(...)
+    doListDots <- c(bands, fun=fun, dots)
+    doList <- c(bands, fun=fun)
+    
+    
     if(is.null(mask)) {
-        ndvi <- overlay(x=bands[1], y=bands[2], fun=fun, ...)
+        vi <- do.call(what=overlay, args=doListDots)
     } else {
-        prendvi <- overlay(x=bands[1], y=bands[2], fun=fun)
-        ndvi <- overlay(x=prendvi, y=mask, fun=clean, ...)
+        previ <- do.call(what=overlay, args=doList)
+        vi <- overlay(x=previ, y=mask, fun=clean, ...)
     }
     
-    return(ndvi)
+    return(vi)
 }
