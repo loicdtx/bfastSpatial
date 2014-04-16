@@ -19,7 +19,7 @@
 #' @param level See \code{\link{bfastmonitor}}
 #' @param mc.cores Numeric. Number of cores to be used for the job.
 #' @param ... Arguments to be passed to \code{\link{mc.calc}}
-#' @return A rasterBrick, with 2 layers. One layer is the timing of change and the other layer the magnitude of change. See \code{\link{bfastmonitor}}
+#' @return A rasterBrick, with 3 layers. (1) Breakpoints (time of change); (2) change magnitude; and (3) error flag (1, NA). See \code{\link{bfastmonitor}}
 #' @author Loic Dutrieux
 #' @import bfast
 #' @import parallel
