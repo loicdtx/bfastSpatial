@@ -22,7 +22,7 @@
 .evi <- function(){
     ind <- c(1,3,4)
     fun <- function(x1, x3, x4){ 
-        evi <- 10000 * 2.5 * (x4 - x3)/(x4 + 6 * x3 - 7.5 * 1 + 1)
+        evi <- 10000 * 2.5 * (x4/10000 - x3/10000)/(x4/10000 + 6 * x3/10000 - 7.5 * x1/10000 + 1)
         return(evi)
     }
     return(list(ind=ind,
