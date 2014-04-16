@@ -66,7 +66,7 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL, se
     }
     
     # check that monend < max(dates) (and ignore if not)
-    if(as.Date(paste(monend, collapse="-"), format="%Y-%j") >= max(dates))
+    if(!is.null(monend) & as.Date(paste(monend, collapse="-"), format="%Y-%j") >= max(dates))
         monend <-  NULL
     
     # subset rasterTS if sensor or monend are supplied
