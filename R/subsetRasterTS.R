@@ -14,6 +14,10 @@
 #' 
 subsetRasterTS <- function(x, sceneID=NULL, sensor="all", minDate=NULL, maxDate=NULL, ...){
     
+    if(is.character(x)) {
+        x <- brick(x)
+    }
+    
     # get scene information either from sceneID or from layer names
     if(!is.null(sceneID)){
         s <- getSceneinfo(sceneID)
