@@ -16,7 +16,7 @@
 #' @import rgdal
 #' @export
 
-sr2vi <- function(x, e=NULL, mask=NULL, keep=c(0), ...) {      
+sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), ...) {      
     
     # x is a character (full filename of an hdf file)
     # filename is a character, full filename of the output file
@@ -26,6 +26,15 @@ sr2vi <- function(x, e=NULL, mask=NULL, keep=c(0), ...) {
     if(extension(x) == '.hdf') { # Also should be the only case when length(x) == 1
         x <- get_subdatasets(x[1])
     }
+    
+    if(vi == 'ndvi') {
+        viFormula <- .ndvi()
+    } else if(vi == 'evi') {
+        viFormula <- .evi()
+    } else {
+        stop("Non supported vi")
+    }
+        
     
     ind <- c(3,4) # To facilitate introduction of other indices later
     x0 <- x[ind]
@@ -63,7 +72,7 @@ sr2vi <- function(x, e=NULL, mask=NULL, keep=c(0), ...) {
     if(is.null(mask)) {
         ndvi <- overlay(x=bands[1], y=bands[2], fun=fun, ...)
     } else {
-        prendvi <- overlay(x=bands[1], y=bands[2], fun=fun, ...)
+        prendvi <- overlay(x=bands[1], y=bands[2], fun=fun)
         ndvi <- overlay(x=prendvi, y=mask, fun=clean, ...)
     }
     
