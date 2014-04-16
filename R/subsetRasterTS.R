@@ -12,7 +12,7 @@
 #' @import raster
 #' @export
 #' 
-trimRasterTS <- function(x, sceneID=NULL, sensor="all", minDate=NULL, maxDate=NULL, ...){
+subsetRasterTS <- function(x, sceneID=NULL, sensor="all", minDate=NULL, maxDate=NULL, ...){
     
     # get scene information either from sceneID or from layer names
     if(!is.null(sceneID)){
