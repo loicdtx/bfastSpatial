@@ -8,6 +8,7 @@
 #' @details This function works similarly to \link{\code{intersect}}, except that it can handle more than two spatial objects. In order to do this, the input should be supplied as a list (an can therefore contain a variety of spatial object types).
 #' 
 #' @author Ben DeVries \email{devries.br@@gmail.com}
+#' @seealso \link{\code{harmonize}}
 #' @import raster
 #' @import sp
 #' @export
