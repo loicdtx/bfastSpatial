@@ -7,7 +7,8 @@
 #' @param vi Character. Vegetation index to be computed. Can be either 'ndvi' or 'evi'
 #' @param e Extent object or object that can be coerced as extent.
 #' @param mask Numeric or NULL. The subdataset number of the mask to be applied to the bands.
-#' @param keep umeric. Can take multiple values. Which values of the mask layer should be kept?
+#' @param keep Numeric. Can take multiple values. Which values of the mask layer should be kept?
+#' @param L Numeric. Soil-adjustment factor for SAVI (ignored if vi != 'savi'). L can take on values between 0 and 1, and a default of 0.5 is typically used.
 #' @param ... Arguments to be passed to \code{\link{writeRaster}}
 #' @return A rasterLayer object
 #' @author Loic Dutrieux
@@ -17,7 +18,7 @@
 #' @import rgdal
 #' @export
 
-sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), ...) {      
+sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {      
     
     # x is a character (full filename of an hdf file)
     # filename is a character, full filename of the output file
@@ -32,10 +33,18 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), ...) {
         viFormula <- .ndvi()
     } else if(vi == 'evi') {
         viFormula <- .evi()
+    } else if(vi == 'nbr') {
+        viFormula <- .nbr()
+    } else if(vi == 'savi') {
+        viFormula <- .savi(L=L)
     } else {
-        stop("Non supported vi")
+        stop("Unsupported vi")
     }
-        
+    # TODO: for tasseled cap to work, information on the Landsat sensor is needed here:
+    # e.g. 
+        # if(sensor==7 & vi=="tcgreen") viFormula <- .tcgreen(sensor=7)
+    # or if 'sensor' is added as an argument, simply:
+        # if(vi == "tcgreen") viFormula <- .tcgreen(sensor=sensor)
     
     ind <- viFormula$ind
     x0 <- x[ind]
