@@ -1,0 +1,71 @@
+\documentclass{article}
+
+\def\code#1{\texttt{#1}}
+
+\begin{document}
+
+\title{Data Inventory}
+\author{Ben DeVries}
+
+\maketitle
+
+A number of functions are available in the bfastSpatial package to help keep an inventory of data in a raster time series stack. These functions range from basic scene information (\code{getSceneinfo()}) to summary of pixel values per year in the time series (\code{annualSummary()}).
+
+The following functions are included in the Data Inventory module:
+\begin{enumerate}
+\item \code{getSceneinfo()}
+\item \code{countObs()}
+\item \code{annualSummary()}
+\end{enumerate}
+
+\section{Basic Scene Information: \code{getSceneinfo()}}
+
+\code{getSceneinfo()} allows the user to list the information contained within a scene ID. Currently, only Landsat scene ID's are supported. For example, the scene ID "LE71700552007309ASN00" tells us that the scene is from the Landsat 7 ETM+ sensor ('LE7'), path-row 170-55 ('170055') and was acquired on the 309th day of the year 2007 ('2007309'). Calling \code{getSceneinfo('LE71700552007309ASN00')} will give a data.frame with one row showing all of this information.
+
+<<echo=FALSE, results='hide'>>=
+library(bfastSpatial)
+@
+
+<<>>=
+getSceneinfo('LE71700552007309ASN00')
+@
+
+When working with Landsat data, it is a good idea to assign and keep these sceneID's as layer names (see \code{?raster::names}) so the relevant information is associated to each raster layer.
+
+<<>>=
+# show scene info from tura layers
+data(tura)
+head(names(tura))
+s <- getSceneinfo(names(tura))
+head(s)
+# add a column for years and plot # of scenes per year
+s$year <- as.numeric(substr(s$date, 1, 4))
+hist(s$year, breaks=c(1984:2014), main="p170r55: Scenes per Year", xlab="year", ylab="# of scenes")
+@
+
+We can combine the dates and sensor information to get more of an idea of where our data are coming from.
+
+<<>>=
+library(ggplot2)
+p <- ggplot(data = s, aes(x = year))
+p <- p + geom_bar(aes(fill = sensor), binwidth=1, col="black")
+p <- p + labs(y="number of scenes")
+p
+@
+
+More examples can be found under \code{?getSceneinfo}. Many other functions in the bfastSpatial package rely on getSceneinfo to extract relevant scene information, such as acquisition dates to be passed to \code{bfmSpatial()} or \code{bfmPixel()}.
+
+\section{Valid Observations: \code{countObs()}}
+
+The number of available observations in a raster time series can be calculated by using countObs(). This function "drills" through pixels of a time series and counts the number of pixels with a non-NA value. Optionally, any other value can be supplied as a substitute for NA (e.g. the number of non-zero values per pixel can also be queried). Values can also be expressed as a percentage if as.perc is set to TRUE.
+
+<<>>=
+data(tura)
+obs <- countObs(tura, as.perc=TRUE)
+plot(obs)
+summary(obs)
+@
+
+\section{Annual Summary Statistics: \code{annualSummary()}}
+
+\end{document}
