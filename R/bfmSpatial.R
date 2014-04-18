@@ -17,7 +17,7 @@
 #' @param n See \code{\link{bfastmonitor}}
 #' @param level See \code{\link{bfastmonitor}}
 #' @param mc.cores Numeric. Number of cores to be used for the job.
-#' @param sensor Character. Limit analysis to a particular sensor. Defaults to "all". See \link{\code{subsetRasterTS}} for more information on allowed values.
+#' @param sensor Character. Optional: Limit analysis to a particular sensor. Can be one or more of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", or "OLI")}
 #' @param ... Arguments to be passed to \code{\link{mc.calc}}
 #' @return A rasterBrick, with 3 layers. (1) Breakpoints (time of change); (2) change magnitude; and (3) error flag (1, NA). See \code{\link{bfastmonitor}}
 #' 
@@ -82,10 +82,12 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
     }
     
     # check that monend < max(dates) (and ignore if not)
+    # TODO: remove this - this can be covered in window() at pixel level
     if(!is.null(monend) & as.Date(paste(monend, collapse="-"), format="%Y-%j") >= max(dates))
         monend <-  NULL
     
     # subset rasterTS if sensor or monend are supplied
+    # TODO: remove this and implement on pixel ts level instead
     if(sensor != "all" | !is.null(monend)){
         x <- subsetRasterTS(x, sensor=sensor, maxDate=monend)
     }
@@ -109,5 +111,4 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
     
     out <- mc.calc(x=x, fun=fun, mc.cores=mc.cores, ...)
     return(out)
-    
 }

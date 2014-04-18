@@ -81,9 +81,9 @@ bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thr
     # 2) by supplying the cell index as an integer of length=1
     # 3) by supplying a vector of length=2 representing the (x,y) coordinates
     if (interactive) { # condition 1:
-    cell <- as.data.frame(click(x, n=1, id=TRUE, cell=TRUE, show=FALSE))$cell
+        cell <- as.data.frame(click(x, n=1, id=TRUE, cell=TRUE, show=FALSE))$cell
     } else { # conditions 2 and 3:
-    cell <- ifelse(length(cell)==2, cellFromXY(x, t(as.matrix(cell))), cell)
+        cell <- ifelse(length(cell)==2, cellFromXY(x, t(as.matrix(cell))), cell)
     }
     
     # extract pixel time series
@@ -98,7 +98,7 @@ bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thr
         dates <- s$date
     }
     
-    # apply a threshold (if supplied)
+    # optional: apply a threshold (if supplied)
     if (!is.null(min.thresh))
         pixelts[pixelts <= min.thresh] <- NA
     
