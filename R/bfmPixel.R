@@ -5,10 +5,11 @@
 #' @param x RasterBrick with raster time series data.
 #' @param start Numeric. Vector of length = 2 representing the start of the monitoring period (in the format c(year, julian day))
 #' @param monend Numeric. Optional: the end of the monitoring period (in the format c(year, julian day)), at which point the time series will be trimmed.
-#' @param cell Numeric. Can be one of: (1) a numeric of length 1 indicating the raster cell to be observed; (2) a numeric of length 2 representing the (x,y) coordinate of the raster cell to be observed. Can also be omitted, in which case 'interactive' must be set to TRUE (see below)
-#' @param min.thresh Numeric. Optional: A minimum threshold below which NA's are assigned to data points.
-#' @param sensor Character. Optional: Limit analysis to data from one or more sensors. Defaults to 'all' to use all available data in the time series.
+#' @param cell Numeric. Can be one of: (1) a numeric of length 1 indicating the raster cell to be observed; (2) a numeric of length 2 representing the (x,y) coordinate of the raster cell to be observed. Can also be omitted, in which case \code{interactive} must be set to \code{TRUE} (see below)
 #' @param interactive Logical. Select cell by clicking on an already plotted map? Defaults to \code{FALSE}. If \code{FALSE}, a value must be assigned to \code{cell} (see above).
+#' @param min.thresh Numeric. Optional: A minimum threshold below which NA's are assigned to data points.
+#' @param sceneID Character. Optional: Landsat sceneID's corresponding exactly to layers in x. If omitted, either \code{dates} should be supplied, or \code{names(x)} should correspond to Landsat sceneID's.
+#' @param sensor Character. Optional: Limit analysis to data from one or more sensors. Defaults to 'all' to use all available data in the time series.
 #' @param plot Logical. Plot the result? Defaults to \code{FALSE}.
 #' @param ... Arguments to be passed to \code{\link{bfastmonitor}}
 #' 
@@ -59,10 +60,12 @@
 #' @import bfast
 #' @export
 
-bfmPixel <- function (x, sceneID=NULL, dates=NULL, start=c(), monend="full", cell=c(), min.thresh=NULL, sensor="all", interactive=FALSE, plot=FALSE, ...) 
+bfmPixel <- function (x, dates=NULL, start=c(), monend="full", cell=c(), interactive=FALSE, min.thresh=NULL, sceneID=NULL, sensor="all", plot=FALSE, ...) 
 {
+    
   # get sceneinfo and put into a data.frame
   # layer names of the input raster brick must correspond to LS scene names!
+  # TODO: make this step more generic an optional (in case of non-LS data)
   if(is.null(sceneID)){
     s <- getSceneinfo(names(x))
   } else {
@@ -72,6 +75,7 @@ bfmPixel <- function (x, sceneID=NULL, dates=NULL, start=c(), monend="full", cel
   }
   
   # if sensor!='all', trim the time series 
+  ## TODO: do this step @ pixel level rather than on the entire RasterBrick
   if (sensor!="all"){
     # if a character vector is supplied
     if("ETM+" %in% sensor)
@@ -97,6 +101,7 @@ bfmPixel <- function (x, sceneID=NULL, dates=NULL, start=c(), monend="full", cel
     s <- s[-which(s$date > end.date), ]
   }
   # extract dates of new time series
+  # TODO: make more generic
   dates <- s$date
   
   # select cell from the input raster brick x in 1 of 3 ways:
