@@ -6,13 +6,17 @@
 #' @param start Numeric. Vector of length = 2 representing the start of the monitoring period (in the format c(year, julian day))
 #' @param monend Numeric. Optional: the end of the monitoring period (in the format c(year, julian day)), at which point the time series will be trimmed.
 #' @param cell Numeric. Can be one of: (1) a numeric of length 1 indicating the raster cell to be observed; (2) a numeric of length 2 representing the (x,y) coordinate of the raster cell to be observed. Can also be omitted, in which case 'interactive' must be set to TRUE (see below)
-#' @param min.thresh Numeric. Optional: A minimum threshold below which NA's are assigned to data points.
-#' @param sensor Character. Optional: Limit analysis to data from one or more sensors. Defaults to 'all' to use all available data in the time series.
+#' @param f Numeric. Factor by which to rescale values before running \code{bfastmonitor}. Defaults to 1 (no rescaling)
+#' @param min.thresh Numeric. Optional: A minimum threshold below which NA's are assigned to data points. NOTE: the threshold is applied \emph{before} rescaling the data by \code{f} (see above)
+#' @param sceneID Character. Optional: character vector of Landsat scene ID's, corresponding to layers in x. These can be supplied instead of \code{dates} if using Landsat data. If neither \code{dates} nor \code{sceneID} are supplied, scene ID must be contained in \code{names(x)}
+#' @param sensor Character. Optional: Limit analysis to data from one or more sensors. Can be one or more of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", "OLI")} according to the sensor information returned by \link{\code{getSceneinfo}}
 #' @param interactive Logical. Select cell by clicking on an already plotted map? Defaults to \code{FALSE}. If \code{FALSE}, a value must be assigned to \code{cell} (see above).
 #' @param plot Logical. Plot the result? Defaults to \code{FALSE}.
 #' @param ... Arguments to be passed to \code{\link{bfastmonitor}}
 #' 
 #' @return A list with the following components: 1) $bfm - an object of class 'bfastmonitor' (see \code{\link{bfastmonitor()}}) 2) $cell - the cell index (an integer of length 1). This can be used to run \code{bfmPixel()} again on the same pixel (with different parameters) without having to click on a plot again to find the same pixel (in that case, be sure to set interactive=FALSE for subsequent trials!).
+#' 
+#' @details \code{bfmPixel} is theoretically designed to work on any generic raster time series, as long as a \code{dates} vector is provided. In the absence of a \code{dates} vector, a number of additional options are included for Landsat data only: a \code{sceneID} character vector can be supplied, which corresponds to the Landsat scene ID's of each raster layer in x; or \code{names(x)} should correspond exactly to respective Landsat scene ID's. In these two cases, \link{\code{getSceneinfo}} is used to extract a dates vector, and subset by sensor if desired.
 #' 
 #' @author Ben DeVries \email{devries.br@@gmail.com}
 #' 
@@ -37,13 +41,13 @@
 #' bfm <- bfmPixel(tura, cell=1068, start=c(2005, 1), sensor="ETM+")
 #' plot(bfm$bfm) 
 #' 
-#' # run bfm on a pixel chosen from the plot window
 #' \dontrun{
+#' # run bfm on a pixel chosen from the plot window
 #' plot(tura, 6) # a cloudless scene from 2001
 #' bfm <- bfmPixel(tura, start=c(2005, 1), sensor="ETM+", interactive=TRUE)
 #' plot(bfm$bfm)
 #' print(targcell <- bfm$cell) # store cell index for follow-up analysis
-#' }
+#' 
 #' ## change the model parameters
 #' # 1. harmonic order
 #' bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", order=3)
@@ -54,75 +58,68 @@
 #' # 3. trend only
 #' bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", formula=response~trend)
 #' plot(bfm$bfm)
+#' }
 #' 
 #' @import raster
 #' @import bfast
 #' @export
 
-bfmPixel <- function (x, sceneID=NULL, dates=NULL, start=c(), monend="full", cell=c(), min.thresh=NULL, sensor="all", interactive=FALSE, plot=FALSE, ...) 
+bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thresh=NULL, sceneID=NULL, sensor=NULL, interactive=FALSE, plot=FALSE, ...) 
 {
-  # get sceneinfo and put into a data.frame
-  # layer names of the input raster brick must correspond to LS scene names!
-  if(is.null(sceneID)){
-    s <- getSceneinfo(names(x))
-  } else {
-    if(length(sceneID) != nlayers(x))
-      stop("length(sceneID) should be equal to nlayers(x).")
-    s <- getSceneinfo(sceneID)
-  }
-  
-  # if sensor!='all', trim the time series 
-  if (sensor!="all"){
-    # if a character vector is supplied
-    if("ETM+" %in% sensor)
-      sensor <- c(sensor, "ETM+ SLC-on", "ETM+ SLC-off")
-    layerSelect <- which(s$sensor %in% sensor)
+
+    # if no dates are provided, these must come from either sceneID or names(x) (ie. it is assumed then that x is Landsat-derived)
+    if(is.null(dates) & is.null(sceneID)){
+        s <- getSceneinfo(names(x))
+        dates <- s$date
+    } else if(is.null(dates) & !is.null(sceneID)){
+        s <- getSceneinfo(sceneID)
+        dates <- s$date
+    }
     
-    # if a numeric vector is supplied
-    if(is.numeric(sensor))
-      layerSelect <- which(substr(row.names(s), 3, 3) %in% sensor)
+    # select cell from the input raster brick x in 1 of 3 ways:
+    # 1) interactively (by clicking on an already plotted map)
+    # 2) by supplying the cell index as an integer of length=1
+    # 3) by supplying a vector of length=2 representing the (x,y) coordinates
+    if (interactive) { # condition 1:
+        cell <- as.data.frame(click(x, n=1, id=TRUE, cell=TRUE, show=FALSE))$cell
+    } else { # conditions 2 and 3:
+        cell <- ifelse(length(cell)==2, cellFromXY(x, t(as.matrix(cell))), cell)
+    }
     
-    # trim the brick to use only these layers; reassign layer names
-    layerDrop <- c(1:nlayers(x))[-layerSelect]
-    x <- dropLayer(x, layerDrop)
-    s <- s[layerSelect,]
-    names(x) <- row.names(s)
-  }
-  
-  # trim time series if monend!="full" and redefine s
-  ## TODO: move this step to after the ts vector is extracted
-  if(monend[1]!="full"){
-    end.date <- as.Date(paste(monend[1], monend[2], sep="-"), format="%Y-%j")
-    x <- dropLayer(x, which(s$date > end.date))
-    s <- s[-which(s$date > end.date), ]
-  }
-  # extract dates of new time series
-  dates <- s$date
-  
-  # select cell from the input raster brick x in 1 of 3 ways:
-  # 1) interactively (by clicking on an already plotted map)
-  # 2) by supplying the cell index as an integer of length=1
-  # 3) by supplying a vector of length=2 representing the (x,y) coordinates
-  if (interactive) { # condition 1:
-    cell <- as.data.frame(click(x, n=1, id=TRUE, cell=TRUE, show=FALSE))$cell
-  } else { # conditions 2 and 3:
-    cell <- ifelse(length(cell)==2, cellFromXY(x, t(as.matrix(cell))), cell)
-  }
-  
-  # extract pixel time series
-  pixelts <- bfastts(as.vector(x[cell]), dates, type=c("irregular"))
-  
-  # apply a threshold (if supplied)
-  if (!is.null(min.thresh)) 
-    pixelts[pixelts <= min.thresh] <- NA
-  
-  # run bfm on the pixel time series
-  bfm <- bfastmonitor(data=pixelts, start=start, ...)
-  
-  # plot if plot=TRUE
-  if(plot) 
-    plot(bfm)
-  
-  # return a list with (1) a bfm object, and (2) the cell number (for follow-up)
-  return(list(bfm=bfm, cell=cell))
+    # extract pixel time series
+    pixelts <- as.vector(x[cell])
+    
+    # optional: subset by sensor (Landsat only) and redefine s and dates
+    if(!is.null(sensor)){
+        if("ETM+" %in% sensor)
+            sensor <- c(sensor, "ETM+ SLC-on", "ETM+ SLC-off")
+        pixelts <- pixelts[which(s$sensor %in% sensor)]
+        s <- s[which(s$sensor %in% sensor), ]
+        dates <- s$date
+    }
+    
+    # optional: apply a threshold (if supplied)
+    if (!is.null(min.thresh))
+        pixelts[pixelts <= min.thresh] <- NA
+    
+    # optional: rescale values
+    if(f != 1)
+        pixelts <- pixelts * f
+    
+    # convert to a bfast ts object
+    pixelts <- bfastts(as.vector(x[cell]), dates, type=c("irregular"))
+    
+    # optional: trim ts if monend is supplied
+    if(!is.null(monend))
+        pixelts <- window(pixelts, end=monend)
+    
+    # run bfm on the pixel time series
+    bfm <- bfastmonitor(data=pixelts, start=start, ...)
+    
+    # plot if plot=TRUE
+    if(plot)
+        plot(bfm)
+    
+    # return a list with (1) a bfm object, and (2) the cell number (for follow-up)
+    return(list(bfm=bfm, cell=cell))
 }
