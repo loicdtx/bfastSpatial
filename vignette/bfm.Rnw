@@ -74,7 +74,56 @@ bfm5 <- bfmPixel(tura, start=c(2009, 1), sensor="ETM+")
 plot(bfm5$bfm)
 @
 
-\section{Appling BFM over a raster time series brick: \code{bfmSpatial}}
+\section{Working with raster time series: \code{bfmSpatial}}
 
+Now that we have done some pixel-based testing, it is time to apply \code{bfastmonitor} over an entire raster time series. This will allow us to pinpoint the location and timing of changes in our study area. In the previous section, we saw that there was a large gap in the 1990's in the tura raster time series, and given the acceptable data density, we could just limit the analysis to ETM+ data. We also saw that a harmonic-trend model with an order of 1 seemed to be the most reasonable time series model for the tura dataset. We will pass these same arguments to \code{bfmSpatial}. At the same time, we will calculate how long the process takes by wrapping it in a \code{system.time} call.
+
+<<>>=
+# run bfmSpatial over tura for a monitoring period of 2009 -
+t1 <- system.time(
+    bfm <- bfmSpatial(tura, start=c(2009, 1), order=1)
+    )
+# plot the result
+plot(bfm)
+@
+
+Luckily for us, tura is a very small RasterBrick, and processing is not incredibly time consuming. Realistically, analyses are done over significantly larger areas (possibly extending beyond a single scene), so running \code{bfmSpatial} on such large areas quickly becomes a very time-consuming task. To assist in this, multi-core support has been built into \code{bfmSpatial}, using the \code{parallel} package. Let's run the same line of code again, but this time specify a value for \code{mc.cores}, which will distribute the process over that many cpus. Again, we will wrap the code in a \code{system.time} call to test the speed of the processing.
+
+<<eval=FALSE>>=
+t2 <- system.time(
+    bfm <- bfmSpatial(tura, start=c(2009, 1), order=1, mc.cores=4)
+    )
+# compare processing time with previous run
+t1 - t2
+@
+
+%% option: include something from parallel package regarding checking # of available cores, etc...?
+%% or something like 'good practices in parallel computing'? Or could that be covered in the pre-processing module?
+
+Three raster layers are output by \code{bfmSpatial}:
+\begin{enumerate}
+\item breakpoint timing - in decimal year format
+\item change magnitude - the medial residual between expected and observed values in the monitoring period
+\item error flag - possible values of 1 if an error has been encountered in a particular pixel, and NA where the algorithm was successful (or a mask had already been applied previously)
+\end{enumerate}
+
+The \code{bfastSpatial} package has some simple functions for 'unpacking' the \code{bfmSpatial} results. \code{bfmChange} simply extracts the first layer and saves it to a separate object. \code{bfmMagn} does the same to the 2nd layer, but adds some other options (masking by breakpoint, applying a threshold). Note that most of these functions have an optional \code{filename} argument, so results at any of these steps can be written to file.
+
+<<>>=
+# extract change raster
+change <- bfmChange(bfm)
+# extract magn raster, and include only change pixels
+magn <- bfmMagn(bfm, change=change)
+# compare with 'original' magn raster
+op <- par(mfrow=c(1, 2))
+plot(magn, main="Magnitude: breakpoints")
+plot(bfm[[2]], main="Magnitude: all pixels")
+par(op)
+@
+
+%% next up:
+    %% - changeMonth()
+    %% - sequential monitoring windows, apply magn threshold + areaSieve(), flattenBrick()
+    %% - change statistics: clumpSize()
 
 \end{document}
