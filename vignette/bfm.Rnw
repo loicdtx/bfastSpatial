@@ -121,8 +121,22 @@ plot(bfm[[2]], main="Magnitude: all pixels")
 par(op)
 @
 
+The change raster gives breakpoint timing values in decimal years. A better way to map change timing from these results may be to show the month of change (the validity of this depends on the temporal density of there input time series). \code{changeMonth} is a convenient way to convert breakpoint values to change months. The result is one or more raster layers with integer values between 1 and 12, representing the months of the year. In cases where multiple years are represented in the change raster, these are split into raster layers representing one layer per year.
+
+<<>>=
+months <- changeMonth(change)
+# set up labels and colourmap for months
+monthlabs <- c("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+library(RColorBrewer)
+cols <- rev(brewer.pal(11, "RdYlBu"))
+# interpolate colormap (since max # of colours for "RdYlBu" is 11)
+cols <- colorRampPalette(cols)(12)
+plot(months, col=cols, breaks=c(1:12), legend=FALSE)
+# insert legend
+legend(x=8, y=18, legend=monthlabs, cex=0.65, fill=cols, ncol=2)
+@
+
 %% next up:
-    %% - changeMonth()
     %% - sequential monitoring windows, apply magn threshold + areaSieve(), flattenBrick()
     %% - change statistics: clumpSize()
 
