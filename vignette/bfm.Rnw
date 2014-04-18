@@ -1,0 +1,80 @@
+\documentclass{article}
+
+\def\code#1{\texttt{#1}}
+
+\begin{document}
+
+\title{Spatial BFASTMonitor}
+\author{Ben DeVries}
+
+\maketitle
+
+\section{Working with pixels: \code{bfmPixel}}
+
+Working with BFM can be intimidating at first, especially given the number of parameters that need to be set (or at least considered) before running the algorithm. It is important to understand these parameters, as not all raster time series are equal. Some time series may have frequent and large temporal gaps (as can be expected in some tropical forest), while others are temporally dense. These differences may call for slightly different approaches in implementing BFM.
+
+\code{bfmPixel} is a function which queries individual pixels in a raster time series and runs bfm over that pixel's time series. To run \code{bfmPixel} in interactive mode, one of the layers of the time series needs to first be plotted.
+
+<<eval=FALSE>>=
+# load tura RasterBrick
+data(tura)
+# plot the 6h layer
+plot(tura, 6)
+# run bfmPixel() in interactive mode with a monitoring period starting @ the 1st day in 2009
+bfm <- bfmPixel(tura, start=c(2009, 1), interactive=TRUE)
+@
+
+Inspecting the output of this function, you will see that a list of length 2 has been outputted. First, a list of class \code{bfastmonitor} is output under \code{$bfm}. Second, an integer indicating the cell number that has been clicked is output under \code{$cell}. The output is formatted this way so that if \code{bfmPixel} is run in interactive mode, a follow-up analysis can be done on that same cell without having to guess which cell was clicked before. In the above example, the cell number can be retrieved simply by typing \code{bfm$cell} in the console.
+
+Let's run \code{bfmPixel} again, but this time indicating a specific cell number instead of using interactive mode. Note that by default \code{interactive=FALSE}, so there is no need to specify this if a value for \code{cell} is given.
+
+<<>>=
+targcell <- 1000
+bfm <- bfmPixel(tura, cell=targcell, start=c(2009, 1))
+# inspect and plot the $bfm output
+bfm$bfm
+plot(bfm$bfm)
+@
+
+Specifying a cell number gives the advantage of being able to test different parameters on the same pixel time series to see what impact these parameters have on the sensitivity of the algorithm.
+
+<<>>=
+# use a harmonic model only
+bfm1 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon)
+plot(bfm1$bfm)
+# same, but with an order of 1
+bfm2 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon, order=1)
+plot(bfm2$bfm)
+# only trend
+bfm3 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~trend)
+plot(bfm3$bfm)
+@
+
+Check out \code{?bfastmonitor} for more information on the parameters that are included in the method.
+
+A number of additional options are provided in \code{bfmPixel}. Specifying a value for \code{monend} will trim the time series after that date (thus limiting the monitoring period to a given period). This simple modification can have an impact on the resulting change magnitude, which is computed as the median residual between the predicted and observed values within the monitoring period.
+
+<<>>=
+# bfmPixel using a 1-year monitoring period
+bfm4 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), monend=c(2010, 1))
+plot(bfm4$bfm)
+@
+
+Finally, for Landsat time series the analysis can be limited to data of a specific sensor. The \code{sensor} parameter currently accepts the following possible character values:
+\begin{itemize}
+\item \code{"ETM+"}
+\item \code{"ETM+ SLC-on"}
+\item \code{"ETM+ SLC-off"}
+\item \code{"TM"}
+\end{itemize}
+
+<<>>=
+# apply bfmPixel only on ETM+ data
+bfm5 <- bfmPixel(tura, start=c(2009, 1), sensor="ETM+")
+plot(bfm5$bfm)
+@
+
+\section{Appling BFM over a raster time series brick: \code{bfmSpatial}}
+
+
+\end{document}
