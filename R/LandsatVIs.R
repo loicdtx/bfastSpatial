@@ -7,7 +7,7 @@
 # NDVI --------------------------------------------------------------------
 
 .ndvi <- function() {
-    ind <- c(3,4)
+    ind <- c('band3','band4')
     fun <- function(x1, x2) {
         ndvi <- 10000 * (x2 - x1)/(x2 + x1)
         return(ndvi)
@@ -20,7 +20,7 @@
 # EVI ---------------------------------------------------------------------
 
 .evi <- function() {
-    ind <- c(1,3,4)
+    ind <- c('band1','band3','band4')
     fun <- function(x1, x3, x4){ 
         evi <- 10000 * 2.5 * (x4/10000 - x3/10000)/(x4/10000 + 6 * x3/10000 - 7.5 * x1/10000 + 1)
         return(evi)
@@ -36,7 +36,7 @@
 # where L ~ [0,1] depending on climate, and is often assumed to be 0.5
 
 .savi <- function(L=0.5) {
-    ind <- c(3,4)
+    ind <- c('band3','band4')
     fun <- function(x1, x2){ 
         savi <- 10000 * (1 + L) * (x2/10000 - x1/10000) / (x2/10000 + x1/10000 + L)
         return(savi)
@@ -50,7 +50,7 @@
 # NBR = (B4 - B7) / (B4 + B7)
 
 .nbr <- function() {
-    ind <- c(4,7)
+    ind <- c('band4','band7')
     fun <- function(x1, x2) {
         ndvi <- 10000 * (x1 - x2)/(x1 + x2)
         return(ndvi)
@@ -62,7 +62,7 @@
 # Tasseled Cap Components -------------------------------------------------
 
 .tcbright <- function(sensor) {
-    ind <- c(1:5, 7)
+    ind <- c('band1','band2','band3','band4','band5','band7') 
     # make compatible with getSceneinfo() output
     if(sensor %in% c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off"))
         sensor <- 7
@@ -84,7 +84,7 @@
 }
 
 .tcgreen <- function(sensor) {
-    ind <- c(1:5, 7)
+    ind <- c('band1','band2','band3','band4','band5','band7')
     # make compatible with getSceneinfo() output
     if(sensor %in% c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off"))
         sensor <- 7
@@ -106,7 +106,7 @@
 }
 
 .tcwet <- function(sensor) {
-    ind <- c(1:5, 7)
+    ind <- c('band1','band2','band3','band4','band5','band7')
     # make compatible with getSceneinfo() output
     if(sensor %in% c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off"))
         sensor <- 7
