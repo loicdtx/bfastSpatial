@@ -48,7 +48,7 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     if(any(grepl(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x))) { 
         vi <- raster(grep(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x, value=TRUE))
         if(!is.null(mask)) {
-            mask <- raster(grep(pattern=sprintf("^.*%s($|\\.tif)", mask), x=x, value=TRUE))
+            mask <- raster(grep(pattern=sprintf("^.*%s($|\\.tif|_band$)", mask), x=x, value=TRUE)) # Called 'fmask_band' in the hdf file
         }
         
         if(!is.null(e)) {
@@ -91,13 +91,13 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
             # if(vi == "tcgreen") viFormula <- .tcgreen(sensor=sensor)
         
         ind <- viFormula$ind
-        x0 <- grep(pattern=sprintf("^.*sr_(%s)($|\\.tif)", paste(ind, collapse='|')), x=x, value=TRUE)
+        x0 <- grep(pattern=sprintf("^.*(%s)($|\\.tif)", paste(ind, collapse='|')), x=x, value=TRUE)
         
         bands <- lapply(X=x0, FUN=raster)
         
         
         if(!is.null(mask)) {
-            mask <- raster(grep(pattern=sprintf("^.*%s($|\\.tif)", mask), x=x, value=TRUE))
+            mask <- raster(grep(pattern=sprintf("^.*%s($|\\.tif|_band$)", mask), x=x, value=TRUE))
         }
         
         
