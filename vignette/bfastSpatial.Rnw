@@ -1,13 +1,58 @@
 \documentclass{article}
 
+\usepackage{hyperref}
+
 \def\code#1{\texttt{#1}}
 
 \begin{document}
 
 \title{bfastSpatial}
-\author{Lo\:{i}c Dutrieux, Ben DeVries, Jan Verbesselt}
+\author{Lo\"{i}c Dutrieux, Ben DeVries, Jan Verbesselt}
 
 \maketitle
+
+\section{Preamble}
+The \code{bfastSpatial} provides utilities to performs change detection analysis on time-series of spatial gridded data, such as time-series of remote sensing images (Landsat, MODIS and the likes). The tools provided by \code{bfastSpatial} allows a user to perform all the steps of the change detection workflow, from pre-processing raw surface reflectance Landsat data, inventorying and preparing them for analysis to the production and formatting of change detection results. The present document aims at providing guidance to the users of \code{bfastSpatial} by detailing every steps of the process.
+
+\section{Set up your system}
+\subsection{Windows}
+There are no specific system requirements for Windows, besides having (a recent version of) R installed; installing the \code{bfastSpatial} package will automatically install the required dependencies.  
+\subsection{Linux & Mac}
+Some pre-processing functions require the \code{rgdal} package, which is a binding between the gdal library and R. For \code{rgdal} to work on Linux and Mac systems, gdal should be installed and properly set-up. For that, please refer to the web page of the \href{http://www.gdal.org/}{gdal project} as well as \href{http://cran.r-project.org/web/packages/rgdal/index.html}{rgdal}.
+
+\section{Downloading Landsat data from Earth Explorer}
+Working with Landsat time-series often involve downloading large amount of data. The full Landsat archive for one path/row may very well exceed 500 scenes in some parts of the world. The most common way to access the data is via the \href{http://earthexplorer.usgs.gov/}{Earth Explorer platform}. You need to have an account before being able to request data to be pre-processed.
+\subsection{Placing your order}
+USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows.
+\subsection{Downloading the data}
+Once you receive the e-mail from USGS notifying you that your order has been pre-processed, you will be able to proceed to the download of the data. Because the amount of scenes is usually large, the use of a download manager is highly recommended. Two options:
+\begin{itemize}
+\item The Bulk Download Application
+\item The DownloadThemAll pluggin of the firefox browser
+\end{itemize}
+
+
+\section{Data pre-processing}
+The \code{bfastSpatial} package includes utilities to pre-process Landsat surface reflectance data and prepare them for subsequent analysis with the change detection functions such as \code{bfmSpatial}. The overall Landsat pre-processing requires to:
+\begin{itemize}
+\item Extract data from the tar.gz archive
+\item Calculate Vegetation Indices from surface reflectance bands (when not provided by USGS)
+\item Crop the data to a desired spatial extent
+\item Apply one of the cloud/land mask supplied with the data
+\item Create a the spatio-temporal object to be used in subsequent analyses
+\end{itemize}
+
+The two important functions to perform the above mentioned steps are \code{processLandsat} and \code{processLandsatBatch}. The former is a wrapper that performs the above steps sequentially, automatically generating file names and deleting unnecessary intermediary outputs. The latter (\code{processLandsatBatch}) allows a user to run \code{processLandsat} in batch mode, over several scenes, with parallel support. Several vegetation indices are supported by both \code{processLandsat} and \code{processLandsatBatch}.
+Let's illustrate that with an example.
+
+
+% TODO add example here
+
+Once the vegetation index layers have been produced for several dates, they can be stacked, in order to create a multilayer raster object, with time dimention written in the file as well. The function to perform this operation on Landsat data is the \code{timeStack} function. By simply providing a list of file names or a directory containing the files, the function will create a multilayer object and directly parse through the file names to extract temporal information from them and write that information to the object created.
+
+% TODO add timeStack example here
+
+
 
 \section{Data Inventory}
 
