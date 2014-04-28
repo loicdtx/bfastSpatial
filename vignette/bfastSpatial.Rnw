@@ -21,14 +21,14 @@ There are no specific system requirements for Windows, besides having (a recent 
 Some pre-processing functions require the \code{rgdal} package, which is a binding between the gdal library and R. For \code{rgdal} to work on Linux and Mac systems, gdal should be installed and properly set-up. For that, please refer to the web page of the \href{http://www.gdal.org/}{gdal project} as well as \href{http://cran.r-project.org/web/packages/rgdal/index.html}{rgdal}.
 
 \section{Downloading Landsat data from Earth Explorer}
-Working with Landsat time-series often involve downloading large amount of data. The full Landsat archive for one path/row may very well exceed 500 scenes in some parts of the world. The most common way to access the data is via the \href{http://earthexplorer.usgs.gov/}{Earth Explorer platform}. You need to have an account before being able to request data to be pre-processed.
+Working with Landsat time-series often involves downloading large amounts of data. The full Landsat archive for one path/row may very well exceed 500 scenes in some parts of the world. The most common way to access the data is via the \href{http://earthexplorer.usgs.gov/}{Earth Explorer platform}. You need to have an account before being able to request data to be pre-processed.
 \subsection{Placing your order}
 USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows.
 \subsection{Downloading the data}
 Once you receive the e-mail from USGS notifying you that your order has been pre-processed, you will be able to proceed to the download of the data. Because the amount of scenes is usually large, the use of a download manager is highly recommended. Two options:
 \begin{itemize}
 \item The Bulk Download Application
-\item The DownloadThemAll pluggin of the firefox browser
+\item The DownloadThemAll plugin of the firefox browser
 \end{itemize}
 
 <<'loadpackage', echo=FALSE, results='hide', message=FALSE, warning=FALSE>>=
@@ -103,16 +103,31 @@ More examples can be found under \code{?getSceneinfo}. Many other functions in t
 
 \subsection{Valid Observations: \code{countObs()}}
 
-The number of available observations in a raster time series can be calculated by using countObs(). This function "drills" through pixels of a time series and counts the number of pixels with a non-NA value. Optionally, any other value can be supplied as a substitute for NA (e.g. the number of non-zero values per pixel can also be queried). Values can also be expressed as a percentage if as.perc is set to TRUE.
+The number of available observations in a raster time series can be calculated by using countObs(). This function "drills" through pixels of a time series and counts the number of pixels with a non-NA value. Optionally, any other value can be supplied as a substitute for NA (e.g. the number of non-zero values per pixel can also be queried).
 
 <<'countObs'>>=
 data(tura)
-obs <- countObs(tura, as.perc=TRUE)
+obs <- countObs(tura)
 plot(obs)
 summary(obs)
 @
 
+Values can also be expressed as a percentage if \code{as.perc} is set to \code{TRUE}.
+
+<<'countObs-asperc'>>=
+# valid observations
+obs <- countObs(tura, as.perc=TRUE)
+summary(obs)
+# \% NA per pixel
+percNA <- 100 - countObs(tura, as.perc=TRUE)
+plot(percNA, main="percent NA per pixel")
+summary(percNA)
+@
+
+
 \subsection{Annual Summary Statistics: \code{annualSummary()}}
+
+...TODO: Ben...
 
 \section{Spatial BFASTMonitor}
 
