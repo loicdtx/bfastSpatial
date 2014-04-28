@@ -186,7 +186,16 @@ plot(bfm5$bfm)
 
 Now that we have done some pixel-based testing, it is time to apply \code{bfastmonitor} over an entire raster time series. This will allow us to pinpoint the location and timing of changes in our study area. In the previous section, we saw that there was a large gap in the 1990's in the tura raster time series, and given the acceptable data density, we could just limit the analysis to ETM+ data. We also saw that a harmonic-trend model with an order of 1 seemed to be the most reasonable time series model for the tura dataset. We will pass these same arguments to \code{bfmSpatial}. At the same time, we will calculate how long the process takes by wrapping it in a \code{system.time} call.
 
-<<>>=
+<<echo=FALSE, results='hide'>>=
+if(!file.exists("temp/bfmTura.rda")){
+    # run bfmSpatial over tura for a monitoring period of 2009 -
+    bfm <- bfmSpatial(tura, start=c(2009, 1), order=1)
+} else {
+    load("temp/bfmTura.rda")
+}
+@
+
+<<eval=FALSE>>=
 # run bfmSpatial over tura for a monitoring period of 2009 -
 t1 <- system.time(
     bfm <- bfmSpatial(tura, start=c(2009, 1), order=1)
@@ -199,7 +208,7 @@ Luckily for us, tura is a very small RasterBrick, and processing is not incredib
 
 <<eval=FALSE>>=
 t2 <- system.time(
-    bfm <- bfmSpatial(tura, start=c(2009, 1), order=1, mc.cores=4)
+    bfm <- bfmSpatial(tura, start=c(2009, 1), order=1, mc.cores=8)
     )
 # compare processing time with previous run
 t1 - t2
@@ -217,18 +226,11 @@ Three raster layers are output by \code{bfmSpatial}:
 \item error flag - possible values of 1 if an error has been encountered in a particular pixel, and NA where the algorithm was successful (or a mask had already been applied previously)
 \end{enumerate}
 
-The \code{bfastSpatial} package has some simple functions for 'unpacking' the \code{bfmSpatial} results. \code{bfmChange} simply extracts the first layer and saves it to a separate object. \code{bfmMagn} does the same to the 2nd layer, but adds some other options (masking by breakpoint, applying a threshold). Note that most of these functions have an optional \code{filename} argument, so results at any of these steps can be written to file.
+The \code{bfastSpatial} package has some simple functions for 'unpacking' the \code{bfmSpatial} results. \code{bfmChange} simply extracts the first layer and saves it to a separate object.
 
 <<>>=
 # extract change raster
 change <- bfmChange(bfm)
-# extract magn raster, and include only change pixels
-magn <- bfmMagn(bfm, change=change)
-# compare with 'original' magn raster
-op <- par(mfrow=c(1, 2))
-plot(magn, main="Magnitude: breakpoints")
-plot(bfm[[2]], main="Magnitude: all pixels")
-par(op)
 @
 
 The change raster gives breakpoint timing values in decimal years. A better way to map change timing from these results may be to show the month of change (the validity of this depends on the temporal density of there input time series). \code{changeMonth} is a convenient way to convert breakpoint values to change months. The result is one or more raster layers with integer values between 1 and 12, representing the months of the year. In cases where multiple years are represented in the change raster, these are split into raster layers representing one layer per year.
@@ -243,11 +245,66 @@ cols <- rev(brewer.pal(11, "RdYlBu"))
 cols <- colorRampPalette(cols)(12)
 plot(months, col=cols, breaks=c(1:12), legend=FALSE)
 # insert legend
-legend(x=8, y=18, legend=monthlabs, cex=0.65, fill=cols, ncol=2)
+legend("bottomright", legend=monthlabs, cex=0.5, fill=cols, ncol=2)
 @
 
+\code{bfmMagn} does the same as \code{bfmChange} to the second layer, but adds some other options (masking by breakpoint, applying a threshold). Magnitude is computed as the median residual between expected and observed values throughout the \emph{entire} monitoring period, meaning that all pixels are assigned a value regardless of whether or not a breakpoint has been detected. If we are only interested in looking at pixels where a breakpoint has been detected, we can use the \code{change} argument in the \code{bfmMagn}, which takes a raster of breakpoints to use as a filter.
+
+<<>>=
+# extract magn raster, and include only change pixels
+magn <- bfmMagn(bfm, change=change)
+# compare with 'original' magn raster
+op <- par(mfrow=c(1, 2))
+plot(magn, main="Magnitude: breakpoints")
+plot(bfm[[2]], main="Magnitude: all pixels")
+par(op)
+@
+
+Note that the magnitude values are in the same scale as the input data, which had been scaled by 10000. Scaling back can be done by simple raster algebra, or with the \code{raster::calc} function to enable writing to file.
+
+<<>>=
+magn <- bfmMagn(bfm, change=change) / 10000
+@
+
+The magnitude could be used to discriminate between actual deforestation and other factors that might give rise to breakpoints (such as noisy data). However, interpreting magnitude is complicated by the fact that follow-up dynamics can affect the magnitude value, since it is computed throughout the entire monitoring period. To circumvent this (not entirely), we will re-run \code{bfmSpatial} using a 1-year monitoring period, under the assumption that this monitoring window is too short for post-change dynamics to significantly affect the magnitude value. To do this, we will include the \code{monend} argument of \code{bfmSpatial}, which will limit the analysis to a specific time period. In this example, we will use a 2009-2010 monitoring period with all other parameters the same as above.
+
+<<echo=FALSE, results='hide'>>=
+if(!file.exists("temp/bfmTura09.rda")){
+    bfm09 <- bfmSpatial(tura, start=c(2009, 1), monend=c(2010, 1), order=1)
+} else {
+    load("temp/bfmTura09.rda")
+}
+# extract change
+change09 <- bfmChange(bfm09)
+# extract and rescale magnitude
+magn09 <- bfmMagn(bfm09, change=change09) / 10000
+@
+
+<<eval=FALSE>>=
+bfm09 <- bfmSpatial(tura, start=c(2009, 1), monend=c(2010, 1), order=1)
+# extract change
+change09 <- bfmChange(bfm09)
+# extract and rescale magnitude
+magn09 <- bfmMagn(bfm09, change=change09) / 10000
+@
+
+Suppose we know from field observations or other reference data that breakpoints with NDVI magnitudes of -0.05 are associated with high probability of detected actual deforestation. We can easily apply this threshold to our magnitude raster, or even pass this threshold as an additional argument to \code{bfmMagn}. In the later case, take care with the scaling of the data - the original \code{bfmSpatial} results are still in their ``raw" format. In this case, our threshold should be accordingly scaled. In this example, we will scale the final magnitude back, as above.
+
+<<>>=
+# extract and rescale magnitude and apply a -500 threshold
+magn09thresh <- bfmMagn(bfm09, change=change09, thresh = -500) / 10000
+# compare
+op <- par(mfrow=c(1, 2))
+plot(magn09, main="magnitude")
+plot(magn09thresh, main="magnitude < -0.05")
+par(op)
+@
+
+
 %% next up:
-    %% - sequential monitoring windows, apply magn threshold + areaSieve(), flattenBrick()
+    %% - bfm on a 1-year monperiod
+    %% - apply a magn threshold
+    %% - apply an areaSieve (1px, 0.5ha, directions=8 and 4)
     %% - change statistics: clumpSize()
 
 \end{document}
