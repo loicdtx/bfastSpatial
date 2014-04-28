@@ -7,6 +7,8 @@
 #' @param stats Logical. Include summary statistics per clump? If TRUE, a list with (1) a raster layer showing clump sizes and (2) a summary table per clump. If FALSE, only a raster layer is returned.
 #' @param ... Additional arguments to pass to \code{\link{clump}}
 #' 
+#' @details Note that if \code{stats=TRUE}, a summary table is also produced. This table is not the same table that would result if the resulting raster was passed to \code{summary}. The summary table in this case is based on pixel clumps, rather than individual pixel values. The conversion factor \code{f} is also factored into the summary table.
+#' 
 #' @import raster
 #' @import igraph
 #' @author Ben DeVries (devries.br@@gmail.com)
@@ -32,8 +34,11 @@ clumpSize <- function(x, f=1, stats=FALSE, ...){
     
     # optional: make a summary matrix
     if(stats){
-      sumstat <- matrix(nc=1, nr=7, dimnames=list(c("Mean", "Min.", "1st Qu.", "Median", "3rd Qu.", "Max.", "NA's"), c("clump size")))
-      sumstat[1,1] <- mean()
+      sumstat <- matrix(nc=1, nr=6, dimnames=list(c("Mean", "Min.", "1st Qu.", "Median", "3rd Qu.", "Max."), c("clump size")))
+      sizes <- rcl[!is.na(rcl[, 1]), 2]
+      sumstat[1, 1] <- mean(sizes)
+      sumstat[c(2:6), 1] <- quantile(sizes)
+      
     }
     
     # reclassify y based on rcl
@@ -42,6 +47,10 @@ clumpSize <- function(x, f=1, stats=FALSE, ...){
     
     # remove NAs
     z[is.na(y)] <- NA
+    
+    # make z into a list if stats=TRUE
+    if(stats)
+        z <- list(clumps = z, stats = sumstat)
     
     return(z)
 }
