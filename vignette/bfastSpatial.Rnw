@@ -323,12 +323,32 @@ plot(magn09_as_rook, main="0.5ha sieve, rook's case")
 par(op)
 @
 
+Once we have applied the desired filters and sieves to our bfm magnitude raster, we may want to calculate area statistics. This can be done with another simple function: \code{clumpSize}. This function is also based on the \code{raster::clumps} function and computes the size of each pixel clump and assigns that value back to each pixel in that clump. As in \code{areaSieve}, the queen's and rook's cases can also apply by adjusting the \code{directions} argument.
 
 <<>>=
-changeSize <- clumpSize(magn09_areasieve)
+changeSize_queen <- clumpSize(magn09_areasieve)
+changeSize_rook <- clumpSize(magn09_areasieve, directions=4)
+# compare
+op <- par(mfrow=c(1, 2))
+plot(changeSize_queen, col=bpy.colors(50), main="Clump size: Queen's case")
+plot(changeSize_rook, col=bpy.colors(50), main="Clump size: Rook's case")
+par(op)
 @
 
-%% next up:
-    %% - change statistics: clumpSize()
+These clump sizes are in number of pixels, which might not be very useful when communicating our results to other parties. The \code{f} argument in \code{clumpSize} allows us to convert these to a useful area measure. In the case of Landsat, we know that each pixel covers 900$m^2$, and that one hectare equals 10000$m^2$. \code{clumpSize} can perform this conversion if a value for \code{f} is supplied.
+
+<<>>=
+changeSize <- clumpSize(magn09_areasieve, f=900/10000)
+plot(changeSize, col=bpy.colors(50), main="Clump size (hectares)")
+@
+
+In order to calculate statistics of the changed area, it may be tempting to simply run \code{raster::summary}. But this function will produce misleading results, as \emph{each pixel} has been assigned the value of its respective clump size (rather than representing each clump as a singular object, as would be the case with a SpatialPolygons object). To circumvent this, a \code{stats} argument is included in \code{clumpSize}, which outputs an additional summary table based on clumps rather than on individual pixels. If \code{stats=TRUE}, rather than outputting a single raster layer, \code{clumpSize} returns a list with 2 objects: (1) a raster layer as above; and (2) a summary table (matrix) showing mean, min, and all quartiles of the clump sizes.
+
+<<>>=
+changeSize <- clumpSize(magn09_areasieve, f=900/10000, stats=TRUE)
+print(changeSize$stats)
+@
+
+We can say that based on our analysis, the average size of change units in Tura in 2009 is estimated to be 6.3 hectares. In this case, the minimum is not suprising, since we had already applied an area sieve using 0.5 hectares as our threshold.
 
 \end{document}
