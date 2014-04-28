@@ -67,19 +67,19 @@ The following functions are included in the Data Inventory module:
 
 \subsection{Basic Scene Information: \code{getSceneinfo()}}
 
-\code{getSceneinfo()} allows the user to list the information contained within a scene ID. Currently, only Landsat scene ID's are supported. For example, the scene ID "LE71700552007309ASN00" tells us that the scene is from the Landsat 7 ETM+ sensor ('LE7'), path-row 170-55 ('170055') and was acquired on the 309th day of the year 2007 ('2007309'). Calling \code{getSceneinfo('LE71700552007309ASN00')} will give a data.frame with one row showing all of this information.
+\code{getSceneinfo()} allows the user to list the information contained within a scene ID. Currently, only Landsat scene ID's are supported. For example, the scene ID ``LE71700552007309ASN00" tells us that the scene is from the Landsat 7 ETM+ sensor ('LE7'), path-row 170-55 ('170055') and was acquired on the 309th day of the year 2007 ('2007309'). Calling \code{getSceneinfo('LE71700552007309ASN00')} will give a data.frame with one row showing all of this information.
 
-<<echo=FALSE, results='hide'>>=
+<<echo=FALSE, results='hide', message=FALSE, warning=FALSE>>=
 library(bfastSpatial)
 @
 
-<<>>=
+<<'getSceneinfo'>>=
 getSceneinfo('LE71700552007309ASN00')
 @
 
 When working with Landsat data, it is a good idea to assign and keep these sceneID's as layer names (see \code{?raster::names}) so the relevant information is associated to each raster layer.
 
-<<>>=
+<<'getSceneinfo2'>>=
 # show scene info from tura layers
 data(tura)
 head(names(tura))
@@ -92,7 +92,7 @@ hist(s$year, breaks=c(1984:2014), main="p170r55: Scenes per Year", xlab="year", 
 
 We can combine the dates and sensor information to get more of an idea of where our data are coming from.
 
-<<>>=
+<<'getSceneinfo3'>>=
 library(ggplot2)
 p <- ggplot(data = s, aes(x = year))
 p <- p + geom_bar(aes(fill = sensor), binwidth=1, col="black")
@@ -106,7 +106,7 @@ More examples can be found under \code{?getSceneinfo}. Many other functions in t
 
 The number of available observations in a raster time series can be calculated by using countObs(). This function "drills" through pixels of a time series and counts the number of pixels with a non-NA value. Optionally, any other value can be supplied as a substitute for NA (e.g. the number of non-zero values per pixel can also be queried). Values can also be expressed as a percentage if as.perc is set to TRUE.
 
-<<>>=
+<<'countObs'>>=
 data(tura)
 obs <- countObs(tura, as.perc=TRUE)
 plot(obs)
@@ -123,7 +123,7 @@ Working with BFM can be intimidating at first, especially given the number of pa
 
 \code{bfmPixel} is a function which queries individual pixels in a raster time series and runs bfm over that pixel's time series. To run \code{bfmPixel} in interactive mode, one of the layers of the time series needs to first be plotted.
 
-<<eval=FALSE>>=
+<<'bfmPixel', eval=FALSE>>=
 # load tura RasterBrick
 data(tura)
 # plot the 6h layer
@@ -136,8 +136,8 @@ Inspecting the output of this function, you will see that a list of length 2 has
 
 Let's run \code{bfmPixel} again, but this time indicating a specific cell number instead of using interactive mode. Note that by default \code{interactive=FALSE}, so there is no need to specify this if a value for \code{cell} is given.
 
-<<>>=
-targcell <- 1000
+<<'bfmPixel2'>>=
+targcell <- 3492
 bfm <- bfmPixel(tura, cell=targcell, start=c(2009, 1))
 # inspect and plot the $bfm output
 bfm$bfm
@@ -307,7 +307,7 @@ magn09_sieve <- areaSieve(magn09thresh, thresh=1800)
 With \code{areaSieve}, this can be taken a step further, and an area threshold can be supplied to apply to the raster. \code{areaSieve} only supports thresholds in $m^2$, so be sure to do the appopriate conversions before appling the sieve. The default value is 5000, which corresponds to the 0.5ha forest definition often applied in national assessments.
 
 <<>>=
-magn09_areasieve <- areaSieve(magn09thresh) # default thresh = 5000
+magn09_areasieve <- areaSieve(magn09thresh)# default thresh = 5000
 @
 
 \code{areaSieve} passes additional arguments to \code{raster::clump}, which allows for considerations of direction when defining pixel neighbourhoods. \code{clump} adheres to the principle of ``queen's case" versus ``rook's case". In the former, pixels in all directions (default: \code{directions = 8}) are considered when defining clumps, whereas in the latter case, only pixels directly adjacent (excluding diagonals) are considered (\code{directions = 4}).
