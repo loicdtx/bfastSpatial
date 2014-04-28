@@ -6,6 +6,7 @@
 #' @param f Numeric. Optional: conversion factor for number of pixels (e.g. f=900/10000 for converting Landsat pixels to area in hectares).
 #' @param stats Logical. Include summary statistics per clump? If TRUE, a list with (1) a raster layer showing clump sizes and (2) a summary table per clump. If FALSE, only a raster layer is returned.
 #' @param ... Additional arguments to pass to \code{\link{clump}}
+#' @return If \code{stats=FALSE}, a raster layer with pixel values indicating the size of the clumps to which those pixels belong. If \code{stats=TRUE}, a list with 2 objects: (1) a raster layer as above; and (2) a summary table of the pixel clump sizes.
 #' 
 #' @details Note that if \code{stats=TRUE}, a summary table is also produced. This table is not the same table that would result if the resulting raster was passed to \code{summary}. The summary table in this case is based on pixel clumps, rather than individual pixel values. The conversion factor \code{f} is also factored into the summary table.
 #' 
