@@ -323,6 +323,11 @@ plot(magn09_as_rook, main="0.5ha sieve, rook's case")
 par(op)
 @
 
+
+<<>>=
+changeSize <- clumpSize(magn09_areasieve)
+@
+
 %% next up:
     %% - change statistics: clumpSize()
 
