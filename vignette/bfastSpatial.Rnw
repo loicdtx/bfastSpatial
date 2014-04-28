@@ -17,7 +17,7 @@ The \code{bfastSpatial} provides utilities to performs change detection analysis
 \section{Set up your system}
 \subsection{Windows}
 There are no specific system requirements for Windows, besides having (a recent version of) R installed; installing the \code{bfastSpatial} package will automatically install the required dependencies.  
-\subsection{Linux & Mac}
+\subsection{Linux \& Mac}
 Some pre-processing functions require the \code{rgdal} package, which is a binding between the gdal library and R. For \code{rgdal} to work on Linux and Mac systems, gdal should be installed and properly set-up. For that, please refer to the web page of the \href{http://www.gdal.org/}{gdal project} as well as \href{http://cran.r-project.org/web/packages/rgdal/index.html}{rgdal}.
 
 \section{Downloading Landsat data from Earth Explorer}
@@ -132,7 +132,7 @@ plot(tura, 6)
 bfm <- bfmPixel(tura, start=c(2009, 1), interactive=TRUE)
 @
 
-Inspecting the output of this function, you will see that a list of length 2 has been outputted. First, a list of class \code{bfastmonitor} is output under \code{$bfm}. Second, an integer indicating the cell number that has been clicked is output under \code{$cell}. The output is formatted this way so that if \code{bfmPixel} is run in interactive mode, a follow-up analysis can be done on that same cell without having to guess which cell was clicked before. In the above example, the cell number can be retrieved simply by typing \code{bfm$cell} in the console.
+Inspecting the output of this function, you will see that a list of length 2 has been outputted. First, a list of class \code{bfastmonitor} is output under \code{\$bfm}. Second, an integer indicating the cell number that has been clicked is output under \code{\$cell}. The output is formatted this way so that if \code{bfmPixel} is run in interactive mode, a follow-up analysis can be done on that same cell without having to guess which cell was clicked before. In the above example, the cell number can be retrieved simply by typing \code{bfm\$cell} in the console.
 
 Let's run \code{bfmPixel} again, but this time indicating a specific cell number instead of using interactive mode. Note that by default \code{interactive=FALSE}, so there is no need to specify this if a value for \code{cell} is given.
 
@@ -144,18 +144,15 @@ bfm$bfm
 plot(bfm$bfm)
 @
 
-Specifying a cell number gives the advantage of being able to test different parameters on the same pixel time series to see what impact these parameters have on the sensitivity of the algorithm.
+Specifying a cell number gives the advantage of being able to test different parameters on the same pixel time series to see what impact these parameters have on the sensitivity of the algorithm. Note that a plot is immediately produced if \code{plot = TRUE}.
 
 <<>>=
 # use a harmonic model only
-bfm1 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon)
-plot(bfm1$bfm)
+bfm1 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon, plot=TRUE)
 # same, but with an order of 1
-bfm2 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon, order=1)
-plot(bfm2$bfm)
+bfm2 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon, order=1, plot=TRUE)
 # only trend
-bfm3 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~trend)
-plot(bfm3$bfm)
+bfm3 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~trend, plot=TRUE)
 @
 
 Check out \code{?bfastmonitor} for more information on the parameters that are included in the method.
@@ -176,10 +173,11 @@ Finally, for Landsat time series the analysis can be limited to data of a specif
 \item \code{"TM"}
 \end{itemize}
 
+Note that in our previous runs of \code{bfmPixel}, there is what seems to be a bias between TM data from the 80's and 90's (which can be found throughout the scene). This has a large effect on our model, especially when a trend is included. A very quick way to avoid this bias is to include only data from the ETM+ sensor, which was launched in 1999.
+
 <<>>=
 # apply bfmPixel only on ETM+ data
-bfm5 <- bfmPixel(tura, start=c(2009, 1), sensor="ETM+")
-plot(bfm5$bfm)
+bfm5 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), sensor="ETM+", plot=TRUE)
 @
 
 \subsection{Working with raster time series: \code{bfmSpatial}}
@@ -244,7 +242,7 @@ cols <- rev(brewer.pal(11, "RdYlBu"))
 # interpolate colormap (since max # of colours for "RdYlBu" is 11)
 cols <- colorRampPalette(cols)(12)
 plot(months, col=cols, breaks=c(1:12), legend=FALSE)
-# insert legend
+# insert custom legend
 legend("bottomright", legend=monthlabs, cex=0.5, fill=cols, ncol=2)
 @
 
@@ -300,11 +298,32 @@ plot(magn09thresh, main="magnitude < -0.05")
 par(op)
 @
 
+A careful inspection of these results will show that applying the magnitude filter has changed the results somewhat, but since there isn't a great deal of noise in this example, the results were not dramatic. Another way we can clean up our results is to get rid of tiny clumps of change pixels that are not likely to represent actual change. For example, a simple raster sieve can eliminate single-pixel change clumps, which is justifiable given the fact that a Landsat pixel represents 900$m^2$, and detectable forest changes are expected to occur at larger scales. Note that the threshold has to be set on a ``less-than" basis, so we can use the area of 2 pixels as our cut-off.
+
+<<>>=
+magn09_sieve <- areaSieve(magn09thresh, thresh=1800)
+@
+
+With \code{areaSieve}, this can be taken a step further, and an area threshold can be supplied to apply to the raster. \code{areaSieve} only supports thresholds in $m^2$, so be sure to do the appopriate conversions before appling the sieve. The default value is 5000, which corresponds to the 0.5ha forest definition often applied in national assessments.
+
+<<>>=
+magn09_areasieve <- areaSieve(magn09thresh) # default thresh = 5000
+@
+
+\code{areaSieve} passes additional arguments to \code{raster::clump}, which allows for considerations of direction when defining pixel neighbourhoods. \code{clump} adheres to the principle of ``queen's case" versus ``rook's case". In the former, pixels in all directions (default: \code{directions = 8}) are considered when defining clumps, whereas in the latter case, only pixels directly adjacent (excluding diagonals) are considered (\code{directions = 4}).
+
+<<>>=
+magn09_as_rook <- areaSieve(magn09thresh, directions=4)
+# compare all magn rasters
+op <- par(mfrow=c(2, 2))
+plot(magn09thresh, main="magnitude")
+plot(magn09_sieve, main="pixel sieve")
+plot(magn09_areasieve, main="0.5ha sieve")
+plot(magn09_as_rook, main="0.5ha sieve, rook's case")
+par(op)
+@
 
 %% next up:
-    %% - bfm on a 1-year monperiod
-    %% - apply a magn threshold
-    %% - apply an areaSieve (1px, 0.5ha, directions=8 and 4)
     %% - change statistics: clumpSize()
 
 \end{document}
