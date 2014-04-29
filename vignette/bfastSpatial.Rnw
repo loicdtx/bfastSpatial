@@ -129,15 +129,18 @@ summary(percNA)
 
 
 
-<<'annualSummary'>>=
-annualMean <- annualSummary(tura, fun=mean)
+<<'annualSummary-ETM'>>=
+annualMed <- annualSummary(tura, fun=median, sensor="ETM+", na.rm=TRUE)
+plot(annualMed)
 @
+
+From the summary RasterBrick, we can see that this is a very dynamic area, with some of the biggest forest changes occurring from 2009 until 2013. With the help of \code{bfastmonitor}, we will look at ways to quantify and map these changes at high temporal resolution.
 
 \section{Spatial BFASTMonitor}
 
 \subsection{Working with pixels: \code{bfmPixel}}
 
-Working with BFM can be intimidating at first, especially given the number of parameters that need to be set (or at least considered) before running the algorithm. It is important to understand these parameters, as not all raster time series are equal. Some time series may have frequent and large temporal gaps (as can be expected in some tropical forest), while others are temporally dense. These differences may call for slightly different approaches in implementing BFM.
+Working with \code{bfastmonitor} (BFM) can be intimidating at first, especially given the number of parameters that need to be set (or at least considered) before running the algorithm. It is important to understand these parameters, as not all raster time series are equal. Some time series may have frequent and large temporal gaps (as can be expected in some tropical forest), while others are temporally dense. These differences may call for slightly different approaches in implementing BFM.
 
 \code{bfmPixel} is a function which queries individual pixels in a raster time series and runs bfm over that pixel's time series. To run \code{bfmPixel} in interactive mode, one of the layers of the time series needs to first be plotted.
 
