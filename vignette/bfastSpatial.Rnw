@@ -127,7 +127,11 @@ summary(percNA)
 
 \subsection{Annual Summary Statistics: \code{annualSummary()}}
 
-...TODO: Ben...
+
+
+<<'annualSummary'>>=
+annualMean <- annualSummary(tura, fun=mean)
+@
 
 \section{Spatial BFASTMonitor}
 
