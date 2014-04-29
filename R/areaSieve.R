@@ -5,13 +5,21 @@
 #' 
 #' @param x Input raster layer.
 #' @param thresh Numeric. Areal threshold (in square metres). All pixel clumps smaller than thresh will be deleted.
-#' @param directions Numeric. Define pixel neighbours using diagonals (diagonals=8; "Queen's case") or without diagonals (diagonals=4; "Rook's case")
+#' @param directions Numeric. Define pixel neighbours using diagonals (\code{directions=8}; "Queen's case") or without diagonals (\code{directions=4}; "Rook's case")
 #' @param keepzeros Logical. Treat zeros as NA's (default option for \code{\link{clump}}) or as actual pixel values? If \code{FALSE} (default), the default method used in \code{\link{clump}} is used. If \code{TRUE}, an intermediate unit raster is first created, \code{areaSieve} is run on that raster, and the sieved unit raster is used to mask the input raster.
-#' @param ... Additional arguments to be passed to \link{overlay} (including filename to write to file).
+#' @param cores Numeric. Number of cores to use for parallel processing (only valid if x is a RasterBrick or RasterStack)
+#' @param ... Additional arguments to be passed to \link{\code{writeRaster}} if \code{nlayers(x) > 1}, or to \link{\code{mask}} if \code{nlayers(x) == 1} and \code{keepzeroes == TRUE}, or to \link{\code{overlay}} if \code{nlayers(x) == 1} and \code{keepzeroes==FALSE}.
 #' @author Ben DeVries \email{devries.br@@gmail.com}
 #' @return raster with pixels in clumps smaller than that specified as thresh removed. All spatial parameters and data are otherwise identical to x.
+#' 
+#' @details
+#' In all cases, a \code{filename} can be passed to \code{areaSieve}, but the arguments allowed by the \code{...} differ depending on whether a multi-layered raster object is supplied - in which case  \code{writeRaster} is used - or if a single-layered raster is supplied - in which case either \code{mask} or \code{overlay} is used.
+#' 
+#' \code{areaSieve} is based on the \code{raster::clump}, which by default ignores zeroes (ie. considers them as NA's). To consider zeroes as valid pixel values when applying the sieve, set \code{keepzeroes=TRUE}.
+#' 
 #' @import raster
 #' @import igraph
+#' @import doMC
 #' @export
 #' 
 #' @examples
@@ -50,7 +58,7 @@
 #' par(op)
 #' 
 
-areaSieve <- function(x, thresh=5000, directions=8, verbose=FALSE, keepzeros=FALSE, ...)
+areaSieve <- function(x, thresh=5000, directions=8, verbose=FALSE, keepzeros=FALSE, cores=1, ...)
 {
   
   # convert thresh from area to pixel threshold
@@ -85,21 +93,45 @@ areaSieve <- function(x, thresh=5000, directions=8, verbose=FALSE, keepzeros=FAL
       
       return(y)
   }
-  
-  # create a unit raster if keepzeros==TRUE
-  if(keepzeros){
-      unitRaster <- x
-      unitRaster[!is.na(unitRaster)] <- 1
-      
-      # apply sieve on unitRaster
-      y <- sieve(unitRaster)
-      
-      # use sieved unitRaster to mask input raster
-      y <- mask(x, y, ...)
-      
-  } else {
-      y <- sieve(x, ...)
-  }
 
+  if(nlayers(x) > 1){
+      registerDoMC(cores=cores)
+      y <- foreach(i = 1:nlayers(x)) %dopar% {
+        if(keepzeros){
+          unitRaster <- x[[i]]
+          unitRaster[!is.na(unitRaster)] <- 1
+          
+          # apply sieve on unitRaster
+          y <- sieve(unitRaster)
+          
+          # use sieved unitRaster to mask input raster
+          y <- mask(x[[i]], y)
+          
+        } else {
+          y <- sieve(x[[i]])
+        }
+        return(y)
+      }
+      y <- do.call("brick", y)
+      names(y) <- names(x)
+      if(hasArg(filename))
+          writeRaster(x, ...)
+  } else {
+  # create a unit raster if keepzeros==TRUE
+      if(keepzeros){
+          unitRaster <- x
+          unitRaster[!is.na(unitRaster)] <- 1
+          
+          # apply sieve on unitRaster
+          y <- sieve(unitRaster)
+          
+          # use sieved unitRaster to mask input raster
+          y <- mask(x, y, ...)
+          
+      } else {
+          y <- sieve(x, ...)
+      }
+  }
+  
   return(y)
 }
