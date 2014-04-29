@@ -127,7 +127,7 @@ summary(percNA)
 
 \subsection{Annual Summary Statistics: \code{annualSummary()}}
 
-
+...TODO: Ben...
 
 <<'annualSummary-ETM'>>=
 annualMed <- annualSummary(tura, fun=median, sensor="ETM+", na.rm=TRUE)
