@@ -22,6 +22,7 @@ clumpSize <- function(x, f=1, stats=FALSE, ...){
     # x - raster layer
     # f - conversion factor for # of pixels (e.g. 900/10000 for landsat pixels --> hectares)
     # ... - arguments passed to clump()
+    # TODO: write in support for multilayered rasters (see areaSieve)
     
     # identify clumps
     y <- clump(x, ...)
