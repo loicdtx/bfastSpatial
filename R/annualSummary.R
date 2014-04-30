@@ -32,6 +32,7 @@
 
 annualSummary <- function(x, fun, sceneID=NULL, years=NULL, sensor="all", na.rm=NULL, ...){
 
+    # TODO: make this applicable to non-Landsat data if a 'dates' vector is supplied
     # get scene information from layer names
     if(is.null(sceneID)){
         s <- getSceneinfo(names(x))
