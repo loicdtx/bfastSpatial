@@ -65,6 +65,7 @@ The following functions are included in the Data Inventory module:
 \begin{enumerate}
 \item \code{getSceneinfo()}
 \item \code{countObs()}
+\item \code{summaryBrick()}
 \item \code{annualSummary()}
 \end{enumerate}
 
@@ -124,17 +125,78 @@ plot(percNA, main="percent NA per pixel")
 summary(percNA)
 @
 
+\subsection{Summary Statistics: \code{summaryBrick()} and \code{annualSummary()}}
 
-\subsection{Annual Summary Statistics: \code{annualSummary()}}
+In this section, we will calculate summary statistics for the Tura RasterBrick. First, general statistics for the entire brick can be calculated using \code{summaryBrick()}. In fact, \code{countObs()} is essentially a specific version of \code{summaryBrick}. \code{summaryBrick()} takes a RasterBrick as its first argument and a function as its second argument, and all others are optional arguments. Calculating the mean of each pixel is simple.
 
-...TODO: Ben...
+<<'summaryBrick-functions'>>=
+meanVI <- summaryBrick(tura, fun=mean) # na.rm=FALSE by default
+plot(meanVI)
+@
+
+The fact that there are no values in the result stems from the fact that an \code{na.rm} argument has not been supplied. By default, this is set to \code{NULL} to ensure that other functions that do not take an \code{na.rm} argument (like \code{length}, for example) can also be used as \code{fun}. Since there are many \code{NA} values scattered through our RasterBrick as a result of cloud masking, \code{na.rm} must be set to \code{TRUE} for functions like \code{mean}, \code{median} and other common stats functions.
+
+<<'summaryBrick-narm'>>=
+meanVI <- summaryBrick(tura, fun=mean, na.rm=TRUE)
+plot(meanVI)
+@
+
+\code{summaryBrick} can also take custom functions, provided these functinos are vectorized - in other words, they should be applicable to a vector extracted from a single pixel time series (for example, by taking a single cell number of the Tura RasterBrick: \code{x <- tura[500]}). Suppose we want to know how many observations per pixel exceed a certain threshold. First, we should define a function that can count the number of elements in a vector that exceed this threshold, and then pass this to \code{summaryBrick}. In this example, we will use 7000 as our threshold (remember that the values are scaled by 10000, so this corresponds to an NDVI of 0.7).
+
+<<summaryBrick-custom>>=
+# define a function that takes a vector as an argument
+checkThresh <- function(x){
+    # first, get rid of NA's
+    x <- x[!is.na(x)]
+    # if there still values left, count how many are above the threshold
+    # otherwise, return a 0
+    if(length(x) > 0){
+        y <- length(x[x > 7000])
+    } else {
+        y <- 0
+    }
+    # return the value
+    return(y)
+}
+# pass this functino to summaryBrick
+customStat <- summaryBrick(tura, fun=checkThresh)
+plot(customStat, main = "# of observations where NDVI > 0.7")
+@
+
+Note that in this case we handled NA values within our function, so there was no need to specify a value for \code{na.rm}. \code{summaryBrick} has some optional arguments that allow constraints according to dates and sensor (currently only for Landsat data). \code{sensor} takes a character vector of sensors to constrain the data, while \code{minDate} and \code{maxDate} allow a date range to be set to constrain the data. In the following example, we will calculate median pixel values using different date and sensor ranges.
+
+<<'summaryBrick-dates'>>=
+# median values for all layers
+medVI <- summaryBrick(tura, fun=median, na.rm=TRUE)
+# only ETM+ layers
+medVI_ETM <- summaryBrick(tura, fun=median, na.rm=TRUE, sensor="ETM+")
+# all layers between 2000 and 2005 (inclusive)
+medVI_00_05 <- summaryBrick(tura, fun=median, na.rm=TRUE, minDate="2000-01-01", maxDate="2005-12-31")
+# all layers after 2005
+medVI_06_13 <- summaryBrick(tura, fun=median, na.rm=TRUE, minDate=c(2006, 1))
+# plot and compare
+op <- par(mfrow=c(2, 2))
+plot(medVI, main = "median NDVI")
+plot(medVI_ETM, main = "only ETM+")
+plot(medVI_00_05, main = "2000-2005")
+plot(medVI_06_13, main = "2006-2013")
+par(op)
+@
+
+\code{minDate} and \code{maxDate} can be supplied in one of two ways: (1) as a character or date object in the format \code{"\%Y-\%m-\%d"} (eg. ``2013-01-31") or (2) as a numeric vector of length 2 representing the year and Julian day (e.g. \code{c(2013, 31)}).
+
+Note that the Tura brick already has scene information included as layer names (see \code{names(tura)}). To run \code{annualSummary} on RasterBricks where no scene information is available, a dates vector \emph{must} be supplied to be able to divide the layers into years. This vector is also required for \code{summaryBrick} when constraining the calculation by date using \code{minDate} and \code{maxDate}.
+
+\code{annualSummary} works similarly to \code{summaryBrick}, but provides a statistic for each year of the time series. At this time, this function is only applicable to Landsat data, and the scene IDs must be supplied either as \code{names(x)} or as a separate character vector to \code{sceneID}. In this sample, we will again calculate median NDVI on all ETM+ data, but this time we are interested in seeing the \emph{annual} median NDVI value.
 
 <<'annualSummary-ETM'>>=
 annualMed <- annualSummary(tura, fun=median, sensor="ETM+", na.rm=TRUE)
 plot(annualMed)
 @
 
-From the summary RasterBrick, we can see that this is a very dynamic area, with some of the biggest forest changes occurring from 2009 until 2013. With the help of \code{bfastmonitor}, we will look at ways to quantify and map these changes at high temporal resolution.
+Both \code{summaryBrick()} and \code{annualSummary()} can pass additional arguments to \code{mc.calc()}, meaning that the result can be saved to file with a \code{filename} argument, and multiple cores can be used in the calculation with a \code{mc.cores} argument.
+
+From the summary RasterBrick above, we can see that this is a very dynamic area, with some of the biggest forest changes occurring from 2009 until 2013. With the help of \code{bfastmonitor}, we will look at ways to quantify and map these changes at high temporal resolution.
 
 \section{Spatial BFASTMonitor}
 
