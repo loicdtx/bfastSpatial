@@ -1,3 +1,4 @@
+export(annualSummary)
 export(areaSieve)
 export(bfmChange)
 export(bfmMagn)
