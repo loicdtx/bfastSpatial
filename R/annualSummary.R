@@ -10,10 +10,15 @@
 #' @param ... Arguments to be passed to \link{\code{mc.calc}}
 #' @return RasterBrick with results of fun for each year represtented in the input time series RasterBrick.
 #' 
+#' @details
+#' If \code{fun} takes a \code{na.rm} argument and none is supplied, it will be ignored and the default value for \code{na.rm} for that function will be used.
+#' 
 #' @author Ben DeVries \email{devries.br@@gmail.com}
 #' 
 #' @import raster
 #' @export
+#' 
+#' @seealso \link{\code{summaryBrick}}
 #' 
 #' @examples
 #' # load tura RasterBrick
@@ -63,12 +68,12 @@ annualSummary <- function(x, fun, sceneID=NULL, years=NULL, sensor="all", na.rm=
     
     # function to be applied over each pixel in the RasterBrickStack
     pixStat <- function(b){
-        ps <- numeric()
+        ps <- vector("numeric", length(yrs))
         for(i in 1:length(yrs)){
-            tmp <- list(b[which(s$year == yrs[i])])
-            if(!is.null(na.rm))
-                tmp$na.rm <- na.rm
-            ps[i] <- do.call(fun, tmp)
+            args <- list(b[which(s$year == yrs[i])])
+            if(is.logical(na.rm))
+                args$na.rm <- na.rm
+            ps[i] <- do.call(fun, args)
         }
         
         names(ps) <- yrs
