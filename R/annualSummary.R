@@ -38,6 +38,7 @@
 annualSummary <- function(x, fun, sceneID=NULL, years=NULL, sensor="all", na.rm=NULL, ...){
 
     # TODO: make this applicable to non-Landsat data if a 'dates' vector is supplied
+    
     # get scene information from layer names
     if(is.null(sceneID)){
         s <- getSceneinfo(names(x))
@@ -46,14 +47,15 @@ annualSummary <- function(x, fun, sceneID=NULL, years=NULL, sensor="all", na.rm=
         names(x) <- row.names(s)
     }
     
-    # include data only from desired sensor(s) and update s accordingly
-    if (sensor != "all") {
+    # if sensor != "all", then limit the analysis to a particular sensor
+    if(sensor != "all"){
         if ("ETM+" %in% sensor) {
             sensor <- unique(c(sensor, "ETM+ SLC-on", "ETM+ SLC-off"))
         }
-        x <- dropLayer(x, which(!s$sensor %in% sensor))
-        s <- s[which(s$sensor %in% sensor), ]
-        names(x) <- row.names(s)
+        # 'allowed' scenes
+        scenes <- which(s$sensor %in% sensor)
+    } else {
+        scenes <- NULL
     }
     
     # add year column to s
@@ -66,8 +68,14 @@ annualSummary <- function(x, fun, sceneID=NULL, years=NULL, sensor="all", na.rm=
     if(!is.null(years))
         yrs <- yrs[yrs %in% years]
     
+    # trim yrs if a sensor is supplied
+    if(!is.null(scenes))
+        yrs <- sort(unique(s[scenes, ]$year))
+    
     # function to be applied over each pixel in the RasterBrickStack
     pixStat <- function(b){
+        if(!is.null(scenes))
+            b <- b[scenes]
         ps <- vector("numeric", length(yrs))
         for(i in 1:length(yrs)){
             args <- list(b[which(s$year == yrs[i])])
