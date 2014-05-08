@@ -46,8 +46,11 @@ The \code{bfastSpatial} package includes utilities to pre-process Landsat surfac
 \end{itemize}
 
 The two important functions to perform the above mentioned steps are \code{processLandsat} and \code{processLandsatBatch}. The former is a wrapper that performs the above steps sequentially, automatically generating file names and deleting unnecessary intermediary outputs. The latter (\code{processLandsatBatch}) allows a user to run \code{processLandsat} in batch mode, over several scenes, with parallel support. Several vegetation indices are supported by both \code{processLandsat} and \code{processLandsatBatch}.
-Let's illustrate that with an example.
-
+Let's illustrate that with an example. We added subsets of Landsat data to the package in order to illustrate the pre-processing steps. The test datasets are stored under the \code{external/} directory of the installed package. To list the content of that directory, run the following comand.
+<<'listPackageData'>>=
+list.files(system.file('external', package='bfastSpatial'), full.names=TRUE)
+@
+Using the \code{full.names=TRUE} argument allows you to directly use the elements of the list create without having to set working directories.
 
 % TODO add example here
 
