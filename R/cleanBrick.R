@@ -66,4 +66,7 @@ cleanBrick <- function(x, monperiod, thresh, dates=NULL, sceneID=NULL, is.max=FA
     z <- mc.calc(x, fun=fun, ...)
     
     return(z)
+    
+    ## TODO: report back on how many pixels have been removed and what the thresholds are if !is.numeric(thresh)
+    ## what's the best way to do this? As an additional raster layer added to the output brick, or as a list object, with diagnostic layers separate from the output brick? The advantage of the 2nd option is that the output brick still 'resembles' the input brick in terms of nlayers and names. The advantage of the 1st option is that everything can be written to file at once via mc.calc() (therefore saving memory).
 }
