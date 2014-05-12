@@ -15,8 +15,13 @@
 #' @return rasterLayer Object also written to file (in \code{outdir}) with an automatically generated filename
 #' @seealso \link{sr2vi}
 #' 
+#' @import stringr
+#' @import raster
+#' @import rgdal
+#' @import gdalUtils
+#' 
 #' @examples
-#' Get list of test data files
+#' # Get list of test data files
 #' dir <- system.file('external', package='bfastSpatial')
 #' list <- list.files(dir, full.names=TRUE)
 #' 
@@ -30,10 +35,6 @@
 #' list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
 #' plot(r <- raster(list[1]))
 #' 
-#' @import stringr
-#' @import raster
-#' @import rgdal
-#' @import gdalUtils
 #' @export
 #' 
 
