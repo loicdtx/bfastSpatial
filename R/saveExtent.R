@@ -3,7 +3,7 @@
 #' @description Identical to \code{\link{drawExtent}} except that the resulting extent is printed to the console with a formatted \code{extent()} command which can be copied and pasted to a script for reproducability.
 #' 
 #' @param ... Arguments to be passed to \code{\link{drawExtent}}
-#' @param digits integer indicating the number of decimal places (passed to \link{\code{round}})
+#' @param digits integer indicating the number of decimal places (passed to \code{\link{round}})
 #' 
 #' @return an object of class \code{extent} with the side effect of having the \code{extent()} command with resulting parameters printed to the console for reproducability.
 #' 
@@ -19,7 +19,7 @@
 #' @import raster
 #' @export
 #' 
-#' @seealso \link{\code{drawExtent}}
+#' @seealso \code{\link{drawExtent}}
 
 saveExtent <- function(..., digits=0){
   # drawExtent() and print R code for reproducing that extent to console

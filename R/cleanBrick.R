@@ -3,7 +3,7 @@
 #' @description Filter a time series RasterBrick or RasterStack using a static or statistical threshold in a defined historical period
 #' 
 #' @param x RasterBrick or RasterStack. Raster time series to be cleaned
-#' @param monperiod Numeric. Beginning of intended monitoring period in \link{\code{bfmSpatial}} in the form \code{c(year, Julian day)}. The filter will only be applied before this period (ie. to the history period). If set to \code{NULL}, the filter will be applied to the entire time series.
+#' @param monperiod Numeric. Beginning of intended monitoring period in \code{\link{bfmSpatial}} in the form \code{c(year, Julian day)}. The filter will only be applied before this period (ie. to the history period). If set to \code{NULL}, the filter will be applied to the entire time series.
 #' @param thresh Either a Numeric static threshold or \code{"IQR"} to calcalate the threshold per pixel based on the interquartile zone.
 #' @param dates Date. Vector of dates corresponding exactly to layers in x. If \code{NULL}, dates are either extracted from \code{sceneID} or \code{names(x)} using \link{code{getSceneinfo}}.
 #' @param sceneID Character. Vector of Landsat sceneID's 

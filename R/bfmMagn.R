@@ -11,7 +11,7 @@
 #' 
 #' @author Ben DeVries
 #' 
-#' @seealso \code{\link{bfmChange}}, \link{\code{bfmSpatial}}
+#' @seealso \code{\link{bfmChange}}, \code{\link{bfmSpatial}}
 #' 
 #' @examples
 #' # load in raster brick
