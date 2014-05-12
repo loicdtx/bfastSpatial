@@ -18,10 +18,9 @@
 #' 
 #' @details \code{bfmPixel} is theoretically designed to work on any generic raster time series, as long as a \code{dates} vector is provided. In the absence of a \code{dates} vector, a number of additional options are included for Landsat data only: a \code{sceneID} character vector can be supplied, which corresponds to the Landsat scene ID's of each raster layer in x; or \code{names(x)} should correspond exactly to respective Landsat scene ID's. In these two cases, \link{\code{getSceneinfo}} is used to extract a dates vector, and subset by sensor if desired.
 #' 
-#' @author Ben DeVries \email{devries.br@@gmail.com}
+#' @author Ben DeVries
 #' 
 #' @examples
-#' 
 #' # load in time series raster data
 #' data(tura)
 #' 
@@ -59,6 +58,8 @@
 #' bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", formula=response~trend)
 #' plot(bfm$bfm)
 #' }
+#' 
+#' @seealso \link{\code{bfastmonitor}}, \link{\code{bfmSpatial}}
 #' 
 #' @import raster
 #' @import bfast
