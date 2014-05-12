@@ -2,7 +2,7 @@
 #' @title Wrapper function to process Landsat data
 #' 
 #' @description Processes a single Landsat scene, from tarball (or hdf/tiff if untar is set to FALSE) to vegetation index (only NDVI supported at the moment). Easy to batch using sapply or mclapply for parallel implementation.
-#' @param x Character. filename of the tarball or of the hdf/tiff file.
+#' @param x Character. filename of the tarball or zip archive of the hdf/tiff file.
 #' @param vi Character. Vegetation index to be computed. Can be either 'ndvi' or 'evi'
 #' @param srdir Character. Directory where the tarball should be uncompressed. Can be ommited if \code{untar} is set to \code{FALSE}
 #' @param outdir Character. Directory where the vegetation index rasterLayer should be written.
@@ -27,16 +27,25 @@ processLandsat <- function(x, vi='ndvi', srdir, outdir, untar=TRUE, delete=FALSE
     # Output layers (NDVI for example) are generated in outdir
     # ... arguments to be passed to hdf2ndvi (filename is automatically generated and therefore does not need to be passed)
     
-    
+    # Although x can be a zip archive, Names are untar, tarlist, etc, since the function was first developped to deal with tar.gz compressed Landsat data
     if(untar){
-        tarlist <- untar(x, list=TRUE)
+        ex <- extension(x)
+        if(ex == '.gz') {
+            tarlist <- untar(x, list=TRUE)
+        } else if(ex == '.zip') {
+            tarlist <- unzip(x, list=TRUE)$Name
+        } else {
+            stop('The archive is neither tar.gz nor .zip; we don\'t know what to do with that.')
+        }
+        
+        
         if(any(grepl(pattern="^.*\\.hdf$", x=tarlist))) { # are there any hdf files
             x0 <- grep(pattern="^.*\\.hdf$", x=tarlist, value=TRUE)
         } else if (any(grepl(pattern="^.*\\.tif$", x=tarlist))) { # Contains tiff
             if(any(grepl(pattern=sprintf("^.*%s\\.tif$", vi), x=tarlist))) { # Contains pre-processed vi
                 x0 <- grep(pattern=sprintf("^.*%s\\.tif$", vi), x=tarlist, value=TRUE)
             } else { # extract the bands needed to process vi
-                # Get viFormula object
+                # Get viFormula object (in order to know which bands to extract)
                 if(vi == 'ndvi') {
                     viFormula <- .ndvi()
                 } else if(vi == 'evi') {
@@ -57,7 +66,12 @@ processLandsat <- function(x, vi='ndvi', srdir, outdir, untar=TRUE, delete=FALSE
         if (!is.null(mask)) {
             x0 <- c(x0, grep(pattern=sprintf("^.*%s\\.tif$", mask), x=tarlist, value=TRUE))
         }
-        untar(x, files=x0, exdir=srdir)
+        if(ex == '.gz') {
+            untar(x, files=x0, exdir=srdir)
+        } else if(ex == '.zip') {
+            unzip(x, files=x0, exdir=srdir)
+        }
+        
         x <- file.path(srdir, x0)
     }
     name <- str_extract(string=basename(x[1]), '(LT4|LT5|LE7|LC8)\\d{13}')   
