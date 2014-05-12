@@ -9,6 +9,31 @@
 #' @param pattern See \link{list.files}
 #' @param ... Arguments to be passed to \link{writeRaster}. If specifying a filename, it is strongly recommended to also set a datatype.
 #' @author Loic Dutrieux
+#' @examples
+#' 1 - Produce individual VI layers (using processLandsatBatch())
+#' Get the directory where the Landsat archives are stored
+#' dir <- system.file('external', package='bfastSpatial')
+#' 
+#' # Set the location of output and intermediary directories (everything in tmpdir in that case)
+#' srdir <- dirout <- file.path(rasterOptions()$tmpdir, 'bfmspatial')
+#' dir.create(dirout, showWarning=FALSE)
+#' processLandsatBatch(x=dir, pattern=glob2rx('*.zip'), outdir=dirout, srdir=srdir, delete=TRUE, vi='ndvi', mask='fmask', keep=0, overwrite=TRUE)
+#' 
+#' # Visualize one of the layers produced
+#' list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
+#' 
+#' 
+#' # Stack the layers
+#' stackName <- file.path(dirout, 'stack/stackTest.grd')
+#' dir.create(file.path(dirout, 'stack'))
+#' s <- timeStack(x=dirout, pattern=glob2rx('*.grd'), filename=stackName, datatype='INT2S')
+#' 
+#' plot(s)
+#'
+#' 
+#' 
+#' 
+#' 
 #' @import stringr
 #' @import raster
 #' @export
@@ -24,14 +49,14 @@ timeStack <- function(x, pattern=NULL, ...) {
     }
     
     orderChrono <- function(list) {
-        list2 <- list[order(substr(str_extract(string=basename(list), '(LT4|LT5|LE7)\\d{13}'), 4, 16))] 
+        list2 <- list[order(substr(str_extract(string=basename(list), '(LT4|LT5|LE7|LC8)\\d{13}'), 4, 16))] 
         return(list2)        
     }
     
     x <- orderChrono(x)
     s <- stack(x)
     
-    time <- getSceneinfo(str_extract(string=basename(x), '(LT4|LT5|LE7)\\d{13}'))$date
+    time <- getSceneinfo(str_extract(string=basename(x), '(LT4|LT5|LE7|LC8)\\d{13}'))$date
     s <- setZ(x=s, z=time)
     
     if(hasArg(filename)) {
