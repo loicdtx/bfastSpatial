@@ -21,7 +21,7 @@ flattenBrick <- function(x, thresh=NULL, ...){
         if(!is.null(thresh))
             z <- z[z <= thresh]
         
-        if(length(y) == 0){
+        if(length(z) == 0){
             z <- NA
         } else {
             z <- z[1]
