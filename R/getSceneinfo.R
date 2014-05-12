@@ -5,17 +5,21 @@
 #' 
 #' @param sourcefile Character. Filename of a landsat layer or dataset.
 #' @param ... Additional arguments to pass to \code{\link{write.csv}}.
-#' @author Ben DeVries \email{devries.br@@gmail.com}
+#' 
+#' @author Ben DeVries and Loic Dutrieux
+#' 
 #' @return a \code{data.frame} with parsed scene information from Landsat scene names
+#' 
 #' @import stringr
+#' 
 #' @examples 
 #' getSceneinfo(c('ndvi.LC82300702014234.tar.gz', 'ndvi.LT52300702008234.tif'))
 #' 
 #' # Load tura
 #' data(tura)
 #' getSceneinfo(names(tura))
+#' 
 #' @export
-
 
 
 getSceneinfo <- function(sourcefile, ...)

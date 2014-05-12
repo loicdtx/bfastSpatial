@@ -2,18 +2,18 @@
 #' 
 #' @description Calculates pixel-based statistics for every year represented by a time series RasterBrick
 #' 
-#' @param RasterBrick or RasterStack
+#' @param x RasterBrick or RasterStack
 #' @param fun Function to apply over each pixel for each year
 #' @param sceneID Character. Optional: Landsat scene ID's for each layer of the input RasterBrick or RasterStack. If not given, sceneID's must be contained in the layer names
 #' @param years Numeric. Vector of years to which to limit the summary.
 #' @param sensor Character. Optional: limit calculation to images from a particular sensor. Defaults to "all", but can take any of "TM", "ETM+", "ETM+ SLC-off" or "ETM+ SLC-on"
 #' @param ... Arguments to be passed to \link{\code{mc.calc}}
-#' @return RasterBrick with results of fun for each year represtented in the input time series RasterBrick.
+#' @return RasterBrick with results of \code{fun} for each year represented in the input time series RasterBrick.
 #' 
 #' @details
-#' If \code{fun} takes a \code{na.rm} argument and none is supplied, it will be ignored and the default value for \code{na.rm} for that function will be used.
+#' If \code{fun} takes a \code{na.rm} argument and none is supplied, the default value for \code{na.rm} for that function will be used.
 #' 
-#' @author Ben DeVries \email{devries.br@@gmail.com}
+#' @author Ben DeVries
 #' 
 #' @import raster
 #' @export
