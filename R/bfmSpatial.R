@@ -79,8 +79,13 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
         
     if(is.null(dates)) {
         if(is.null(getZ(x))) {
+<<<<<<< HEAD
             if(!all(grepl(pattern='(LT4|LT5|LE7)\\d{13}', x=names(x)))){ # Check if dates can be extracted from layernames
                 stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
+=======
+            if(!all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){ # Check if dates can be extracted from layernames
+                stop('A date vector must be supplied, either via the date argument, the z dimention of x or comprised in names(x)')
+>>>>>>> d21b698a5c5f14123dce333efaebbad688d76fab
             } else {
                 dates <- as.Date(getSceneinfo(names(x))$date)
             }
