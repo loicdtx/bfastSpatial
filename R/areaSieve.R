@@ -4,10 +4,10 @@
 #' 
 #' @param x Input raster layer.
 #' @param thresh Numeric. Areal threshold (in square metres). All pixel clumps smaller than this threshold will be deleted.
-#' @param directions Numeric. Define pixel neighbours using diagonals (\code{directions=8}; "Queen's case") or without diagonals (\code{directions=4}; "Rook's case"). See \link{\code{clump}} for more information.
+#' @param directions Numeric. Define pixel neighbours using diagonals (\code{directions=8}; "Queen's case") or without diagonals (\code{directions=4}; "Rook's case"). See \code{\link{clump}} for more information.
 #' @param keepzeros Logical. Treat zeros as NA's (default option for \code{\link{clump}}) or as actual pixel values? If \code{FALSE} (default), the default method used in \code{\link{clump}} is used. If \code{TRUE}, an intermediate unit raster is first created, \code{areaSieve} is run on that raster, and the sieved unit raster is used to mask the input raster.
 #' @param cores Numeric. Number of cores to use for parallel processing (only valid if x is a RasterBrick or RasterStack)
-#' @param ... Additional arguments to be passed to \link{\code{writeRaster}} if \code{nlayers(x) > 1}, or to \link{\code{mask}} if \code{nlayers(x) == 1} and \code{keepzeroes == TRUE}, or to \link{\code{overlay}} if \code{nlayers(x) == 1} and \code{keepzeroes==FALSE}.
+#' @param ... Additional arguments to be passed to \code{\link{writeRaster}} if \code{nlayers(x) > 1}, or to \code{\link{mask}} if \code{nlayers(x) == 1} and \code{keepzeroes == TRUE}, or to \code{\link{overlay}} if \code{nlayers(x) == 1} and \code{keepzeroes==FALSE}.
 #' 
 #' @author Ben DeVries
 #' 
@@ -22,7 +22,7 @@
 #' @import igraph
 #' @export
 #' 
-#' @seealso \link{\code{clump}}
+#' @seealso \code{\link{clump}}
 #' 
 #' @examples
 #' # load test raster

@@ -7,7 +7,7 @@
 #' @param sensor Character. Limit time series to specified sensor(s). Can take any combination of "ETM+ SLC-off", "ETM+ SLC-on", "ETM+", "TM", "OLI". Defaults to "all" (use all sensors).
 #' @param minDate Numeric. Optional: minumum date (in format c(year, julian day)) before which all layers will be removed from the RasterBrickStack.
 #' @param maxDate Numeric. Optional: maximum date (in format c(year, julian day)) after which all layers will be removed form the RasterBrickStack.
-#' @param ... Additional arguments to be passed to \link{\code{raster::subset}}
+#' @param ... Additional arguments to be passed to \code{\link{raster::subset}}
 #' 
 #' @details This function only supports Landsat data with associated scene ID's at this time. Support for MODIS (and possibly other datasets) wil follow in future versions.
 #' 

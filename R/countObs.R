@@ -5,11 +5,11 @@
 #' @param x RasterBrick or RasterStack
 #' @param navalues Integer. Values representing NA's in time series. Defaults to NA, but multiple values can be supplied (e.g. \code{navalue = c(0, NA)})
 #' @param as.perc Logical. Express result as a percentage of nlayers(x)?
-#' @param ... Arguments to be passed to \link{\code{mc.calc}}
+#' @param ... Arguments to be passed to \code{\link{mc.calc}}
 #' 
 #' @return A raster layer with the number of valid observations per pixel, either as an absolute value or expressed as a percent of \code{nlayers(x)} if \code{is.perc = TRUE}.
 #' 
-#' @seealso \link{\code{summaryBrick}}
+#' @seealso \code{\link{summaryBrick}}
 #' 
 #' @import raster
 #' @import parallel
