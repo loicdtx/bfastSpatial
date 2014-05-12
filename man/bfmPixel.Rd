@@ -31,7 +31,7 @@ bfmPixel(x, dates = NULL, start, monend = NULL, cell = NULL, f = 1,
 \item{...}{Arguments to be passed to \code{\link{bfastmonitor}}}
 }
 \value{
-A list with the following components: 1) $bfm - an object of class 'bfastmonitor' (see \code{\link{bfastmonitor()}}) 2) $cell - the cell index (an integer of length 1). This can be used to run \code{bfmPixel()} again on the same pixel (with different parameters) without having to click on a plot again to find the same pixel (in that case, be sure to set interactive=FALSE for subsequent trials!).
+A list with the following components: 1) $bfm - an object of class 'bfastmonitor' (see \code{\link{bfastmonitor}}) 2) $cell - the cell index (an integer of length 1). This can be used to run \code{bfmPixel} again on the same pixel (with different parameters) without having to click on a plot again to find the same pixel (in that case, be sure to set interactive=FALSE for subsequent trials!).
 }
 \description{
 Apply bfastmonitor (bfm) on a single pixel of known cell index (by supplying a single numeric value for cell), xy coordinates (\code{cell=c(x, y)}), or interactively by clicking on a plot (by setting \code{interactive=TRUE}). Outputs a list with (1) an object of class 'bfastmonitor' and (2) the resulting cell number (useful for follow-up analysis).

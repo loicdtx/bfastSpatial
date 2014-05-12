@@ -14,7 +14,7 @@
 #' @param plot Logical. Plot the result? Defaults to \code{FALSE}.
 #' @param ... Arguments to be passed to \code{\link{bfastmonitor}}
 #' 
-#' @return A list with the following components: 1) $bfm - an object of class 'bfastmonitor' (see \code{\link{bfastmonitor()}}) 2) $cell - the cell index (an integer of length 1). This can be used to run \code{bfmPixel()} again on the same pixel (with different parameters) without having to click on a plot again to find the same pixel (in that case, be sure to set interactive=FALSE for subsequent trials!).
+#' @return A list with the following components: 1) $bfm - an object of class 'bfastmonitor' (see \code{\link{bfastmonitor}}) 2) $cell - the cell index (an integer of length 1). This can be used to run \code{bfmPixel} again on the same pixel (with different parameters) without having to click on a plot again to find the same pixel (in that case, be sure to set interactive=FALSE for subsequent trials!).
 #' 
 #' @details \code{bfmPixel} is theoretically designed to work on any generic raster time series, as long as a \code{dates} vector is provided. In the absence of a \code{dates} vector, a number of additional options are included for Landsat data only: a \code{sceneID} character vector can be supplied, which corresponds to the Landsat scene ID's of each raster layer in x; or \code{names(x)} should correspond exactly to respective Landsat scene ID's. In these two cases, \code{\link{getSceneinfo}} is used to extract a dates vector, and subset by sensor if desired.
 #' 
