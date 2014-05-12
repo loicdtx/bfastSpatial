@@ -11,7 +11,7 @@
 #' 
 #' @author Ben DeVries
 #' 
-#' @seealso {bfmSpatial}}, \code{\link{bfmMagn}}, \code{\link{changeMonth}}
+#' @seealso \code{\link{bfmSpatial}}, \code{\link{bfmMagn}}, \code{\link{changeMonth}}
 #' 
 #' @import raster
 #' @export
