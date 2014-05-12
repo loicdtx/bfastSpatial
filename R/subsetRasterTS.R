@@ -8,7 +8,11 @@
 #' @param minDate Numeric. Optional: minumum date (in format c(year, julian day)) before which all layers will be removed from the RasterBrickStack.
 #' @param maxDate Numeric. Optional: maximum date (in format c(year, julian day)) after which all layers will be removed form the RasterBrickStack.
 #' @param ... Additional arguments to be passed to \link{\code{raster::subset}}
-#' @author Ben DeVries \email{devries.br@@gmail.com}
+#' 
+#' @details This function only supports Landsat data with associated scene ID's at this time. Support for MODIS (and possibly other datasets) wil follow in future versions.
+#' 
+#' @author Ben DeVries
+#' 
 #' @import raster
 #' @export
 #' 

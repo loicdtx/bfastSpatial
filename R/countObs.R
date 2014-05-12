@@ -7,9 +7,14 @@
 #' @param as.perc Logical. Express result as a percentage of nlayers(x)?
 #' @param ... Arguments to be passed to \link{\code{mc.calc}}
 #' 
+#' @return A raster layer with the number of valid observations per pixel, either as an absolute value or expressed as a percent of \code{nlayers(x)} if \code{is.perc = TRUE}.
+#' 
+#' @seealso \link{\code{summaryBrick}}
+#' 
 #' @import raster
 #' @import parallel
-#' @author Ben DeVries (\email{devries.br@@gmail.com})
+#' 
+#' @author Ben DeVries
 #' @export
 #' 
 
