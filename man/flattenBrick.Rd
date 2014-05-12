@@ -2,7 +2,7 @@
 \alias{flattenBrick}
 \title{Convert a RasterBrick or RasterStack to a RasterLayer based on the first encountered value}
 \usage{
-flattenBrick(x, thresh = NULL, filename = "", ...)
+flattenBrick(x, thresh = NULL, ...)
 }
 \arguments{
   \item{x}{RasterBrick or RasterStack.}
@@ -12,7 +12,7 @@ flattenBrick(x, thresh = NULL, filename = "", ...)
   values.}
 
   \item{...}{Additional arguments to be bassed to
-  \code{\link{writeRaster}}.}
+  \code{\link{mc.calc}}.}
 }
 \value{
 RasterLayer with values representing 'earliest' encountered

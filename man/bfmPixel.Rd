@@ -2,8 +2,8 @@
 \alias{bfmPixel}
 \title{Apply bfmastmonitor on a single pixel}
 \usage{
-bfmPixel(x, sceneID = NULL, dates = NULL, start = c(), monend = "full",
-  cell = c(), min.thresh = NULL, sensor = "all", interactive = FALSE,
+bfmPixel(x, dates = NULL, start, monend = NULL, cell = NULL, f = 1,
+  min.thresh = NULL, sceneID = NULL, sensor = NULL, interactive = FALSE,
   plot = FALSE, ...)
 }
 \arguments{
@@ -23,12 +23,26 @@ bfmPixel(x, sceneID = NULL, dates = NULL, start = c(), monend = "full",
   the raster cell to be observed. Can also be omitted, in
   which case 'interactive' must be set to TRUE (see below)}
 
+  \item{f}{Numeric. Factor by which to rescale values
+  before running \code{bfastmonitor}. Defaults to 1 (no
+  rescaling)}
+
   \item{min.thresh}{Numeric. Optional: A minimum threshold
-  below which NA's are assigned to data points.}
+  below which NA's are assigned to data points. NOTE: the
+  threshold is applied \emph{before} rescaling the data by
+  \code{f} (see above)}
+
+  \item{sceneID}{Character. Optional: character vector of
+  Landsat scene ID's, corresponding to layers in x. These
+  can be supplied instead of \code{dates} if using Landsat
+  data. If neither \code{dates} nor \code{sceneID} are
+  supplied, scene ID must be contained in \code{names(x)}}
 
   \item{sensor}{Character. Optional: Limit analysis to data
-  from one or more sensors. Defaults to 'all' to use all
-  available data in the time series.}
+  from one or more sensors. Can be one or more of
+  \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM",
+  "OLI")} according to the sensor information returned by
+  \link{\code{getSceneinfo}}}
 
   \item{interactive}{Logical. Select cell by clicking on an
   already plotted map? Defaults to \code{FALSE}. If
@@ -59,31 +73,45 @@ Outputs a list with (1) an object of class 'bfastmonitor'
 and (2) the resulting cell number (useful for follow-up
 analysis).
 }
+\details{
+\code{bfmPixel} is theoretically designed to work on any
+generic raster time series, as long as a \code{dates}
+vector is provided. In the absence of a \code{dates}
+vector, a number of additional options are included for
+Landsat data only: a \code{sceneID} character vector can be
+supplied, which corresponds to the Landsat scene ID's of
+each raster layer in x; or \code{names(x)} should
+correspond exactly to respective Landsat scene ID's. In
+these two cases, \link{\code{getSceneinfo}} is used to
+extract a dates vector, and subset by sensor if desired.
+}
 \examples{
 # load in time series raster data
 data(tura)
 
 # run bfm on a pixel of known (x,y) location
-bfm <- bfmPixel(tura, cell=c(816750, 826020), start=c(2005, 1))
+bfm <- bfmPixel(tura, cell=c(820900, 831340), start=c(2005, 1))
 print(bfm$cell) # check the corresponding cell index
 
 # get bfm results for a pixel of known cell index
-bfm <- bfmPixel(tura, cell=1068, start=c(2005, 1))
+targcell <- 4064
+bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1))
 plot(bfm$bfm)
 # try another monitoring period
-bfm <- bfmPixel(tura, cell=1068, start=c(2009, 1))
+bfm <- bfmPixel(tura, cell=targcell, start=c(2009, 1))
 plot(bfm$bfm)
 
 # try again using only ETM+ data (Landsat 7)
 bfm <- bfmPixel(tura, cell=1068, start=c(2005, 1), sensor="ETM+")
+plot(bfm$bfm)
 
-# run bfm on a pixel chosen from the plot window
 \dontrun{
+# run bfm on a pixel chosen from the plot window
 plot(tura, 6) # a cloudless scene from 2001
 bfm <- bfmPixel(tura, start=c(2005, 1), sensor="ETM+", interactive=TRUE)
 plot(bfm$bfm)
 print(targcell <- bfm$cell) # store cell index for follow-up analysis
-}
+
 ## change the model parameters
 # 1. harmonic order
 bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", order=3)
@@ -94,6 +122,7 @@ plot(bfm$bfm)
 # 3. trend only
 bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", formula=response~trend)
 plot(bfm$bfm)
+}
 }
 \author{
 Ben DeVries \email{devries.br@gmail.com}

@@ -2,11 +2,14 @@
 \alias{saveExtent}
 \title{Draw an extent on a raster plot and print command to console}
 \usage{
-saveExtent(...)
+saveExtent(..., digits = 0)
 }
 \arguments{
   \item{...}{Arguments to be passed to
   \code{\link{drawExtent}}}
+
+  \item{digits}{integer indicating the number of decimal
+  places (passed to \link{\code{round}})}
 }
 \value{
 an object of class \code{extent} with the side effect of

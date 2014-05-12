@@ -2,7 +2,8 @@
 \alias{areaSieve}
 \title{Apply a sieve to a raster layer}
 \usage{
-areaSieve(x, thresh = 5000, directions = 8, verbose = FALSE, ...)
+areaSieve(x, thresh = 5000, directions = 8, verbose = FALSE,
+  keepzeros = FALSE, cores = 1, ...)
 }
 \arguments{
   \item{x}{Input raster layer.}
@@ -12,11 +13,26 @@ areaSieve(x, thresh = 5000, directions = 8, verbose = FALSE, ...)
   deleted.}
 
   \item{directions}{Numeric. Define pixel neighbours using
-  diagonals (diagonals=8; "Queen's case") or without
-  diagonals (diagonals=4; "Rook's case").}
+  diagonals (\code{directions=8}; "Queen's case") or
+  without diagonals (\code{directions=4}; "Rook's case")}
+
+  \item{keepzeros}{Logical. Treat zeros as NA's (default
+  option for \code{\link{clump}}) or as actual pixel
+  values? If \code{FALSE} (default), the default method
+  used in \code{\link{clump}} is used. If \code{TRUE}, an
+  intermediate unit raster is first created,
+  \code{areaSieve} is run on that raster, and the sieved
+  unit raster is used to mask the input raster.}
+
+  \item{cores}{Numeric. Number of cores to use for parallel
+  processing (only valid if x is a RasterBrick or
+  RasterStack)}
 
   \item{...}{Additional arguments to be passed to
-  \link{overlay} (including filename to write to file).}
+  \link{\code{writeRaster}} if \code{nlayers(x) > 1}, or to
+  \link{\code{mask}} if \code{nlayers(x) == 1} and
+  \code{keepzeroes == TRUE}, or to \link{\code{overlay}} if
+  \code{nlayers(x) == 1} and \code{keepzeroes==FALSE}.}
 }
 \value{
 raster with pixels in clumps smaller than that specified as
@@ -28,6 +44,55 @@ Applies an areal threshold to a raster layer. A threshold
 is supplied in square metres (to be generalized in future)
 and all pixel 'clumps' smaller than this threshold are
 deleted.
+}
+\details{
+In all cases, a \code{filename} can be passed to
+\code{areaSieve}, but the arguments allowed by the
+\code{...} differ depending on whether a multi-layered
+raster object is supplied - in which case
+\code{writeRaster} is used - or if a single-layered raster
+is supplied - in which case either \code{mask} or
+\code{overlay} is used.
+
+\code{areaSieve} is based on the \code{raster::clump},
+which by default ignores zeroes (ie. considers them as
+NA's). To consider zeroes as valid pixel values when
+applying the sieve, set \code{keepzeroes=TRUE}.
+}
+\examples{
+# load test raster
+data(tura)
+# extract the first layer
+r <- raster(tura, 1)
+
+# create pixel 'islands' by reassigning some values to NA
+r[r < 7500] <- NA
+# zoom into extent where pixel islands were generated
+e <- extent(c(821958, 822697, 830504, 831070))
+plot(r, ext=e)
+
+# apply areaSieve with default threshold of 5000 square metres
+rs <- areaSieve(r)
+
+# compare two rasters
+op <- par(mfrow=c(1, 2))
+plot(r, ext=e, legend=FALSE)
+plot(rs, ext=e, legend=FALSE)
+par(op)
+
+# same as above, but assign 0 instead of NA
+# (ie. simulate a situation where 0's are valid pixel values)
+r <- raster(tura, 1)
+r[r < 7500] <- 0
+
+# apply areaSieve with default threshold of 5000 square metres and keep zeros
+rs <- areaSieve(r, keepzeros = TRUE)
+
+# compare two rasters
+op <- par(mfrow=c(1, 2))
+plot(r, ext=e, legend=FALSE)
+plot(rs, ext=e, legend=FALSE)
+par(op)
 }
 \author{
 Ben DeVries \email{devries.br@gmail.com}

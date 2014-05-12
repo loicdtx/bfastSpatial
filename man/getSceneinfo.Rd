@@ -2,7 +2,7 @@
 \alias{getSceneinfo}
 \title{Retrieve Landsat info from filenames}
 \usage{
-getSceneinfo(sourcefile, filename = NULL, ...)
+getSceneinfo(sourcefile, ...)
 }
 \arguments{
   \item{sourcefile}{Character. Filename of a landsat layer
@@ -19,6 +19,13 @@ Landsat scene names
 Parses through typical Landsat filenames and retrieves
 information on sensor and acquisition date. Vectorized over
 \code{sourcefile}.
+}
+\examples{
+getSceneinfo(c('ndvi.LC82300702014234.tar.gz', 'ndvi.LT52300702008234.tif'))
+
+# Load tura
+data(tura)
+getSceneinfo(names(tura))
 }
 \author{
 Ben DeVries \email{devries.br@gmail.com}

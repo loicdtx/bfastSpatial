@@ -2,20 +2,32 @@
 \alias{sr2vi}
 \title{Calculate Vegetation Index from Landsat surface reflectance data file}
 \usage{
-sr2vi(x, e = NULL, mask = NULL, keep = c(0), ...)
+sr2vi(x, vi = "ndvi", e = NULL, mask = NULL, keep = c(0), L = 0.5,
+  ...)
 }
 \arguments{
   \item{x}{Character. File name of the hdf file containing
-  the bands.}
+  the bands, or list of filenames (geoTiffs).}
+
+  \item{vi}{Character. Vegetation index to be computed.
+  'ndvi', 'evi' and 'savi' are supported at the moment. The
+  function will first attempt to find if a pre-processed
+  version of the index is present in the list supplied or
+  in the .hdf file and will use that layer when available.}
 
   \item{e}{Extent object or object that can be coerced as
   extent.}
 
-  \item{mask}{Numeric or NULL. The subdataset number of the
-  mask to be applied to the bands.}
+  \item{mask}{Character or NULL. The name of the cloud/Land
+  mask to be applied to the output (e.g.:
+  \code{mask='fmask'})}
 
-  \item{keep}{umeric. Can take multiple values. Which
+  \item{keep}{Numeric. Can take multiple values. Which
   values of the mask layer should be kept?}
+
+  \item{L}{Numeric. Soil-adjustment factor for SAVI
+  (ignored if vi != 'savi'). L can take on values between 0
+  and 1, and a default of 0.5 is typically used.}
 
   \item{...}{Arguments to be passed to
   \code{\link{writeRaster}}}

@@ -1,0 +1,40 @@
+\name{subsetRasterTS}
+\alias{subsetRasterTS}
+\title{Trim raster time series}
+\usage{
+subsetRasterTS(x, sceneID = NULL, sensor = "all", minDate = NULL,
+  maxDate = NULL, ...)
+}
+\arguments{
+  \item{x}{RasterBrick or RasterStack}
+
+  \item{sceneID}{Character. Landsat scene ID'. Length and
+  order of vector should correspond with layers of x. Can
+  be omitted if names(x) correspond to sceneID's. See
+  \code{\link{getSceneinfo}} for more information on
+  Landsat sceneID's.}
+
+  \item{sensor}{Character. Limit time series to specified
+  sensor(s). Can take any combination of "ETM+ SLC-off",
+  "ETM+ SLC-on", "ETM+", "TM", "OLI". Defaults to "all"
+  (use all sensors).}
+
+  \item{minDate}{Numeric. Optional: minumum date (in format
+  c(year, julian day)) before which all layers will be
+  removed from the RasterBrickStack.}
+
+  \item{maxDate}{Numeric. Optional: maximum date (in format
+  c(year, julian day)) after which all layers will be
+  removed form the RasterBrickStack.}
+
+  \item{...}{Additional arguments to be passed to
+  \link{\code{raster::subset}}}
+}
+\description{
+Trim a time series RasterBrickStack based on a specified
+Landsat sensor or threshold date (year)
+}
+\author{
+Ben DeVries \email{devries.br@gmail.com}
+}
+
