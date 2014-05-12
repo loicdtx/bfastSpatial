@@ -30,7 +30,23 @@ therefore themselves removed).
 achieve the reverse, first let \code{x <- -1*x} then
 convert the result back by \code{y <- -1*y}.
 }
+\examples{
+# load Tura dataset
+data(tura)
+
+## apply a very crude gap-fill using 2 Landsat
+# the 1st layer has alot of gaps from the cloud mask
+# suppose this is our target image and we want to use the 2nd layer to fill
+# just take these two layers
+gapfill <- tura[[c(1:2)]]
+names(gapfill) <- c("target", "fill")
+plot(gapfill)
+
+# flatten the Brick to fill the gaps (NA's in the 1st layer)
+filled <- flattenBrick(gapfill)
+plot(filled)
+}
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries
 }
 

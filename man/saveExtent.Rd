@@ -32,4 +32,7 @@ e <- saveExtent() # draw extent on the plot, and associated extent() command wil
 \author{
 Ben DeVries
 }
+\seealso{
+\link{\code{drawExtent}}
+}
 

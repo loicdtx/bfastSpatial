@@ -9,12 +9,13 @@ areaSieve(x, thresh = 5000, directions = 8, verbose = FALSE,
   \item{x}{Input raster layer.}
 
   \item{thresh}{Numeric. Areal threshold (in square
-  metres). All pixel clumps smaller than thresh will be
-  deleted.}
+  metres). All pixel clumps smaller than this threshold
+  will be deleted.}
 
   \item{directions}{Numeric. Define pixel neighbours using
   diagonals (\code{directions=8}; "Queen's case") or
-  without diagonals (\code{directions=4}; "Rook's case")}
+  without diagonals (\code{directions=4}; "Rook's case").
+  See \link{\code{clump}} for more information.}
 
   \item{keepzeros}{Logical. Treat zeros as NA's (default
   option for \code{\link{clump}}) or as actual pixel
@@ -57,7 +58,7 @@ is supplied - in which case either \code{mask} or
 \code{areaSieve} is based on the \code{raster::clump},
 which by default ignores zeroes (ie. considers them as
 NA's). To consider zeroes as valid pixel values when
-applying the sieve, set \code{keepzeroes=TRUE}.
+applying the sieve, set \code{keepzeroes} to \code{TRUE}.
 }
 \examples{
 # load test raster
@@ -95,6 +96,9 @@ plot(rs, ext=e, legend=FALSE)
 par(op)
 }
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries
+}
+\seealso{
+\link{\code{clump}}
 }
 

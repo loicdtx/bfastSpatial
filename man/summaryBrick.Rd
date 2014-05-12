@@ -60,6 +60,38 @@ the form "%Y-%m-%d" or as a Numeric of length 2. In the
 latter case, the first element is the year, and the second
 is the Julian day (from 1 to 365).
 }
+\examples{
+# load tura dataset
+data(tura)
+
+# median value per pixel
+medVI <- summaryBrick(tura, fun=median)
+plot(medVI) # use na.rm=TRUE!!
+medVI <- summaryBrick(tura, fun=median, na.rm=TRUE)
+plot(medVI)
+
+# custom pixel-wise function to count values > 7500
+countVal <- function(x){
+ return(length(which(x > 7500)))
+}
+vals <- summaryBrick(tura, fun=countVal)
+plot(vals)
+
+# the above could just as easily be done in calc() or mc.calc()
+# but summaryBrick allows for additional parameters
+# such as minDate and maxDate
+# same function, but only for 2005
+vals <- summaryBrick(tura, fun=countVal, minDate="2005-01-01", maxDate=c(2006, 1))
+
+# range of values for each pixel
+valRange <- summaryBrick(tura, fun=range, na.rm=TRUE)
+plot(valRange)
+# returns a brick with min and max values
+# see ?range
+}
+\author{
+Ben DeVries
+}
 \seealso{
 \link{\code{annualSummary}}
 }

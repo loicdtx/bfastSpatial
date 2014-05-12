@@ -29,7 +29,7 @@
 #' srdir <- dirout <- file.path(rasterOptions()$tmpdir, 'bfmspatial')
 #' dir.create(dirout, showWarning=FALSE)
 #' # Generate (or extract, depending on whether the layer is already in the archive or not) NDVI for the first archive file
-#' processLandsat(x=list[1], vi='NDVI', outdir=dirout, srdir=srdir, delete=TRUE, vi='ndvi', mask='fmask', keep=0, overwrite=TRUE)
+#' processLandsat(x=list[1], vi='ndvi', outdir=dirout, srdir=srdir, delete=TRUE, mask='fmask', keep=0, overwrite=TRUE)
 #' 
 #' # Visualize one of the layers produced
 #' list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)

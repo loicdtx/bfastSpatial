@@ -125,6 +125,9 @@ plot(bfm$bfm)
 }
 }
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries
+}
+\seealso{
+\link{\code{bfastmonitor}}, \link{\code{bfmSpatial}}
 }
 

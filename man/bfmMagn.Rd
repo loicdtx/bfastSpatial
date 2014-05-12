@@ -50,7 +50,7 @@ magn.filt <- bfmMagn(bfm, change = change)
 plot(magn.filt)
 
 # extract breakpoint magnitudes for large changes (where dNDVI < -0.03)
-magn.large <- bfmMagn(bfm, change = change, thresh=-0.03)
+magn.large <- bfmMagn(bfm, change = change, thresh = -0.03)
 plot(magn.large)
 
 if("rasterVis" \%in\% row.names(installed.packages())){
@@ -59,9 +59,9 @@ if("rasterVis" \%in\% row.names(installed.packages())){
 }
 }
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries
 }
 \seealso{
-\code{\link{bfmChange}}
+\code{\link{bfmChange}}, \link{\code{bfmSpatial}}
 }
 

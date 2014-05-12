@@ -17,11 +17,19 @@ countObs(x, navalues = c(NA), sensor = "all", as.perc = FALSE, ...)
   \item{...}{Arguments to be passed to
   \link{\code{mc.calc}}}
 }
+\value{
+A raster layer with the number of valid observations per
+pixel, either as an absolute value or expressed as a
+percent of \code{nlayers(x)} if \code{is.perc = TRUE}.
+}
 \description{
 Calculates the number of valid observations per pixel of a
 time series RasterBrick.
 }
 \author{
-Ben DeVries (\email{devries.br@gmail.com})
+Ben DeVries
+}
+\seealso{
+\link{\code{summaryBrick}}
 }
 

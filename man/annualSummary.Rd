@@ -6,7 +6,7 @@ annualSummary(x, fun, sceneID = NULL, years = NULL, sensor = "all",
   na.rm = NULL, ...)
 }
 \arguments{
-  \item{RasterBrick}{or RasterStack}
+  \item{x}{RasterBrick or RasterStack}
 
   \item{fun}{Function to apply over each pixel for each
   year}
@@ -28,8 +28,8 @@ annualSummary(x, fun, sceneID = NULL, years = NULL, sensor = "all",
   \link{\code{mc.calc}}}
 }
 \value{
-RasterBrick with results of fun for each year represtented
-in the input time series RasterBrick.
+RasterBrick with results of \code{fun} for each year
+represented in the input time series RasterBrick.
 }
 \description{
 Calculates pixel-based statistics for every year
@@ -37,8 +37,8 @@ represented by a time series RasterBrick
 }
 \details{
 If \code{fun} takes a \code{na.rm} argument and none is
-supplied, it will be ignored and the default value for
-\code{na.rm} for that function will be used.
+supplied, the default value for \code{na.rm} for that
+function will be used.
 }
 \examples{
 # load tura RasterBrick
@@ -56,7 +56,7 @@ ff <- function(x)
 annualObs <- annualSummary(tura, fun=ff, sensor="ETM+")
 }
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries
 }
 \seealso{
 \link{\code{summaryBrick}}

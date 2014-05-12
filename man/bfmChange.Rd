@@ -6,7 +6,7 @@ bfmChange(bfm, ...)
 }
 \arguments{
   \item{bfm}{RasterBrick output from
-  \code{\link{bfmSpatial}}. 1st layer is the breakpoint
+  \code{\link{bfmSpatial}}. The 1st layer is the breakpoint
   timing and the 2nd is the change magnitude.}
 
   \item{...}{Additional arguments to pass to
@@ -27,9 +27,10 @@ in the \code{\link{bfmMagn}} function to filter out pixels
 where no breakpoint was detected.
 }
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries
 }
 \seealso{
-\code{\link{bfmMagn}}, \code{\link{changeMonth}}
+\link{\code{bfmSpatial}}, \code{\link{bfmMagn}},
+\code{\link{changeMonth}}
 }
 

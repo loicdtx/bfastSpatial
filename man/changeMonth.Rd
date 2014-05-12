@@ -24,7 +24,7 @@ change results. Months are represted by integers from 1 to
 12.
 }
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries
 }
 \seealso{
 \code{\link{bfmChange}}

@@ -34,7 +34,12 @@ subsetRasterTS(x, sceneID = NULL, sensor = "all", minDate = NULL,
 Trim a time series RasterBrickStack based on a specified
 Landsat sensor or threshold date (year)
 }
+\details{
+This function only supports Landsat data with associated
+scene ID's at this time. Support for MODIS (and possibly
+other datasets) wil follow in future versions.
+}
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries
 }
 

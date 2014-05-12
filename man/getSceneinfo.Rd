@@ -28,6 +28,6 @@ data(tura)
 getSceneinfo(names(tura))
 }
 \author{
-Ben DeVries \email{devries.br@gmail.com}
+Ben DeVries and Loic Dutrieux
 }
 

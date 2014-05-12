@@ -27,7 +27,7 @@
 #' @import raster
 #' @export
 #' 
-#' @example
+#' @examples
 #' # load tura dataset
 #' data(tura)
 #' 

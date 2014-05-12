@@ -45,6 +45,6 @@ conversion factor \code{f} is also factored into the
 summary table.
 }
 \author{
-Ben DeVries (devries.br@gmail.com)
+Ben DeVries
 }
 
