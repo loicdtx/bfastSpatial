@@ -1,14 +1,14 @@
 
 #' @title Wrapper function to process Landsat data
 #' 
-#' @description Processes a single Landsat scene, from tarball (or hdf/tiff if untar is set to FALSE) to vegetation index (only NDVI supported at the moment). Easy to batch using sapply or mclapply for parallel implementation.
+#' @description Processes a single Landsat scene, from tarball or zip archive (or hdf/tiff if untar is set to FALSE) to vegetation index. Easy to batch using sapply or mclapply for parallel implementation. Data obtained from espi may already contained pre-processed indices layers, in which case they are directly used.
 #' @param x Character. filename of the tarball or zip archive of the hdf/tiff file.
-#' @param vi Character. Vegetation index to be computed. Can be either 'ndvi' or 'evi'
+#' @param vi Character. Vegetation index to be computed or extracted from the archive. Can be either 'ndvi', 'evi', 'savi', 'ndmi'*, 'nbr', 'nbr2'* or 'msavi'*. Indices with * need to be present in the archive.
 #' @param srdir Character. Directory where the tarball should be uncompressed. Can be ommited if \code{untar} is set to \code{FALSE}
 #' @param outdir Character. Directory where the vegetation index rasterLayer should be written.
-#' @param untar Logical. IS there a need to untar data, or have they been previously unpacked.
+#' @param untar Logical. Is there a need to untar data, or have they been previously unpacked.
 #' @param delete Logical. Should surface reflectance files (hdf/tiff) be deleted after vegetation index calculated? (usefull for disk space management; surface reflectance files are very voluminous and a user may want to keep the Landsat archive in compressed format only)
-#' @param mask Numeric or NULL. The subdataset number of the mask to be applied to the bands.
+#' @param mask Character or NULL. The name of the mask to be applied to the bands (e.g.: \code{mask = 'fmask'})
 #' @param L Numeric. Soil-adjustment factor for SAVI (ignored if vi != 'savi'). L can take on values between 0 and 1, and a default of 0.5 is typically used.
 #' @param ... Arguments to be passed to \link{sr2vi}. Do not specify \code{filename} since it is automatically generated
 #' @author Loic Dutrieux
