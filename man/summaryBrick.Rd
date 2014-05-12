@@ -15,13 +15,13 @@ summaryBrick(x, fun, dates = NULL, sceneID = NULL, na.rm = NULL,
 
 \item{sceneID}{Character. Optional: vector of Landsat scene ID's corresponding exactly to layers of \code{x}}
 
-\item{minDate}{Date, Character or Numeric. Optional: minimum date to include in the calculation (see \link{\code{subsetRasterTS}}). Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)}
+\item{minDate}{Date, Character or Numeric. Optional: minimum date to include in the calculation (see \code{\link{subsetRasterTS}}). Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)}
 
-\item{maxDate}{Date, Character or Numeric. Optional: maximum date to include in the calculation (see \link{\code{subsetRasterTS}}). Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)}
+\item{maxDate}{Date, Character or Numeric. Optional: maximum date to include in the calculation (see \code{\link{subsetRasterTS}}). Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)}
 
 \item{sensor}{Character. Optional: limit calculation to selected (Landsat) sensors. Defaults to "all" for all data.}
 
-\item{...}{Additional arguments to be passed to \link{\code{mc.calc}}}
+\item{...}{Additional arguments to be passed to \code{\link{mc.calc}}}
 }
 \value{
 A Raster layer representing the summary statistic of each pixel in the input RasterBrick or RasterStack
@@ -69,6 +69,6 @@ plot(valRange)
 Ben DeVries
 }
 \seealso{
-\link{\code{annualSummary}}
+\code{\link{annualSummary}}
 }
 

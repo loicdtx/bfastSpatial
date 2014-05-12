@@ -13,7 +13,7 @@ cleanBrick(x, monperiod, thresh, dates = NULL, sceneID = NULL,
 
 \item{thresh}{Either a Numeric static threshold or \code{"IQR"} to calcalate the threshold per pixel based on the interquartile zone.}
 
-\item{dates}{Date. Vector of dates corresponding exactly to layers in x. If \code{NULL}, dates are either extracted from \code{sceneID} or \code{names(x)} using \link{code{getSceneinfo}}.}
+\item{dates}{Date. Vector of dates corresponding exactly to layers in x. If \code{NULL}, dates are either extracted from \code{sceneID} or \code{names(x)} using \code{\link{getSceneinfo}}.}
 
 \item{sceneID}{Character. Vector of Landsat sceneID's}
 
