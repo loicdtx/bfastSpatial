@@ -15,5 +15,6 @@ Depends:
     parallel,
     bfast,
     gdalUtils,
-    stringr
+    stringr,
+    doMC
 License: tbd
