@@ -16,5 +16,5 @@ Depends:
     bfast,
     gdalUtils,
     stringr,
-    doMC
+    foreach
 License: tbd
