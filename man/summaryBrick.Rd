@@ -15,7 +15,7 @@ summaryBrick(x, fun, dates = NULL, sceneID = NULL, na.rm = NULL,
 
 \item{sceneID}{Character. Optional: vector of Landsat scene ID's corresponding exactly to layers of \code{x}}
 
-\item{minDate}{Date, Character or Numeric. Optional: minimum date to include in the calculation (see \code{\link{subsetRasterTS}}). Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)}
+\item{minDate}{Date, Character or Numeric. Optional: minimum date to include in the calculation. Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)}
 
 \item{maxDate}{Date, Character or Numeric. Optional: maximum date to include in the calculation (see \code{\link{subsetRasterTS}}). Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)}
 

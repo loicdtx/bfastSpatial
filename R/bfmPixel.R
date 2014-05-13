@@ -8,7 +8,7 @@
 #' @param cell Numeric. Can be one of: (1) a numeric of length 1 indicating the raster cell to be observed; (2) a numeric of length 2 representing the (x,y) coordinate of the raster cell to be observed. Can also be omitted, in which case 'interactive' must be set to TRUE (see below)
 #' @param f Numeric. Factor by which to rescale values before running \code{bfastmonitor}. Defaults to 1 (no rescaling)
 #' @param min.thresh Numeric. Optional: A minimum threshold below which NA's are assigned to data points. NOTE: the threshold is applied \emph{before} rescaling the data by \code{f} (see above)
-#' @param sceneID Character. Optional: character vector of Landsat scene ID's, corresponding to layers in x. These can be supplied instead of \code{dates} if using Landsat data. If neither \code{dates} nor \code{sceneID} are supplied, scene ID must be contained in \code{names(x)}
+#' @param sceneID Character. Optional: character vector of Landsat scene ID's, corresponding to layers in x. These can be supplied instead of \code{dates} if using Landsat data. If neither \code{dates} nor \code{sceneID} are supplied, scene ID must be contained in \code{names(x)} or found in the z dimension of x (see \code{\link{getZ}})
 #' @param sensor Character. Optional: Limit analysis to data from one or more sensors. Can be one or more of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", "OLI")} according to the sensor information returned by \code{\link{getSceneinfo}}
 #' @param interactive Logical. Select cell by clicking on an already plotted map? Defaults to \code{FALSE}. If \code{FALSE}, a value must be assigned to \code{cell} (see above).
 #' @param plot Logical. Plot the result? Defaults to \code{FALSE}.
@@ -69,12 +69,20 @@ bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thr
 {
 
     # if no dates are provided, these must come from either sceneID or names(x) (ie. it is assumed then that x is Landsat-derived)
-    if(is.null(dates) & is.null(sceneID)){
-        s <- getSceneinfo(names(x))
-        dates <- s$date
+    if(is.null(dates)) {
+        if(is.null(getZ(x))) {
+            if(!all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){ # Check if dates can be extracted from layernames
+                stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
+                
+            } else {
+                dates <- as.Date(getSceneinfo(names(x))$date)
+            }
+        } else {
+            dates <- getZ(x)
+        }
     } else if(is.null(dates) & !is.null(sceneID)){
         s <- getSceneinfo(sceneID)
-        dates <- s$date
+        dates <- as.Date(s$date)
     }
     
     # select cell from the input raster brick x in 1 of 3 ways:
@@ -91,7 +99,14 @@ bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thr
     pixelts <- as.vector(x[cell])
     
     # optional: subset by sensor (Landsat only) and redefine s and dates
-    if(!is.null(sensor)){
+    if(is.null(sceneID) & !all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){
+        warning("Scene IDs should be supplied as names(x) or as sceneID to subset by sensor. Ignoring...\n")
+    } else {
+        if(!is.null(sceneID)){
+            s <- getSceneinfo(sceneID)
+        } else {
+            s <- getSceneinfo(names(x))
+        }
         if("ETM+" %in% sensor)
             sensor <- c(sensor, "ETM+ SLC-on", "ETM+ SLC-off")
         pixelts <- pixelts[which(s$sensor %in% sensor)]

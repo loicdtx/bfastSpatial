@@ -3,19 +3,21 @@
 \alias{annualSummary}
 \title{Annual summary of a time series RasterBrick}
 \usage{
-annualSummary(x, fun, sceneID = NULL, years = NULL, sensor = "all",
-  na.rm = NULL, ...)
+annualSummary(x, fun, dates = NULL, years = NULL, sceneID = NULL,
+  sensor = "all", na.rm = NULL, ...)
 }
 \arguments{
 \item{x}{RasterBrick or RasterStack}
 
 \item{fun}{Function to apply over each pixel for each year}
 
+\item{dates}{Date. Optional: vector of dates exactly corresponding to the layers of x. If not included, dates must be included in the z dimension of x (see \code{\link{getZ}}) or in \code{names(x)}}
+
+\item{years}{Numeric. Optional: Vector of years to which to limit the summary.}
+
 \item{sceneID}{Character. Optional: Landsat scene ID's for each layer of the input RasterBrick or RasterStack. If not given, sceneID's must be contained in the layer names}
 
-\item{years}{Numeric. Vector of years to which to limit the summary.}
-
-\item{sensor}{Character. Optional: limit calculation to images from a particular sensor. Defaults to "all", but can take any of "TM", "ETM+", "ETM+ SLC-off" or "ETM+ SLC-on"}
+\item{sensor}{Character. Optional: limit calculation to images from a particular sensor. Defaults to "all", but can take any of "TM", "ETM+", "ETM+ SLC-off" or "ETM+ SLC-on". Will be ignored with a warning if \code{names(x)} do not correspond to Landsat scene ID's.}
 
 \item{...}{Arguments to be passed to \code{\link{mc.calc}}}
 }

@@ -6,7 +6,7 @@
 #' @param fun Function to apply to vectors extracted from each pixel
 #' @param dates Date. Optional: vector of dates corresponding exactly to layers of \code{x}
 #' @param sceneID Character. Optional: vector of Landsat scene ID's corresponding exactly to layers of \code{x}
-#' @param minDate Date, Character or Numeric. Optional: minimum date to include in the calculation (see \code{\link{subsetRasterTS}}). Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)
+#' @param minDate Date, Character or Numeric. Optional: minimum date to include in the calculation. Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)
 #' @param maxDate Date, Character or Numeric. Optional: maximum date to include in the calculation (see \code{\link{subsetRasterTS}}). Should either be supplied as a \code{date} or \code{numeric} of length 2 (see Details)
 #' @param sensor Character. Optional: limit calculation to selected (Landsat) sensors. Defaults to "all" for all data.
 #' @param ... Additional arguments to be passed to \code{\link{mc.calc}}
@@ -68,11 +68,22 @@ summaryBrick <- function(x, fun, dates=NULL, sceneID=NULL, na.rm=NULL, minDate=N
             maxDate <- as.Date(paste(maxDate, collapse="-"), format="%Y-%j")
         }
         
-        # get dates
-        if(is.null(dates) & is.null(sceneID)){
-            dates <- getSceneinfo(names(x))$date
+        # get dates:
+        # if no dates are provided, these must come from either sceneID or names(x) (ie. it is assumed then that x is Landsat-derived)
+        if(is.null(dates)) {
+            if(is.null(getZ(x))) {
+                if(!all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){ # Check if dates can be extracted from layernames
+                    stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
+                    
+                } else {
+                    dates <- as.Date(getSceneinfo(names(x))$date)
+                }
+            } else {
+                dates <- getZ(x)
+            }
         } else if(is.null(dates) & !is.null(sceneID)){
-            dates <- getSceneinfo(sceneID)$date
+            s <- getSceneinfo(sceneID)
+            dates <- as.Date(s$date)
         }
         
         # make a new vector of allowable dates
@@ -86,7 +97,11 @@ summaryBrick <- function(x, fun, dates=NULL, sceneID=NULL, na.rm=NULL, minDate=N
     }
     
     # if sensor != "all", then limit the analysis to a particular sensor
-    if(sensor != "all"){
+    if(is.null(sceneID) & !all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){
+        warning("Scene IDs should be supplied as names(x) or as sceneID to subset by sensor. Ignoring...\n")
+        sensor <- "all"
+    }
+    if(sensor != "all"){   
         if ("ETM+" %in% sensor) {
             sensor <- unique(c(sensor, "ETM+ SLC-on", "ETM+ SLC-off"))
         }

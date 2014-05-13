@@ -20,7 +20,7 @@ bfmPixel(x, dates = NULL, start, monend = NULL, cell = NULL, f = 1,
 
 \item{min.thresh}{Numeric. Optional: A minimum threshold below which NA's are assigned to data points. NOTE: the threshold is applied \emph{before} rescaling the data by \code{f} (see above)}
 
-\item{sceneID}{Character. Optional: character vector of Landsat scene ID's, corresponding to layers in x. These can be supplied instead of \code{dates} if using Landsat data. If neither \code{dates} nor \code{sceneID} are supplied, scene ID must be contained in \code{names(x)}}
+\item{sceneID}{Character. Optional: character vector of Landsat scene ID's, corresponding to layers in x. These can be supplied instead of \code{dates} if using Landsat data. If neither \code{dates} nor \code{sceneID} are supplied, scene ID must be contained in \code{names(x)} or found in the z dimension of x (see \code{\link{getZ}})}
 
 \item{sensor}{Character. Optional: Limit analysis to data from one or more sensors. Can be one or more of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", "OLI")} according to the sensor information returned by \code{\link{getSceneinfo}}}
 
