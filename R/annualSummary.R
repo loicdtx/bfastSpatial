@@ -4,10 +4,12 @@
 #' 
 #' @param x RasterBrick or RasterStack
 #' @param fun Function to apply over each pixel for each year
+#' @param dates Date. Optional: vector of dates exactly corresponding to the layers of x. If not included, dates must be included in the z dimension of x (see \code{\link{getZ}}) or in \code{names(x)}
+#' @param years Numeric. Optional: Vector of years to which to limit the summary.
 #' @param sceneID Character. Optional: Landsat scene ID's for each layer of the input RasterBrick or RasterStack. If not given, sceneID's must be contained in the layer names
-#' @param years Numeric. Vector of years to which to limit the summary.
-#' @param sensor Character. Optional: limit calculation to images from a particular sensor. Defaults to "all", but can take any of "TM", "ETM+", "ETM+ SLC-off" or "ETM+ SLC-on"
+#' @param sensor Character. Optional: limit calculation to images from a particular sensor. Defaults to "all", but can take any of "TM", "ETM+", "ETM+ SLC-off" or "ETM+ SLC-on". Will be ignored with a warning if \code{names(x)} do not correspond to Landsat scene ID's.
 #' @param ... Arguments to be passed to \code{\link{mc.calc}}
+#' 
 #' @return RasterBrick with results of \code{fun} for each year represented in the input time series RasterBrick.
 #' 
 #' @details
@@ -35,35 +37,51 @@
 #'  length(x[!is.na(x)])
 #' annualObs <- annualSummary(tura, fun=ff, sensor="ETM+")
 
-annualSummary <- function(x, fun, sceneID=NULL, years=NULL, sensor="all", na.rm=NULL, ...){
+annualSummary <- function(x, fun, dates=NULL, years=NULL, sceneID=NULL, sensor="all", na.rm=NULL, ...){
 
-    # TODO: make this applicable to non-Landsat data if a 'dates' vector is supplied
-    
-    # get scene information from layer names
-    if(is.null(sceneID)){
-        s <- getSceneinfo(names(x))
-    } else {
-        s <- getSceneinfo(sceneID)
-        names(x) <- row.names(s)
+    # get dates (if is.null(dates))
+    if(is.null(dates)) {
+        if(is.null(getZ(x))) {
+            if(!all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){ # Check if dates can be extracted from layernames
+                stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
+                
+            } else {
+                dates <- as.Date(getSceneinfo(names(x))$date)
+            }
+        } else {
+            dates <- getZ(x)
+        }
     }
     
+    # extract years
+    y <- substr(dates, 1, 4)
+    
+    # vector of years over which to process
+    yrs <- sort(unique(y))
+    
     # if sensor != "all", then limit the analysis to a particular sensor
+    if ("ETM+" %in% sensor) {
+        sensor <- unique(c(sensor, "ETM+ SLC-on", "ETM+ SLC-off"))
+    }
+    
     if(sensor != "all"){
-        if ("ETM+" %in% sensor) {
-            sensor <- unique(c(sensor, "ETM+ SLC-on", "ETM+ SLC-off"))
+        if(is.null(sceneID) & !all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){
+            warning("Scene IDs should be supplied as names(x) or as sceneID to subset by sensor. Ignoring...\n")
+            scenes <- NULL
+        } else {
+            # get sceneinfo
+            if(!is.null(sceneID)){
+                s <- getSceneinfo(sceneID)
+            } else {
+                s <- getSceneinfo(names(x))
+            }
+            # 'allowed' scenes
+            scenes <- which(s$sensor %in% sensor)
         }
-        # 'allowed' scenes
-        scenes <- which(s$sensor %in% sensor)
     } else {
         scenes <- NULL
     }
-    
-    # add year column to s
-    s$year <- as.numeric(substr(s$date, 1, 4))
-    
-    # vector of years over which to process
-    yrs <- sort(unique(s$year))
-    
+
     # limit to user-defined period
     if(!is.null(years))
         yrs <- yrs[yrs %in% years]
@@ -78,7 +96,7 @@ annualSummary <- function(x, fun, sceneID=NULL, years=NULL, sensor="all", na.rm=
             b <- b[scenes]
         ps <- vector("numeric", length(yrs))
         for(i in 1:length(yrs)){
-            args <- list(b[which(s$year == yrs[i])])
+            args <- list(b[which(y == yrs[i])])
             if(is.logical(na.rm))
                 args$na.rm <- na.rm
             ps[i] <- do.call(fun, args)
@@ -91,5 +109,4 @@ annualSummary <- function(x, fun, sceneID=NULL, years=NULL, sensor="all", na.rm=
     out <- mc.calc(x, fun=pixStat, ...)
     
     return(out)
-    
 }
