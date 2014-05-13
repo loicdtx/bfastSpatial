@@ -20,6 +20,7 @@
 #' 
 #' @import raster
 #' @import igraph
+#' @import doMC
 #' @export
 #' 
 #' @seealso \code{\link{clump}}
