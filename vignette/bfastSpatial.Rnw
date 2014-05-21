@@ -62,7 +62,7 @@ Some pre-processing functions require the \code{rgdal} package, which is a bindi
 \section{Downloading Landsat data from Earth Explorer/espa}
 Working with Landsat time-series often involves downloading large amounts of data. The full Landsat archive for one path/row may very well exceed 500 scenes in some parts of the world. The most common way to access the data is via the \href{http://earthexplorer.usgs.gov/}{Earth Explorer platform}. You need to have an account before being able to request data to be pre-processed.
 \subsection{Placing your order}
-USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows. A convenient way of placing an order at the moment is via \href{http://espa.cr.usgs.gov/}{espa} (you will need to request a username/password, which is different from your USGS credentials). Once you have entered the credentials provided to you, you may use the interface to upload the list of scenes you want to have pre-processed. A scene list is a simple text file with a scene ID (eg: LT52302701999134) on each line. Note that this order system is likely to evolve in the future.
+USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows. A convenient way of placing an order at the moment is via \href{http://espa.cr.usgs.gov/}{espa} (you will need to request a username/password, which is different from your USGS credentials). Once you have entered the credentials provided to you, you may use the interface to upload the list of scenes you want to have pre-processed, select the layers of interest and place your order. A scene list is a simple text file with a scene ID (eg: LT52302701999134) on each line. Note that this order system is likely to evolve in the future.
 \subsection{Downloading the data}
 Once you receive the e-mail from ESPA notifying you that your order has been pre-processed, you will be able to proceed to the download of the data. Because the amount of scenes is usually large, the use of a download manager is highly recommended. Two options:
 \begin{itemize}
@@ -85,13 +85,45 @@ The \code{bfastSpatial} package includes utilities to pre-process Landsat surfac
 \end{itemize}
 
 The two important functions to perform the above mentioned steps are \code{processLandsat} and \code{processLandsatBatch}. The former is a wrapper that performs the above steps sequentially, automatically generating file names and deleting unnecessary intermediary outputs. The latter (\code{processLandsatBatch}) allows a user to run \code{processLandsat} in batch mode, over several scenes, with parallel support. Several vegetation indices are supported by both \code{processLandsat} and \code{processLandsatBatch}.
-Let's illustrate that with an example. We added subsets of Landsat data to the package in order to illustrate the pre-processing steps. The test datasets are stored under the \code{external/} directory of the installed package. To list the content of that directory, run the following comand.
+Let's illustrate with an example how these functions work. We added subsets of Landsat data to the package in order to illustrate the pre-processing steps. The test datasets are stored under the \code{external/} directory of the installed package. To list the content of that directory, run the following comand.
 <<'listPackageData'>>=
 list.files(system.file('external', package='bfastSpatial'), full.names=TRUE)
 @
-Using the \code{full.names=TRUE} argument allows you to directly use the elements of the list create without having to set working directories.
+Using the \code{full.names=TRUE} argument allows you to directly use the elements of the list create without having to set working directories.\\
 
-% TODO add example here
+
+Since these functions are meant to write new data to disk, we will make use as much as possible of the raster temporary directory in order to make the examples reproducible independently of the paths you set.The raster temporary directory is a variable set by the \code{raster} package. The example below first creates a sub-dirrectory in the temporary directory of your system and uses this location for storage of intermediary and final outputs of the function.
+
+<<'processLandsat'>>=
+# Set the location of output and intermediary directories (everything in tmpdir in that case)
+srdir <- dirout <- file.path(rasterOptions()$tmpdir, 'bfmspatial')
+dir.create(dirout, showWarning=FALSE)
+
+# Get list of test data files
+list <- list.files(system.file('external', package='bfastSpatial'), full.names=TRUE)
+
+# Generate (or extract, depending on whether the layer is already in the archive or not) NDVI for the first archive file
+processLandsat(x=list[1], vi='ndvi', outdir=dirout, srdir=srdir, delete=TRUE, mask='fmask', keep=0, overwrite=TRUE)
+
+# Visualize one of the layers produced
+list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
+plot(r <- raster(list[1]))
+@
+A few remarks about the above example:
+\begin{itemize}
+    \item A mask (\code{mask=}) had to be selected; in that case \code{'fmask'}, which is one of the layers of the landsat archive file delivered by USGS/ESPA. For details about that mask and know which values to keep (\code{keep=}), you can visit \href{http://code.google.com/p/cfmask/}{this page}, or for general information on the layers provided in the archive, see the \href{http://landsat.usgs.gov/documents/cdr_sr_product_guide.pdf}{product guide}.
+    \item The option \code{delete=} does not delete the original tarball/zip file, but instead the intermediary output, which is the layers uncompressed from the archive later used to compute the vegetation indices. This option is usefull in case you want to keep the data in their compressed form only, hence reducing disk space usage.
+    \item No output filename was required; that variable is automatically generated from the input file and the \code{vi} selected.
+    \item The extension of the output is by default .grd. This is the native format of the raster package. This format has many advantages over more common GeoTiff or ENVI formats.
+    \begin{itemize}
+        \item Original layer names are kept in multi-layer objects.
+        \item There is a possibility to add a z dimension to multilayer objects, useful for storing time information for instance.
+        \item Can be read and written without requiring the \code{rgdal} package (which is not always easy to install).
+    \end{itemize}
+\end{itemize}
+
+
+
 
 Once the vegetation index layers have been produced for several dates, they can be stacked, in order to create a multilayer raster object, with time dimention written in the file as well. The function to perform this operation on Landsat data is the \code{timeStack} function. By simply providing a list of file names or a directory containing the files, the function will create a multilayer object and directly parse through the file names to extract temporal information from them and write that information to the object created.
 
