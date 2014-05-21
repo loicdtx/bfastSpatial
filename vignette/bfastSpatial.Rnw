@@ -59,12 +59,12 @@ There are no specific system requirements for Windows, besides having (a recent 
 \subsection{Linux \& Mac}
 Some pre-processing functions require the \code{rgdal} package, which is a binding between the gdal library and R. For \code{rgdal} to work on Linux and Mac systems, gdal should be installed and properly set-up. For that, please refer to the web page of the \href{http://www.gdal.org/}{gdal project} as well as \href{http://cran.r-project.org/web/packages/rgdal/index.html}{rgdal}.
 
-\section{Downloading Landsat data from Earth Explorer}
+\section{Downloading Landsat data from Earth Explorer/espa}
 Working with Landsat time-series often involves downloading large amounts of data. The full Landsat archive for one path/row may very well exceed 500 scenes in some parts of the world. The most common way to access the data is via the \href{http://earthexplorer.usgs.gov/}{Earth Explorer platform}. You need to have an account before being able to request data to be pre-processed.
 \subsection{Placing your order}
-USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows.
+USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows. A convenient way of placing an order at the moment is via \href{http://espa.cr.usgs.gov/}{espa} (you will need to request a username/password, which is different from your USGS credentials). Once you have entered the credentials provided to you, you may use the interface to upload the list of scenes you want to have pre-processed. A scene list is a simple text file with a scene ID (eg: LT52302701999134) on each line. Note that this order system is likely to evolve in the future.
 \subsection{Downloading the data}
-Once you receive the e-mail from USGS notifying you that your order has been pre-processed, you will be able to proceed to the download of the data. Because the amount of scenes is usually large, the use of a download manager is highly recommended. Two options:
+Once you receive the e-mail from ESPA notifying you that your order has been pre-processed, you will be able to proceed to the download of the data. Because the amount of scenes is usually large, the use of a download manager is highly recommended. Two options:
 \begin{itemize}
 \item The Bulk Download Application
 \item The DownloadThemAll plugin of the firefox browser
