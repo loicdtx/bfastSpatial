@@ -144,7 +144,7 @@ processLandsatBatch(x=dir, pattern=glob2rx('*.zip'), outdir=dirout, srdir=srdir,
 
 # Visualize one of the layers produced
 list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
-plot(r <- raster(list[1]))
+# plot(r <- raster(list[1]))
 @
 
 If you visualize the two layers produced, you'll notice that they look similar; this is simply because they in fact are the same image. Only the file name for one of the two images has been altered to make it look like it has been acquired at a different date. The reason behind this trick is that at the time we are writting this tutorial, USGS has only released \textbf{test data} of the new Landsat delivery format, and for only a few scenes and one date for each of these scenes.
@@ -166,6 +166,9 @@ stackName <- file.path(dirout, 'stackTest.grd')
 
 # Stack the layers
 s <- timeStack(x=list, filename=stackName, datatype='INT2S')
+
+# Visualize both layers (They are the same for the reason stated above)
+plot(s)
 @
 About the example above:
 \begin{itemize}
