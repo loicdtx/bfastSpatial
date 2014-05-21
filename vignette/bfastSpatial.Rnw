@@ -97,7 +97,8 @@ Since these functions are meant to write new data to disk, we will make use as m
 
 <<'processLandsat'>>=
 # Set the location of output and intermediary directories (everything in tmpdir in that case)
-srdir <- dirout <- file.path(rasterOptions()$tmpdir, 'bfmspatial')
+# We use dirname(rasterTmpFile()) instead of rasterOptions()$tmpdir to reduce verbose
+srdir <- dirout <- file.path(dirname(rasterTmpFile()), 'bfmspatial')
 dir.create(dirout, showWarning=FALSE)
 
 # Get list of test data files
@@ -132,7 +133,7 @@ For that, use the \code{processLandsatBatch} function; it allows to perform the 
 We saw above that the test data directory of the package contains 2 files (zip archives); we will generate from both of them vegetation index layers. This is not a great challenge, and could very well be achieved by running twice the same line, but in a real case you may very well have hundreds of input files and it will save you a lot of time and energy if you can process them all in one line.
 <<'processLandsatBatch'>>=
 # Create a temporary directory to store the output files.
-srdir <- dirout <- file.path(rasterOptions()$tmpdir, 'bfmspatial_2')
+srdir <- dirout <- file.path(dirname(rasterTmpFile()), 'bfmspatial_2')
 dir.create(dirout, showWarning=FALSE)
 
 # Get the directory where the Landsat archives are stored
@@ -152,8 +153,27 @@ If you visualize the two layers produced, you'll notice that they look similar; 
 Once the vegetation index layers have been produced for several dates, they can be stacked, in order to create a multilayer raster object, with time dimention written in the file as well. The function to perform this operation on Landsat data is the \code{timeStack} function. By simply providing a list of file names or a directory containing the files, the function will create a multilayer object and directly parse through the file names to extract temporal information from them and write that information to the object created.\\
 
 Make sure you have ran the previous code chunk before running the code below.
+<<'timeStack'>>=
+# Make sure that the list object generated in the prvious code chunk
+# contains 2 elements only
+list
+# Create a new subdirectory in the temporary directory
+dirout <- file.path(dirname(rasterTmpFile()), 'stack')
+dir.create(dirout, showWarnings=FALSE)
 
+# Generate a file name for the output stack
+stackName <- file.path(dirout, 'stackTest.grd')
 
+# Stack the layers
+s <- timeStack(x=list, filename=stackName, datatype='INT2S')
+@
+About the example above:
+\begin{itemize}
+    \item It is absolutely necessary for this function to work that the input layers have the same extent. Two Landsat scenes belonging to the same path/row, but acquired at different times often have slightly different extents. We therefore recomend to always use an extent object in \code{processLandsat} and \code{processLandsatBatch}, even when working with full scenes.
+    \item Time information is automatically extracted from the layer names (using \code{getSceneInfo}) and written to the z dimention of the stack.
+    \item We chose to write the output to the .grd format, which allows the time information to be stored as well as the original layer names.
+    \item The \code{x=} argument can also simply be the directory containing the layers; in which case we recomend using \code{pattern=} as well in order to ensure that only the desired files are included.
+\end{itemize}
 
 \section{Data Inventory}
 
