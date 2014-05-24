@@ -37,7 +37,7 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     
     
     if(extension(x[1]) == '.hdf') { 
-        x <- unlist(sapply(FUN=function(x){try(get_subdatasets(x), silent=TRUE)}, X=x)) #get_subdataset returns an error in case one of the hdfs contains no more than one sds (which can be the case when VIs are ordered via espa)
+        x <- unlist(sapply(FUN=function(x){try(get_subdatasets(x), silent=TRUE)}, X=x), use.names=FALSE) #get_subdataset returns an error in case one of the hdfs contains no more than one sds (which can be the case when VIs are ordered via espa)
     }
     
     
