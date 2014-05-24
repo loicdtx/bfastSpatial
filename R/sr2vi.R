@@ -105,7 +105,7 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
             if(class(e) != 'extent') {
                 e <- extent(e)
             }
-            s <- crop(s, e)
+            bands <- lapply(X=bands, FUN=crop, y=e)
             if(!is.null(mask)) {
                 mask <- crop(mask, e)
             }
