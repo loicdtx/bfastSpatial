@@ -36,8 +36,8 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     
     
     
-    if(extension(x[1]) == '.hdf') { # Also should be the only case when length(x) == 1
-        x <- get_subdatasets(x[1])
+    if(extension(x[1]) == '.hdf') { 
+        x <- unlist(sapply(FUN=function(x){try(get_subdatasets(x), silent=TRUE)}, X=x)) #get_subdataset returns an error in case one of the hdfs contains no more than one sds (which can be the case when VIs are ordered via espa)
     }
     
     
@@ -45,8 +45,8 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     ###########################################################################
     # When the indices are already pre-processed ------------------------------
        
-    if(any(grepl(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x))) { 
-        vi <- raster(grep(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x, value=TRUE))
+    if(any(grepl(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x, ignore.case=TRUE))) { 
+        vi <- raster(grep(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x, value=TRUE, ignore.case=TRUE))
         if(!is.null(mask)) {
             mask <- raster(grep(pattern=sprintf("^.*%s($|\\.tif|_band$)", mask), x=x, value=TRUE)) # Called 'fmask_band' in the hdf file
         }
