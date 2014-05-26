@@ -1,7 +1,7 @@
 Package: bfastSpatial
 Type: Package
 Title: Utilities to monitor for change on satellite image time-series
-Version: 0.2
+Version: 0.2.2
 Date: 2014-04-06
 Author: Loic Dutrieux, Ben DeVries, Jan Verbesselt
 Maintainer: <loic.dutrieux@gmail.com>
