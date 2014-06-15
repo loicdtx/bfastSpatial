@@ -16,7 +16,7 @@
 
 .isLandsatSceneID <- function(x){
         if(is.character(x)) {
-            grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x)
+            all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x))
         } else if(inherits(x, 'RasterStackBrick')) {
             all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))
         }
