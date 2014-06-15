@@ -42,15 +42,17 @@ annualSummary <- function(x, fun, dates=NULL, years=NULL, sceneID=NULL, sensor="
     # get dates (if is.null(dates))
     if(is.null(dates)) {
         if(is.null(getZ(x))) {
-            if(!.hasLandsatSceneID(x)){ # Check if dates can be extracted from layernames
+            if(!.isLandsatSceneID(x)){ # Check if dates can be extracted from layernames
                 stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
-                
             } else {
                 dates <- as.Date(getSceneinfo(names(x))$date)
             }
         } else {
             dates <- getZ(x)
         }
+    } else if(is.null(dates) & !is.null(sceneID)){
+        s <- getSceneinfo(sceneID)
+        dates <- as.Date(s$date)
     }
     
     # extract years

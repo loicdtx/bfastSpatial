@@ -76,7 +76,7 @@ summaryBrick <- function(x, fun, dates=NULL, sceneID=NULL, na.rm=NULL, minDate=N
         # if no dates are provided, these must come from either sceneID or names(x) (ie. it is assumed then that x is Landsat-derived)
         if(is.null(dates)) {
             if(is.null(getZ(x))) {
-                if(!.hasLandsatSceneID(x)){ # Check if dates can be extracted from layernames
+                if(!.isLandsatSceneID(x)){ # Check if dates can be extracted from layernames
                     stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
                 } else {
                     dates <- as.Date(getSceneinfo(names(x))$date)
@@ -100,7 +100,7 @@ summaryBrick <- function(x, fun, dates=NULL, sceneID=NULL, na.rm=NULL, minDate=N
     }
     
     # if sensor != "all", then limit the analysis to a particular sensor
-    if(is.null(sceneID) & !.hasLandsatSceneID(x)){
+    if(is.null(sceneID) & !.isLandsatSceneID(x)){
         warning("Scene IDs should be supplied as names(x) or as sceneID to subset by sensor. Ignoring...\n")
         sensor <- "all"
     }

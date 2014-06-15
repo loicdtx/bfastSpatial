@@ -21,8 +21,8 @@
 countObs <- function(x, navalues=c(NA), sensor = "all", as.perc=FALSE, ...){
     
     # include data only from desired sensor(s), only if Landsat scene ID's are provided
-    if(sensor != "all" & !all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){
-        warning("Scene IDs should be supplied as names(x) or as sceneID to subset by sensor. Ignoring...\n")
+    if(sensor != "all" & !.isLandsatSceneID(x)){
+        warning("Scene IDs should be supplied as names(x) to subset by sensor. Ignoring...\n")
         sensor <- "all"
     }
     if (sensor != "all") {

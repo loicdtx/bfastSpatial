@@ -26,8 +26,11 @@ subsetRasterTS <- function(x, sceneID=NULL, sensor="all", minDate=NULL, maxDate=
     if(!is.null(sceneID)){
         s <- getSceneinfo(sceneID)
     } else {
-        s <- getSceneinfo(names(x))
-        ### TODO: insert .hasLandsatMetadata() here as an additional check
+        if(.isLandsatSceneID(x)){
+            s <- getSceneinfo(names(x))
+        } else {
+            stop("Landsat scene information must be supplied either as 'sceneID' or via names(x).\n")
+        }
     }
     
     

@@ -73,16 +73,17 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
         
     if(is.null(dates)) {
         if(is.null(getZ(x))) {
-
-            if(!all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){ # Check if dates can be extracted from layernames
+            if(!.isLandsatSceneID(x)){ # Check if dates can be extracted from layernames
                 stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
-
             } else {
                 dates <- as.Date(getSceneinfo(names(x))$date)
             }
         } else {
             dates <- getZ(x)
         }
+    } else if(is.null(dates) & !is.null(sceneID)){
+        s <- getSceneinfo(sceneID)
+        dates <- as.Date(s$date)
     }
     
     # optional: reformat sensor if needed
