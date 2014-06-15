@@ -100,7 +100,9 @@ bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thr
     # optional: subset by sensor (Landsat only) and redefine s and dates
     if(is.null(sceneID) & !all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){
         warning("Scene IDs should be supplied as names(x) or as sceneID to subset by sensor. Ignoring...\n")
-    } else {
+        sensor <- NULL
+    }
+    if(!is.null(sensor)){
         if(!is.null(sceneID)){
             s <- getSceneinfo(sceneID)
         } else {
