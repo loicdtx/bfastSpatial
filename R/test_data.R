@@ -1,8 +1,10 @@
-#' Landsat-like tarballs
-#' @name LE72220622001176EDC01-LE72220622002147EDC00-LT52220622004289CUB01
+#' Landsat-like zip archives
+#' @name LE70230282011250EDC00_sub.zip-LE70230282015250EDC00_sub_fake.zip
 #' @description subset of Landsat surface reflectance data for testing pre-processing steps.
 #' @docType data
 #' @author NASA/USGS
 #' @keywords data
 
 NULL
+
+

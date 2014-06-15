@@ -7,8 +7,12 @@
 #' @param sensor Character. Limit time series to specified sensor(s). Can take any combination of "ETM+ SLC-off", "ETM+ SLC-on", "ETM+", "TM", "OLI". Defaults to "all" (use all sensors).
 #' @param minDate Numeric. Optional: minumum date (in format c(year, julian day)) before which all layers will be removed from the RasterBrickStack.
 #' @param maxDate Numeric. Optional: maximum date (in format c(year, julian day)) after which all layers will be removed form the RasterBrickStack.
-#' @param ... Additional arguments to be passed to \link{\code{raster::subset}}
-#' @author Ben DeVries \email{devries.br@@gmail.com}
+#' @param ... Additional arguments to be passed to \code{\link{raster::subset}}
+#' 
+#' @details This function only supports Landsat data with associated scene ID's at this time. Support for MODIS (and possibly other datasets) wil follow in future versions.
+#' 
+#' @author Ben DeVries
+#' 
 #' @import raster
 #' @export
 #' 
@@ -22,8 +26,11 @@ subsetRasterTS <- function(x, sceneID=NULL, sensor="all", minDate=NULL, maxDate=
     if(!is.null(sceneID)){
         s <- getSceneinfo(sceneID)
     } else {
-        s <- getSceneinfo(names(x))
-        ### TODO: insert .hasLandsatMetadata() here as an additional check
+        if(.isLandsatSceneID(x)){
+            s <- getSceneinfo(names(x))
+        } else {
+            stop("Landsat scene information must be supplied either as 'sceneID' or via names(x).\n")
+        }
     }
     
     
