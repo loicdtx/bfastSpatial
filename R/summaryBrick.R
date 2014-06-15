@@ -47,8 +47,12 @@
 #' # the above could just as easily be done in calc() or mc.calc()
 #' # but summaryBrick allows for additional parameters
 #' # such as minDate and maxDate
+#' 
 #' # same function, but only for 2005
-#' vals <- summaryBrick(tura, fun=countVal, minDate="2005-01-01", maxDate=c(2006, 1))
+#' vals <- summaryBrick(tura, fun=countVal, minDate=c(2005, 1), maxDate=c(2006, 1))
+#' # equivalent to:
+#' vals <- summaryBrick(tura, fun=countVal, minDate="2005-01-01", maxDate="2006-01-01")
+
 #' 
 #' # range of values for each pixel
 #' valRange <- summaryBrick(tura, fun=range, na.rm=TRUE)
@@ -72,9 +76,8 @@ summaryBrick <- function(x, fun, dates=NULL, sceneID=NULL, na.rm=NULL, minDate=N
         # if no dates are provided, these must come from either sceneID or names(x) (ie. it is assumed then that x is Landsat-derived)
         if(is.null(dates)) {
             if(is.null(getZ(x))) {
-                if(!all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){ # Check if dates can be extracted from layernames
+                if(!.hasLandsatSceneID(x)){ # Check if dates can be extracted from layernames
                     stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
-                    
                 } else {
                     dates <- as.Date(getSceneinfo(names(x))$date)
                 }
@@ -97,7 +100,7 @@ summaryBrick <- function(x, fun, dates=NULL, sceneID=NULL, na.rm=NULL, minDate=N
     }
     
     # if sensor != "all", then limit the analysis to a particular sensor
-    if(is.null(sceneID) & !all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){
+    if(is.null(sceneID) & !.hasLandsatSceneID(x)){
         warning("Scene IDs should be supplied as names(x) or as sceneID to subset by sensor. Ignoring...\n")
         sensor <- "all"
     }
