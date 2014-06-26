@@ -124,7 +124,7 @@ bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thr
         pixelts <- pixelts * f
     
     # convert to a bfast ts object
-    pixelts <- bfastts(as.vector(x[cell]), dates, type=c("irregular"))
+    pixelts <- bfastts(pixelts, dates, type=c("irregular"))
     
     # optional: trim ts if monend is supplied
     if(!is.null(monend))
