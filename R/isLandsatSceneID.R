@@ -4,15 +4,10 @@
 #'  
 #' @param x Character or object of class RasterBrick or RasterStack
 #' 
-#' @return A logical vector of length \code{length(x)}, with values of \code{TRUE} if respective elements of \code{x} match Landsat scene ID criteria
+#' @return \code{TRUE} if all elements of \code{x} match Landsat scene ID criteria, or \code{FALSE} otherwise.
 #' 
 #' @author Ben DeVries, Loic Dutrieux
 #' 
-#' 
-#' @examples
-#' # check if layer names of tura RasterBrick correspond to Landsat naming convention
-#' data(tura)
-#' .isLandsatSceneID(tura)
 
 .isLandsatSceneID <- function(x){
         if(is.character(x)) {
