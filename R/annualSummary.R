@@ -6,7 +6,6 @@
 #' @param fun Function to apply over each pixel for each year
 #' @param dates Date. Optional: vector of dates exactly corresponding to the layers of x. If not included, dates must be included in the z dimension of x (see \code{\link{getZ}}) or in \code{names(x)}
 #' @param years Numeric. Optional: Vector of years to which to limit the summary.
-#' @param sceneID Character. Optional: Landsat scene ID's for each layer of the input RasterBrick or RasterStack. If not given, sceneID's must be contained in the layer names
 #' @param sensor Character. Optional: limit calculation to images from a particular sensor. Defaults to "all", but can take any of "TM", "ETM+", "ETM+ SLC-off" or "ETM+ SLC-on". Will be ignored with a warning if \code{names(x)} do not correspond to Landsat scene ID's.
 #' @param ... Arguments to be passed to \code{\link{mc.calc}}
 #' 
@@ -37,8 +36,24 @@
 #'  length(x[!is.na(x)])
 #' annualObs <- annualSummary(tura, fun=ff, sensor="ETM+")
 
-annualSummary <- function(x, fun, dates=NULL, years=NULL, sceneID=NULL, sensor="all", na.rm=NULL, ...){
+annualSummary <- function(x, fun, dates=NULL, years=NULL, sensor=NULL, na.rm=NULL, ...){
 
+    # if sensor is given (!is.null(sensor)), then limit the analysis to a particular sensor
+    if(!is.null(sensor)){
+        if ("ETM+" %in% sensor) {
+            sensor <- unique(c(sensor, "ETM+ SLC-on", "ETM+ SLC-off"))
+        }
+        if(!.isLandsatSceneID(x)){
+            warning("Scene IDs should be supplied as names(x) to subset by sensor. Ignoring...\n")
+            scenes <- NULL
+        } else {
+            # 'allowed' scenes
+            scenes <- which(getSceneinfo(names(x))$sensor %in% sensor)
+        }
+    } else {
+        scenes <- NULL
+    }
+        
     # get dates (if is.null(dates))
     if(is.null(dates)) {
         if(is.null(getZ(x))) {
@@ -50,9 +65,15 @@ annualSummary <- function(x, fun, dates=NULL, years=NULL, sceneID=NULL, sensor="
         } else {
             dates <- getZ(x)
         }
-    } else if(is.null(dates) & !is.null(sceneID)){
-        s <- getSceneinfo(sceneID)
-        dates <- as.Date(s$date)
+    } else {
+        if(length(dates) != nlayers(x)){
+            stop("dates should be of same length as nlayers(x)")
+        }
+    }
+    
+    # trim dates if a sensor had been supplied
+    if(!is.null(scenes)){
+        dates <- dates[scenes]
     }
     
     # extract years
@@ -61,36 +82,9 @@ annualSummary <- function(x, fun, dates=NULL, years=NULL, sceneID=NULL, sensor="
     # vector of years over which to process
     yrs <- sort(unique(y))
     
-    # if sensor != "all", then limit the analysis to a particular sensor
-    if ("ETM+" %in% sensor) {
-        sensor <- unique(c(sensor, "ETM+ SLC-on", "ETM+ SLC-off"))
-    }
-    
-    if(sensor != "all"){
-        if(is.null(sceneID) & !.hasLandsatSceneID(x)){
-            warning("Scene IDs should be supplied as names(x) or as sceneID to subset by sensor. Ignoring...\n")
-            scenes <- NULL
-        } else {
-            # get sceneinfo
-            if(!is.null(sceneID)){
-                s <- getSceneinfo(sceneID)
-            } else {
-                s <- getSceneinfo(names(x))
-            }
-            # 'allowed' scenes
-            scenes <- which(s$sensor %in% sensor)
-        }
-    } else {
-        scenes <- NULL
-    }
-
     # limit to user-defined period
     if(!is.null(years))
         yrs <- yrs[yrs %in% years]
-    
-    # trim yrs if a sensor is supplied
-    if(!is.null(scenes))
-        yrs <- sort(unique(s[scenes, ]$year))
     
     # function to be applied over each pixel in the RasterBrickStack
     pixStat <- function(b){
