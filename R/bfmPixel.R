@@ -8,7 +8,6 @@
 #' @param cell Numeric. Can be one of: (1) a numeric of length 1 indicating the raster cell to be observed; (2) a numeric of length 2 representing the (x,y) coordinate of the raster cell to be observed. Can also be omitted, in which case 'interactive' must be set to TRUE (see below)
 #' @param f Numeric. Factor by which to rescale values before running \code{bfastmonitor}. Defaults to 1 (no rescaling)
 #' @param min.thresh Numeric. Optional: A minimum threshold below which NA's are assigned to data points. NOTE: the threshold is applied \emph{before} rescaling the data by \code{f} (see above)
-#' @param sceneID Character. Optional: character vector of Landsat scene ID's, corresponding to layers in x. These can be supplied instead of \code{dates} if using Landsat data. If neither \code{dates} nor \code{sceneID} are supplied, scene ID must be contained in \code{names(x)} or found in the z dimension of x (see \code{\link{getZ}})
 #' @param sensor Character. Optional: Limit analysis to data from one or more sensors. Can be one or more of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", "OLI")} according to the sensor information returned by \code{\link{getSceneinfo}}
 #' @param interactive Logical. Select cell by clicking on an already plotted map? Defaults to \code{FALSE}. If \code{FALSE}, a value must be assigned to \code{cell} (see above).
 #' @param plot Logical. Plot the result? Defaults to \code{FALSE}.
@@ -16,7 +15,7 @@
 #' 
 #' @return A list with the following components: 1) $bfm - an object of class 'bfastmonitor' (see \code{\link{bfastmonitor}}) 2) $cell - the cell index (an integer of length 1). This can be used to run \code{bfmPixel} again on the same pixel (with different parameters) without having to click on a plot again to find the same pixel (in that case, be sure to set interactive=FALSE for subsequent trials!).
 #' 
-#' @details \code{bfmPixel} is theoretically designed to work on any generic raster time series, as long as a \code{dates} vector is provided. In the absence of a \code{dates} vector, a number of additional options are included for Landsat data only: a \code{sceneID} character vector can be supplied, which corresponds to the Landsat scene ID's of each raster layer in x; or \code{names(x)} should correspond exactly to respective Landsat scene ID's. In these two cases, \code{\link{getSceneinfo}} is used to extract a dates vector, and subset by sensor if desired.
+#' @details \code{bfmPixel} is theoretically designed to work on any generic raster time series, as long as a \code{dates} vector is provided. In the absence of a \code{dates} vector, \code{names(x)} should correspond exactly to respective Landsat scene ID's. In this case, \code{\link{getSceneinfo}} is used to extract a dates vector, and subset by sensor if desired.
 #' 
 #' @author Ben DeVries
 #' 
@@ -65,10 +64,10 @@
 #' @import bfast
 #' @export
 
-bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thresh=NULL, sceneID=NULL, sensor=NULL, interactive=FALSE, plot=FALSE, ...) 
+bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thresh=NULL, sensor=NULL, interactive=FALSE, plot=FALSE, ...) 
 {
 
-    # if no dates are provided, these must come from either sceneID or names(x) (ie. it is assumed then that x is Landsat-derived)
+    # if no dates are provided, these must come names(x) (ie. it is assumed then that x is Landsat-derived)
     if(is.null(dates)) {
         if(is.null(getZ(x))) {
             if(!.isLandsatSceneID(x)){ # Check if dates can be extracted from layernames
@@ -79,9 +78,6 @@ bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thr
         } else {
             dates <- getZ(x)
         }
-    } else if(is.null(dates) & !is.null(sceneID)){
-        s <- getSceneinfo(sceneID)
-        dates <- as.Date(s$date)
     }
     
     # select cell from the input raster brick x in 1 of 3 ways:
@@ -98,18 +94,15 @@ bfmPixel <- function (x, dates=NULL, start, monend=NULL, cell=NULL, f=1, min.thr
     pixelts <- as.vector(x[cell])
     
     # optional: subset by sensor (Landsat only) and redefine s and dates
-    if(is.null(sceneID) & !all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){
-        warning("Scene IDs should be supplied as names(x) or as sceneID to subset by sensor. Ignoring...\n")
+    if(!is.null(sensor) & !.isLandsatSceneID(x)){
+        warning("Scene IDs should be supplied as names(x) to subset by sensor. Ignoring...\n")
         sensor <- NULL
     }
     if(!is.null(sensor)){
-        if(!is.null(sceneID)){
-            s <- getSceneinfo(sceneID)
-        } else {
-            s <- getSceneinfo(names(x))
-        }
-        if("ETM+" %in% sensor)
+        if("ETM+" %in% sensor){
             sensor <- c(sensor, "ETM+ SLC-on", "ETM+ SLC-off")
+        }
+        s <- getSceneinfo(names(x))
         pixelts <- pixelts[which(s$sensor %in% sensor)]
         s <- s[which(s$sensor %in% sensor), ]
         dates <- s$date

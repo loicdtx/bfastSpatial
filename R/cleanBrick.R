@@ -21,13 +21,23 @@
 #' 
 #' 
 
-cleanBrick <- function(x, monperiod, thresh, dates=NULL, sceneID=NULL, is.max=FALSE, ...){
+cleanBrick <- function(x, monperiod, thresh, dates=NULL, is.max=FALSE, ...){
     
-    # if dates==NULL, get dates vector either from sceneID or from names(x)
-    if(is.null(dates) & !is.null(sceneID)){
-        dates <- getSceneinfo(sceneID)$date
-    } else if(is.null(dates) & is.null(sceneID)){
-        dates <- getSceneinfo(names(x))$date
+    # get dates (if is.null(dates))
+    if(is.null(dates)) {
+        if(is.null(getZ(x))) {
+            if(!.isLandsatSceneID(x)){ # Check if dates can be extracted from layernames
+                stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
+            } else {
+                dates <- as.Date(getSceneinfo(names(x))$date)
+            }
+        } else {
+            dates <- getZ(x)
+        }
+    } else {
+        if(length(dates) != nlayers(x)){
+            stop("dates should be of same length as nlayers(x)")
+        }
     }
     
     # reformat monperiod
