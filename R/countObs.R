@@ -18,7 +18,7 @@
 #' @export
 #' 
 
-countObs <- function(x, navalues=c(NA), sensor = "all", as.perc=FALSE, ...){
+countObs <- function(x, navalues=c(NA), sensor = NULL, as.perc=FALSE, ...){
     
     # if sensor is given (!is.null(sensor)), then limit the analysis to a particular sensor
     if(!is.null(sensor)){
