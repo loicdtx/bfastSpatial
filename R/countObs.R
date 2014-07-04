@@ -18,23 +18,29 @@
 #' @export
 #' 
 
-countObs <- function(x, navalues=c(NA), sensor = "all", as.perc=FALSE, ...){
+countObs <- function(x, navalues=c(NA), sensor = NULL, as.perc=FALSE, ...){
     
-    # include data only from desired sensor(s)
-    if (sensor != "all") {
-        # get scene information from layer names
-        s <- getSceneinfo(names(x))
-        
+    # if sensor is given (!is.null(sensor)), then limit the analysis to a particular sensor
+    if(!is.null(sensor)){
         if ("ETM+" %in% sensor) {
             sensor <- unique(c(sensor, "ETM+ SLC-on", "ETM+ SLC-off"))
         }
-        x <- dropLayer(x, which(!s$sensor %in% sensor))
-        s <- s[which(s$sensor %in% sensor), ]
-        names(x) <- row.names(s)
+        if(!.isLandsatSceneID(x)){
+            warning("Scene IDs should be supplied as names(x) to subset by sensor. Ignoring...\n")
+            scenes <- NULL
+        } else {
+            # 'allowed' scenes
+            scenes <- which(getSceneinfo(names(x))$sensor %in% sensor)
+        }
+    } else {
+        scenes <- NULL
     }
     
     # function to calculate # of observations per pixel
     fun <- function(b){
+        if(!is.null(scenes)){
+            b <- b[scenes]
+        }
         n <- length(b[!b %in% navalues])
         if(as.perc)
             n <- n / nlayers(x) * 100

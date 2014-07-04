@@ -73,10 +73,8 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
         
     if(is.null(dates)) {
         if(is.null(getZ(x))) {
-
-            if(!all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))){ # Check if dates can be extracted from layernames
+            if(!.isLandsatSceneID(x)){ # Check if dates can be extracted from layernames
                 stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
-
             } else {
                 dates <- as.Date(getSceneinfo(names(x))$date)
             }
@@ -92,7 +90,7 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
     # optional: get Landsat sceneinfo if sensor is supplied
     # ignore sensor if names(x) are not Landsat sceneID's
     if(!is.null(sensor)){
-        if(!all(grepl(pattern='(LT4|LT5|LE7)\\d{13}', x=names(x)))){
+        if(!.isLandsatSceneID(x)){
             warning("Cannot subset by sensor if names(x) do not correspond to Landsat sceneID's. Ignoring...\n")
             sensor <- NULL
         } else {
@@ -102,7 +100,7 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
     }
 
     fun <- function(x) {
-        # optional: subset x by sensor
+        # subset x by sensor
         if(!is.null(sensor))
             x <- x[which(s$sensor %in% sensor)]
         
