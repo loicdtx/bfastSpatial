@@ -3,7 +3,7 @@
 \alias{countObs}
 \title{Valid observations per pixel}
 \usage{
-countObs(x, navalues = c(NA), sensor = "all", as.perc = FALSE, ...)
+countObs(x, navalues = c(NA), sensor = NULL, as.perc = FALSE, ...)
 }
 \arguments{
 \item{x}{RasterBrick or RasterStack}

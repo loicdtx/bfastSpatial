@@ -15,6 +15,5 @@ Depends:
     parallel,
     bfast,
     gdalUtils,
-    stringr,
-    foreach
+    stringr
 License: tbd
