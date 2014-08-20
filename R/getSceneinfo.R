@@ -45,7 +45,7 @@ getSceneinfo <- function(sourcefile, ...)
       "ETM+ SLC-on"
     else if(sen == "LE7" & y > "2003-03-31")
       "ETM+ SLC-off"
-    else if(sen == "LT5" | x == "LT4") 
+    else if(sen == "LT5" | sen == "LT4") 
       "TM" 
     else if(sen == "LC8")
       "OLI"      
