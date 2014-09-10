@@ -12,7 +12,7 @@
 #' @param ... Arguments to be passed to \code{\link{writeRaster}}
 #' @return A rasterLayer object
 #' @author Loic Dutrieux
-#' @seealso \code{\link{processLandsat}} for wrapper function
+#' @seealso \code{\link{processLandsat}} and \code{\link{processLandsatBatch}} for wrapper and wrapper/batcher functions
 #' @import gdalUtils
 #' @import raster
 #' @import rgdal

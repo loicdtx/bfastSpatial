@@ -11,7 +11,7 @@
 #' @param mc.cores Numeric. For multicore implementation only. See \link{mclapply}
 #' @param ... Arguments to be passed to \link{processLandsat} (\code{untar}, \code{delete}) or to \link{sr2vi} (\code{e}, \code{mask}, \code{keep}, \code{vi})
 #' @author Loic Dutrieux
-#' @return Function is used for its side effect of calculating in batch mode Vegetation indices fron surface reflectance Lantsat data.
+#' @return Function is used for its side effect of calculating in batch mode Vegetation indices from surface reflectance Landsat data.
 #' @seealso \link{processLandsat} and \link{sr2vi}
 #' @examples
 #' # Get the directory where the Landsat archives are stored
