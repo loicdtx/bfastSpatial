@@ -119,7 +119,7 @@ More examples can be found under \code{?getSceneinfo}. Many other functions in t
 
 \subsection{Valid Observations: \code{countObs()}}
 
-The number of available observations in a raster time series can be calculated by using countObs(). This function "drills" through pixels of a time series and counts the number of pixels with a non-NA value. Optionally, any other value can be supplied as a substitute for NA (e.g. the number of non-zero values per pixel can also be queried).
+The number of available observations in a raster time series can be calculated by using \code{countObs()}. This function "drills" through pixels of a time series and counts the number of pixels with a non-NA value. Optionally, any other value can be supplied as a substitute for NA (e.g. the number of non-zero values per pixel can also be queried).
 
 <<'countObs'>>=
 data(tura)
