@@ -1,6 +1,9 @@
-\documentclass{article}
+\documentclass[11pt,a4paper]{article}
 
 \usepackage{hyperref}
+
+%% added by Ben:
+\usepackage{a4wide}
 
 \def\code#1{\texttt{#1}}
 
@@ -19,6 +22,14 @@ The \code{bfastSpatial} provides utilities to performs change detection analysis
 There are no specific system requirements for Windows, besides having (a recent version of) R installed; installing the \code{bfastSpatial} package will automatically install the required dependencies.  
 \subsection{Linux \& Mac}
 Some pre-processing functions require the \code{rgdal} package, which is a binding between the gdal library and R. For \code{rgdal} to work on Linux and Mac systems, gdal should be installed and properly set-up. For that, please refer to the web page of the \href{http://www.gdal.org/}{gdal project} as well as \href{http://cran.r-project.org/web/packages/rgdal/index.html}{rgdal}.
+\subsection{Installing bfastSpatial}
+The package can be installed directly from github using devtools, provided you have git already installed on your system:
+<<installpackage, eval=FALSE, results='hide'>>=
+library(devtools)
+install_github('dutri001/bfastSpatial')
+# load the package
+library(bfastSpatial)
+@
 
 \section{Downloading Landsat data from Earth Explorer}
 Working with Landsat time-series often involves downloading large amounts of data. The full Landsat archive for one path/row may very well exceed 500 scenes in some parts of the world. The most common way to access the data is via the \href{http://earthexplorer.usgs.gov/}{Earth Explorer platform}. You need to have an account before being able to request data to be pre-processed.
@@ -33,6 +44,7 @@ Once you receive the e-mail from USGS notifying you that your order has been pre
 
 <<'loadpackage', echo=FALSE, results='hide', message=FALSE, warning=FALSE>>=
 library(bfastSpatial)
+library(igraph)
 @
 
 \section{Data pre-processing}
@@ -47,7 +59,7 @@ The \code{bfastSpatial} package includes utilities to pre-process Landsat surfac
 
 The two important functions to perform the above mentioned steps are \code{processLandsat} and \code{processLandsatBatch}. The former is a wrapper that performs the above steps sequentially, automatically generating file names and deleting unnecessary intermediary outputs. The latter (\code{processLandsatBatch}) allows a user to run \code{processLandsat} in batch mode, over several scenes, with parallel support. Several vegetation indices are supported by both \code{processLandsat} and \code{processLandsatBatch}.
 Let's illustrate that with an example. We added subsets of Landsat data to the package in order to illustrate the pre-processing steps. The test datasets are stored under the \code{external/} directory of the installed package. To list the content of that directory, run the following comand.
-<<'listPackageData'>>=
+<<'listPackageData', results='hide'>>=
 list.files(system.file('external', package='bfastSpatial'), full.names=TRUE)
 @
 Using the \code{full.names=TRUE} argument allows you to directly use the elements of the list create without having to set working directories.
@@ -57,7 +69,6 @@ Using the \code{full.names=TRUE} argument allows you to directly use the element
 Once the vegetation index layers have been produced for several dates, they can be stacked, in order to create a multilayer raster object, with time dimention written in the file as well. The function to perform this operation on Landsat data is the \code{timeStack} function. By simply providing a list of file names or a directory containing the files, the function will create a multilayer object and directly parse through the file names to extract temporal information from them and write that information to the object created.
 
 % TODO add timeStack example here
-
 
 
 \section{Data Inventory}
@@ -74,7 +85,7 @@ The following functions are included in the Data Inventory module:
 
 \subsection{Basic Scene Information: \code{getSceneinfo()}}
 
-\code{getSceneinfo()} allows the user to list the information contained within a scene ID. Currently, only Landsat scene ID's are supported. For example, the scene ID ``LE71700552007309ASN00" tells us that the scene is from the Landsat 7 ETM+ sensor ('LE7'), path-row 170-55 ('170055') and was acquired on the 309th day of the year 2007 ('2007309'). Calling \code{getSceneinfo('LE71700552007309ASN00')} will give a data.frame with one row showing all of this information.
+\code{getSceneinfo()} allows the user to list the information contained within a scene ID. Currently, only Landsat scene ID's are supported. For example, the scene ID ``LE71700552007309ASN00" tells us that the scene is from the Landsat 7 ETM+ sensor ('LE7'), path-row 170-55 ('170055') and was acquired on the 309th day of the year 2007 ('2007309'). Calling the following code will give a data.frame with one row showing all of this information:
 
 <<'getSceneinfo'>>=
 getSceneinfo('LE71700552007309ASN00')
@@ -82,7 +93,7 @@ getSceneinfo('LE71700552007309ASN00')
 
 When working with Landsat data, it is a good idea to assign and keep these sceneID's as layer names (see \code{?raster::names}) so the relevant information is associated to each raster layer.
 
-<<'getSceneinfo-tura'>>=
+<<'getSceneinfo-tura', fig.show='hide'>>=
 # show scene info from tura layers
 data(tura)
 head(names(tura))
@@ -90,7 +101,8 @@ s <- getSceneinfo(names(tura))
 head(s)
 # add a column for years and plot # of scenes per year
 s$year <- as.numeric(substr(s$date, 1, 4))
-hist(s$year, breaks=c(1984:2014), main="p170r55: Scenes per Year", xlab="year", ylab="# of scenes")
+hist(s$year, breaks=c(1984:2014), main="p170r55: Scenes per Year", 
+     xlab="year", ylab="# of scenes")
 @
 
 We can combine the dates and sensor information to get more of an idea of where our data are coming from.
@@ -118,7 +130,7 @@ summary(obs)
 
 Values can also be expressed as a percentage if \code{as.perc} is set to \code{TRUE}.
 
-<<'countObs-asperc'>>=
+<<'countObs-asperc', fig.show='hide', results='hide'>>=
 # valid observations
 obs <- countObs(tura, as.perc=TRUE)
 summary(obs)
@@ -132,21 +144,21 @@ summary(percNA)
 
 In this section, we will calculate summary statistics for the Tura RasterBrick. First, general statistics for the entire brick can be calculated using \code{summaryBrick()}. In fact, \code{countObs()} is essentially a specific version of \code{summaryBrick}. \code{summaryBrick()} takes a RasterBrick as its first argument and a function as its second argument, and all others are optional arguments. Calculating the mean of each pixel is simple.
 
-<<'summaryBrick-functions'>>=
+<<'summaryBrick-functions', fig.show='hide'>>=
 meanVI <- summaryBrick(tura, fun=mean) # na.rm=FALSE by default
 plot(meanVI)
 @
 
 The fact that there are no values in the result stems from the fact that an \code{na.rm} argument has not been supplied. By default, this is set to \code{NULL} to ensure that other functions that do not take an \code{na.rm} argument (like \code{length}, for example) can also be used as \code{fun}. Since there are many \code{NA} values scattered through our RasterBrick as a result of cloud masking, \code{na.rm} must be set to \code{TRUE} for functions like \code{mean}, \code{median} and other common stats functions.
 
-<<'summaryBrick-narm'>>=
+<<'summaryBrick-narm', fig.show='hide'>>=
 meanVI <- summaryBrick(tura, fun=mean, na.rm=TRUE)
 plot(meanVI)
 @
 
 \code{summaryBrick} can also take custom functions, provided these functinos are vectorized - in other words, they should be applicable to a vector extracted from a single pixel time series (for example, by taking a single cell number of the Tura RasterBrick: \code{x <- tura[500]}). Suppose we want to know how many observations per pixel exceed a certain threshold. First, we should define a function that can count the number of elements in a vector that exceed this threshold, and then pass this to \code{summaryBrick}. In this example, we will use 7000 as our threshold (remember that the values are scaled by 10000, so this corresponds to an NDVI of 0.7).
 
-<<summaryBrick-custom>>=
+<<summaryBrick-custom, fig.show='hide'>>=
 # define a function that takes a vector as an argument
 checkThresh <- function(x){
     # first, get rid of NA's
@@ -174,7 +186,8 @@ medVI <- summaryBrick(tura, fun=median, na.rm=TRUE)
 # only ETM+ layers
 medVI_ETM <- summaryBrick(tura, fun=median, na.rm=TRUE, sensor="ETM+")
 # all layers between 2000 and 2005 (inclusive)
-medVI_00_05 <- summaryBrick(tura, fun=median, na.rm=TRUE, minDate="2000-01-01", maxDate="2005-12-31")
+medVI_00_05 <- summaryBrick(tura, fun=median, na.rm=TRUE, minDate="2000-01-01", 
+                            maxDate="2005-12-31")
 # all layers after 2005
 medVI_06_13 <- summaryBrick(tura, fun=median, na.rm=TRUE, minDate=c(2006, 1))
 # plot and compare
@@ -192,7 +205,7 @@ Note that the Tura brick already has scene information included as layer names (
 
 \code{annualSummary} works similarly to \code{summaryBrick}, but provides a statistic for each year of the time series. At this time, this function is only applicable to Landsat data, and the scene IDs must be supplied either as \code{names(x)} or as a separate character vector to \code{sceneID}. In this sample, we will again calculate median NDVI on all ETM+ data, but this time we are interested in seeing the \emph{annual} median NDVI value.
 
-<<'annualSummary-ETM'>>=
+<<'annualSummary-ETM', fig.show='hold'>>=
 annualMed <- annualSummary(tura, fun=median, sensor="ETM+", na.rm=TRUE)
 plot(annualMed)
 @
@@ -214,7 +227,8 @@ Working with \code{bfastmonitor} (BFM) can be intimidating at first, especially 
 data(tura)
 # plot the 6h layer
 plot(tura, 6)
-# run bfmPixel() in interactive mode with a monitoring period starting @ the 1st day in 2009
+# run bfmPixel() in interactive mode with a monitoring period 
+# starting @ the 1st day in 2009
 bfm <- bfmPixel(tura, start=c(2009, 1), interactive=TRUE)
 @
 
@@ -222,7 +236,7 @@ Inspecting the output of this function, you will see that a list of length 2 has
 
 Let's run \code{bfmPixel} again, but this time indicating a specific cell number instead of using interactive mode. Note that by default \code{interactive=FALSE}, so there is no need to specify this if a value for \code{cell} is given.
 
-<<'bfmPixel-targcell'>>=
+<<'bfmPixel-targcell', fig.show='hide'>>=
 targcell <- 3492
 bfm <- bfmPixel(tura, cell=targcell, start=c(2009, 1))
 # inspect and plot the $bfm output
@@ -232,22 +246,26 @@ plot(bfm$bfm)
 
 Specifying a cell number gives the advantage of being able to test different parameters on the same pixel time series to see what impact these parameters have on the sensitivity of the algorithm. Note that a plot is immediately produced if \code{plot = TRUE}.
 
-<<'bfmPixel-args'>>=
+<<'bfmPixel-args', fig.show='hide'>>=
 # use a harmonic model only
-bfm1 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon, plot=TRUE)
+bfm1 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
+                 formula=response~harmon, plot=TRUE)
 # same, but with an order of 1
-bfm2 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon, order=1, plot=TRUE)
+bfm2 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
+                 formula=response~harmon, order=1, plot=TRUE)
 # only trend
-bfm3 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~trend, plot=TRUE)
+bfm3 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
+                 formula=response~trend, plot=TRUE)
 @
 
 Check out \code{?bfastmonitor} for more information on the parameters that are included in the method.
 
 A number of additional options are provided in \code{bfmPixel}. Specifying a value for \code{monend} will trim the time series after that date (thus limiting the monitoring period to a given period). This simple modification can have an impact on the resulting change magnitude, which is computed as the median residual between the predicted and observed values within the monitoring period.
 
-<<'bfmPixel-monend'>>=
+<<'bfmPixel-monend', fig.show='hide'>>=
 # bfmPixel using a 1-year monitoring period
-bfm4 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), monend=c(2010, 1), plot=TRUE)
+bfm4 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
+                 monend=c(2010, 1), plot=TRUE)
 @
 
 Finally, for Landsat time series the analysis can be limited to data of a specific sensor. The \code{sensor} parameter currently accepts the following possible character values:
@@ -262,7 +280,8 @@ Note that in our previous runs of \code{bfmPixel}, there is what seems to be a b
 
 <<'bfmPixel-sensor'>>=
 # apply bfmPixel only on ETM+ data
-bfm5 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), sensor="ETM+", plot=TRUE)
+bfm5 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
+                 sensor="ETM+", plot=TRUE)
 @
 
 \subsection{Working with raster time series: \code{bfmSpatial}}
@@ -321,7 +340,8 @@ The change raster gives breakpoint timing values in decimal years. A better way 
 <<'changeMonth'>>=
 months <- changeMonth(change)
 # set up labels and colourmap for months
-monthlabs <- c("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+monthlabs <- c("jan", "feb", "mar", "apr", "may", "jun", 
+               "jul", "aug", "sep", "oct", "nov", "dec")
 library(RColorBrewer)
 cols <- rev(brewer.pal(11, "RdYlBu"))
 # interpolate colormap (since max # of colours for "RdYlBu" is 11)
@@ -333,7 +353,7 @@ legend("bottomright", legend=monthlabs, cex=0.5, fill=cols, ncol=2)
 
 \code{bfmMagn} does the same as \code{bfmChange} to the second layer, but adds some other options (masking by breakpoint, applying a threshold). Magnitude is computed as the median residual between expected and observed values throughout the \emph{entire} monitoring period, meaning that all pixels are assigned a value regardless of whether or not a breakpoint has been detected. If we are only interested in looking at pixels where a breakpoint has been detected, we can use the \code{change} argument in the \code{bfmMagn}, which takes a raster of breakpoints to use as a filter.
 
-<<'bfmMagn'>>=
+<<'bfmMagn', fig.show='hold'>>=
 # extract magn raster, and include only change pixels
 magn <- bfmMagn(bfm, change=change)
 # compare with 'original' magn raster
@@ -373,7 +393,7 @@ magn09 <- bfmMagn(bfm09, change=change09) / 10000
 
 Suppose we know from field observations or other reference data that breakpoints with NDVI magnitudes of -0.05 are associated with high probability of detected actual deforestation. We can easily apply this threshold to our magnitude raster, or even pass this threshold as an additional argument to \code{bfmMagn}. In the later case, take care with the scaling of the data - the original \code{bfmSpatial} results are still in their ``raw" format. In this case, our threshold should be accordingly scaled. In this example, we will scale the final magnitude back, as above.
 
-<<'bfmMagn-thresh'>>=
+<<'bfmMagn-thresh', fig.show='hold'>>=
 # extract and rescale magnitude and apply a -500 threshold
 magn09thresh <- bfmMagn(bfm09, change=change09, thresh = -500) / 10000
 # compare
@@ -397,7 +417,7 @@ magn09_areasieve <- areaSieve(magn09thresh)# default thresh = 5000
 
 \code{areaSieve} passes additional arguments to \code{raster::clump}, which allows for considerations of direction when defining pixel neighbourhoods. \code{clump} adheres to the principle of ``queen's case" versus ``rook's case". In the former, pixels in all directions (default: \code{directions = 8}) are considered when defining clumps, whereas in the latter case, only pixels directly adjacent (excluding diagonals) are considered (\code{directions = 4}).
 
-<<'areaSieve-rook'>>=
+<<'areaSieve-rook', fig.show='hold'>>=
 magn09_as_rook <- areaSieve(magn09thresh, directions=4)
 # compare all magn rasters
 op <- par(mfrow=c(2, 2))
@@ -410,7 +430,7 @@ par(op)
 
 Once we have applied the desired filters and sieves to our bfm magnitude raster, we may want to calculate area statistics. This can be done with another simple function: \code{clumpSize}. This function is also based on the \code{raster::clumps} function and computes the size of each pixel clump and assigns that value back to each pixel in that clump. As in \code{areaSieve}, the queen's and rook's cases can also apply by adjusting the \code{directions} argument.
 
-<<'clumpSize'>>=
+<<'clumpSize', fig.show='hold'>>=
 changeSize_queen <- clumpSize(magn09_areasieve)
 changeSize_rook <- clumpSize(magn09_areasieve, directions=4)
 # compare
