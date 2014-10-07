@@ -19,7 +19,6 @@
 #' \code{areaSieve} is based on the \code{raster::clump}, which by default ignores zeroes (ie. considers them as NA's). To consider zeroes as valid pixel values when applying the sieve, set \code{keepzeroes} to \code{TRUE}.
 #' 
 #' @import raster
-#' @import igraph
 #' @export
 #' 
 #' @seealso \code{\link{clump}}
@@ -63,6 +62,7 @@
 areaSieve <- function(x, thresh=5000, directions=8, verbose=FALSE, keepzeros=FALSE, cores=1, ...)
 {
   
+  require(igraph)
   # convert thresh from area to pixel threshold
   # TODO: make this applicable to all projections
   thresh <- ceiling(thresh/(res(x)[1]*res(x)[2]))
@@ -97,6 +97,7 @@ areaSieve <- function(x, thresh=5000, directions=8, verbose=FALSE, keepzeros=FAL
   }
 
   if(nlayers(x) > 1){
+      require(doMC)
       registerDoMC(cores=cores)
       y <- foreach(i = 1:nlayers(x)) %dopar% {
         if(keepzeros){

@@ -12,7 +12,6 @@
 #' @details Note that if \code{stats=TRUE}, a summary table is also produced. This table is not the same table that would result if the resulting raster was passed to \code{summary}. The summary table in this case is based on pixel clumps, rather than individual pixel values. The conversion factor \code{f} is also factored into the summary table.
 #' 
 #' @import raster
-#' @import igraph
 #' 
 #' @author Ben DeVries
 #' @export

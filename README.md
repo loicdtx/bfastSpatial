@@ -18,7 +18,7 @@ The package can be installed directly from github using devtools
 
 ```R
 library(devtools)
-install_github(repo='bfastSpatial', username='dutri001')
+install_github('dutri001/bfastSpatial')
 ```
 
 Feedback on the package is very much welcome. Send your feedback to Ben or Loic

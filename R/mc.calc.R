@@ -5,8 +5,10 @@
 #' 
 #' @param x Raster* object
 #' @param fun Function to be applied to the raster object.
-#' @param ... Arguments to be passed to \code{link{writeRaster}}; only filename and overwrite are supported at the moment.
+#' @param ... Arguments to be passed to \code{link{writeRaster}}.
 #' @details For further help, see \code{\link{calc}}. Warnings of the parallel package (see \code{\link{mclapply}} for instance) apply to this function.
+#' @return a Raster* object 
+#' @author Loic Dutrieux
 #' @seealso \code{\link{calc}}
 #' @import raster
 #' @import parallel
@@ -39,14 +41,10 @@ mc.calc <- function(x, fun, mc.cores=1, ...) {
         
         listOut <- mclapply(X=blocs, FUN=fun2, mc.cores=mc.cores)
         
+        # Add ALL arguments passed in the ellipsis in the listOut object
         dots <- list(...)
-        # Mosaic and write to filename
-        if(hasArg(filename)){
-            listOut$filename <- dots$filename
-        }
-        if(hasArg(overwrite)){
-            listOut$overwrite <- dots$overwrite
-        }
+        listOut <- c(listOut, dots)
+        
         listOut$fun <- max
         out <- do.call(mosaic, listOut)
         
