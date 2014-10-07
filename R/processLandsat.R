@@ -15,8 +15,13 @@
 #' @return rasterLayer Object also written to file (in \code{outdir}) with an automatically generated filename
 #' @seealso \link{sr2vi}
 #' 
+#' @import stringr
+#' @import raster
+#' @import rgdal
+#' @import gdalUtils
+#' 
 #' @examples
-#' Get list of test data files
+#' # Get list of test data files
 #' dir <- system.file('external', package='bfastSpatial')
 #' list <- list.files(dir, full.names=TRUE)
 #' 
@@ -24,16 +29,12 @@
 #' srdir <- dirout <- file.path(rasterOptions()$tmpdir, 'bfmspatial')
 #' dir.create(dirout, showWarning=FALSE)
 #' # Generate (or extract, depending on whether the layer is already in the archive or not) NDVI for the first archive file
-#' processLandsat(x=list[1], vi='NDVI', outdir=dirout, srdir=srdir, delete=TRUE, vi='ndvi', mask='fmask', keep=0, overwrite=TRUE)
+#' processLandsat(x=list[1], vi='ndvi', outdir=dirout, srdir=srdir, delete=TRUE, mask='fmask', keep=0, overwrite=TRUE)
 #' 
 #' # Visualize one of the layers produced
 #' list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
 #' plot(r <- raster(list[1]))
 #' 
-#' @import stringr
-#' @import raster
-#' @import rgdal
-#' @import gdalUtils
 #' @export
 #' 
 

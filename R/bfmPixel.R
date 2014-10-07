@@ -9,19 +9,18 @@
 #' @param f Numeric. Factor by which to rescale values before running \code{bfastmonitor}. Defaults to 1 (no rescaling)
 #' @param min.thresh Numeric. Optional: A minimum threshold below which NA's are assigned to data points. NOTE: the threshold is applied \emph{before} rescaling the data by \code{f} (see above)
 #' @param sceneID Character. Optional: character vector of Landsat scene ID's, corresponding to layers in x. These can be supplied instead of \code{dates} if using Landsat data. If neither \code{dates} nor \code{sceneID} are supplied, scene ID must be contained in \code{names(x)}
-#' @param sensor Character. Optional: Limit analysis to data from one or more sensors. Can be one or more of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", "OLI")} according to the sensor information returned by \link{\code{getSceneinfo}}
+#' @param sensor Character. Optional: Limit analysis to data from one or more sensors. Can be one or more of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", "OLI")} according to the sensor information returned by \code{\link{getSceneinfo}}
 #' @param interactive Logical. Select cell by clicking on an already plotted map? Defaults to \code{FALSE}. If \code{FALSE}, a value must be assigned to \code{cell} (see above).
 #' @param plot Logical. Plot the result? Defaults to \code{FALSE}.
 #' @param ... Arguments to be passed to \code{\link{bfastmonitor}}
 #' 
-#' @return A list with the following components: 1) $bfm - an object of class 'bfastmonitor' (see \code{\link{bfastmonitor()}}) 2) $cell - the cell index (an integer of length 1). This can be used to run \code{bfmPixel()} again on the same pixel (with different parameters) without having to click on a plot again to find the same pixel (in that case, be sure to set interactive=FALSE for subsequent trials!).
+#' @return A list with the following components: 1) $bfm - an object of class 'bfastmonitor' (see \code{\link{bfastmonitor}}) 2) $cell - the cell index (an integer of length 1). This can be used to run \code{bfmPixel} again on the same pixel (with different parameters) without having to click on a plot again to find the same pixel (in that case, be sure to set interactive=FALSE for subsequent trials!).
 #' 
-#' @details \code{bfmPixel} is theoretically designed to work on any generic raster time series, as long as a \code{dates} vector is provided. In the absence of a \code{dates} vector, a number of additional options are included for Landsat data only: a \code{sceneID} character vector can be supplied, which corresponds to the Landsat scene ID's of each raster layer in x; or \code{names(x)} should correspond exactly to respective Landsat scene ID's. In these two cases, \link{\code{getSceneinfo}} is used to extract a dates vector, and subset by sensor if desired.
+#' @details \code{bfmPixel} is theoretically designed to work on any generic raster time series, as long as a \code{dates} vector is provided. In the absence of a \code{dates} vector, a number of additional options are included for Landsat data only: a \code{sceneID} character vector can be supplied, which corresponds to the Landsat scene ID's of each raster layer in x; or \code{names(x)} should correspond exactly to respective Landsat scene ID's. In these two cases, \code{\link{getSceneinfo}} is used to extract a dates vector, and subset by sensor if desired.
 #' 
-#' @author Ben DeVries \email{devries.br@@gmail.com}
+#' @author Ben DeVries
 #' 
 #' @examples
-#' 
 #' # load in time series raster data
 #' data(tura)
 #' 
@@ -59,6 +58,8 @@
 #' bfm <- bfmPixel(tura, cell=targcell, start=c(2005, 1), sensor="ETM+", formula=response~trend)
 #' plot(bfm$bfm)
 #' }
+#' 
+#' @seealso \code{\link{bfastmonitor}}, \code{\link{bfmSpatial}}
 #' 
 #' @import raster
 #' @import bfast
