@@ -21,6 +21,8 @@ library(devtools)
 install_github('dutri001/bfastSpatial')
 ```
 
+Full [tutorial](http://dutri001.github.io/bfastSpatial/) available to guide you through data pre-processing and analysis.
+
 Feedback on the package is very much welcome. Send your feedback to Ben or Loic
 
 
