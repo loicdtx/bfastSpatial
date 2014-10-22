@@ -6,9 +6,10 @@
 ```{r, echo = FALSE, message = FALSE}
 library(bfastSpatial)
 knitr::opts_chunk$set(
-  comment = "#>",
-  error = FALSE,
-  tidy = FALSE)
+    fig.align='center',
+    comment = "#>",
+    error = FALSE,
+    tidy = FALSE)
 ```
 
 
@@ -25,7 +26,7 @@ The `bfastSpatial` package provides utilities to performs change detection analy
 There are no specific system requirements for Windows, besides having (a recent version of) R installed; installing the `bfastSpatial` package will automatically install the required dependencies.  
 
 ### Linux & Mac
-Some pre-processing functions require the `rgdal` package, which is a binding between the gdal library and R. For `rgdal` to work on Linux and Mac systems, gdal should be installed and properly set-up. For that, please refer to the web page of the \href{http://www.gdal.org/}{gdal project} as well as \href{http://cran.r-project.org/web/packages/rgdal/index.html}{rgdal}.
+Some pre-processing functions require the `rgdal` package, which is a binding between the gdal library and R. For `rgdal` to work on Linux and Mac systems, gdal should be installed and properly set-up. For that, please refer to the web page of the [gdal project](http://www.gdal.org/) as well as [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html).
 
 ### Installing bfastSpatial
 The package can be installed directly from github using devtools, provided you have git already installed on your system:
@@ -37,14 +38,14 @@ install_github('dutri001/bfastSpatial')
 library(bfastSpatial)
 ```
 
-## Downloading Landsat data from Earth Explorer
+## Downloading Landsat data from Earth Explorer/espa
 Working with Landsat time-series often involves downloading large amounts of data. The full Landsat archive for one path/row may very well exceed 500 scenes in some parts of the world. The most common way to access the data is via the [Earth Explorer](http://earthexplorer.usgs.gov/) platform. You need to have an account before being able to request data to be pre-processed.
 
 ### Placing your order
-USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows.
+USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows. A convenient way of placing an order at the moment is via [espa](http://espa.cr.usgs.gov/) (your username/password are your USGS credential, which you should already have requested to place your order on EarthExplorer). Once you have entered your credentials, you may use the interface to upload the list of scenes you want to have pre-processed, select the layers of interest and place your order. A scene list is a simple text file with a scene ID (eg: LT52302701999134) on each line.
 
 ### Downloading the data
-Once you receive the e-mail from USGS notifying you that your order has been pre-processed, you will be able to proceed to the download of the data. Because the amount of scenes is usually large, the use of a download manager is highly recommended. Two options:
+Once you receive the e-mail from ESPA notifying you that your order has been pre-processed, you will be able to proceed to the download of the data. Because the amount of scenes is usually large, the use of a download manager is highly recommended. Two options:
 
 * The Bulk Download Application
 * The DownloadThemAll plugin of the firefox browser
@@ -65,23 +66,103 @@ The `bfastSpatial` package includes utilities to pre-process Landsat surface ref
 
 
 The two important functions to perform the above mentioned steps are `processLandsat` and `processLandsatBatch`. The former is a wrapper that performs the above steps sequentially, automatically generating file names and deleting unnecessary intermediary outputs. The latter (`processLandsatBatch`) allows a user to run `processLandsat` in batch mode, over several scenes, with parallel support. Several vegetation indices are supported by both `processLandsat` and `processLandsatBatch`.
-Let's illustrate that with an example. We added subsets of Landsat data to the package in order to illustrate the pre-processing steps. The test datasets are stored under the `external/` directory of the installed package. To list the content of that directory, run the following comand.
+Let's illustrate with an example how these functions work. We added subsets of Landsat data to the package in order to illustrate the pre-processing steps. The test datasets are stored under the `external/` directory of the installed package. To list the content of that directory, run the following comand.
 
-```{r, results='hide'}
+```{r}
 list.files(system.file('external', package='bfastSpatial'), full.names=TRUE)
 ```
 
 Using the `full.names=TRUE` argument allows you to directly use the elements of the list create without having to set working directories.
 
-<!--
-TODO add example here
--->
+### Generate Vegetation Index Layer from a Landsat archive file
 
+Since these functions are meant to write new data to disk, we will make use as much as possible of the raster temporary directory in order to make the examples reproducible independently of the paths you set.The raster temporary directory is a variable set by the `raster` package. The example below first creates a sub-dirrectory in the temporary directory of your system and uses this location for storage of intermediary and final outputs of the function.
+
+```{r}
+# Set the location of output and intermediary directories (everything in tmpdir in that case)
+# We use dirname(rasterTmpFile()) instead of rasterOptions()$tmpdir to reduce verbose
+srdir <- dirout <- file.path(dirname(rasterTmpFile()), 'bfmspatial')
+dir.create(dirout, showWarning=FALSE)
+
+# Get list of test data files
+list <- list.files(system.file('external', package='bfastSpatial'), full.names=TRUE)
+
+# Generate (or extract, depending on whether the layer is already in the archive or not) NDVI for the first archive file
+processLandsat(x=list[1], vi='ndvi', outdir=dirout, srdir=srdir, delete=TRUE, mask='fmask', keep=0, overwrite=TRUE)
+
+# Visualize one of the layers produced
+list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
+plot(r <- raster(list[1]))
+```
+
+
+A few remarks about the above example:
+
+* A mask (`mask=`) had to be selected; in that case `'fmask'`, which is one of the layers of the landsat archive file delivered by USGS/ESPA. For details about that mask and know which values to keep (`keep=`), you can visit [this page](http://code.google.com/p/cfmask/), or for general information on the layers provided in the archive, see the [product guide](http://landsat.usgs.gov/documents/cdr_sr_product_guide.pdf).
+* The option `delete=` does not delete the original tarball/zip file, but instead the intermediary output, which is the layers uncompressed from the archive later used to compute the vegetation indices. This option is usefull in case you want to keep the data in their compressed form only, hence reducing disk space usage.
+* No extent object (`e=`) was used in the example. However, it is advised to always use an extent to crop the layers produced. This way we ensure that all layers have exactly the same extent and can be used to create a multilayer object, which is the next step in the pre-processing chain. To obtain an extent, you may either use the interactive function `drawExtent()` to draw an extent manually, or use an existing spatial object (raster or vector).
+* Masking and cropping are optional but highly recomended if you intend to perform subsequent time-series analysis with the layers produced.
+* No output filename was required; that variable is automatically generated from the input file and the `vi` selected.
+* The extension of the output is by default .grd. This is the native format of the raster package. This format has many advantages over more common GeoTiff or ENVI formats.
+..* Original layer names are kept in multi-layer objects.
+..* There is a possibility to add a z dimension to multilayer objects, useful for storing time information for instance.
+..* Can be read and written without requiring the `rgdal` package (which is not always easy to install).
+
+
+### Running `processLandsat` in batch mode
+Now that we have seen how to generate 
+For that, use the `processLandsatBatch` function; it allows to perform the above step in batch mode over a list and supports parallel implementation for greater speed.
+
+We saw above that the test data directory of the package contains 2 files (zip archives); we will generate from both of them vegetation index layers. This is not a great challenge, and could very well be achieved by running twice the same line, but in a real case you may very well have hundreds of input files and it will save you a lot of time and energy if you can process them all in one line.
+
+```{r}
+# Create a temporary directory to store the output files.
+srdir <- dirout <- file.path(dirname(rasterTmpFile()), 'bfmspatial_2')
+dir.create(dirout, showWarning=FALSE)
+
+# Get the directory where the Landsat archives are stored
+dir <- system.file('external', package='bfastSpatial')
+
+# Run the batch line
+processLandsatBatch(x=dir, pattern=glob2rx('*.zip'), outdir=dirout, srdir=srdir, delete=TRUE, vi='ndvi', mask='fmask', keep=0, overwrite=TRUE)
+
+# Visualize one of the layers produced
+list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
+# plot(r <- raster(list[1]))
+```
+
+
+If you visualize the two layers produced, you'll notice that they look similar; this is simply because they in fact are the same image. Only the file name for one of the two images has been altered to make it look like it has been acquired at a different date. The reason behind this trick is that at the time we are writting this tutorial, USGS has only released **test data** of the new Landsat delivery format, and for only a few scenes and one date for each of these scenes.
+
+### Creating a multi-temporal raster object
 Once the vegetation index layers have been produced for several dates, they can be stacked, in order to create a multilayer raster object, with time dimention written in the file as well. The function to perform this operation on Landsat data is the `timeStack` function. By simply providing a list of file names or a directory containing the files, the function will create a multilayer object and directly parse through the file names to extract temporal information from them and write that information to the object created.
 
-<!--
-TODO add timeStack example here
--->
+Make sure you have ran the previous code chunk before running the code below.
+
+```{r}
+# Make sure that the list object generated in the prvious code chunk
+# contains 2 elements only
+list
+# Create a new subdirectory in the temporary directory
+dirout <- file.path(dirname(rasterTmpFile()), 'stack')
+dir.create(dirout, showWarnings=FALSE)
+
+# Generate a file name for the output stack
+stackName <- file.path(dirout, 'stackTest.grd')
+
+# Stack the layers
+s <- timeStack(x=list, filename=stackName, datatype='INT2S', overwrite=TRUE)
+
+# Visualize both layers (They are the same for the reason stated above)
+plot(s)
+```
+
+About the example above:
+
+* It is absolutely necessary for this function to work that the input layers have the same extent. Two Landsat scenes belonging to the same path/row, but acquired at different times often have slightly different extents. We therefore recomend to always use an extent object in `processLandsat` and `processLandsatBatch`, even when working with full scenes.
+* Time information is automatically extracted from the layer names (using `getSceneInfo`) and written to the z dimention of the stack.
+* We chose to write the output to the .grd format, which allows the time information to be stored as well as the original layer names.
+* The `x=` argument can also simply be the directory containing the layers; in which case we recomend using `pattern=` as well in order to ensure that only the desired files are included.
 
 ## Data Inventory
 
@@ -96,7 +177,7 @@ The following functions are included in the Data Inventory module:
 
 ### Basic Scene Information: `getSceneinfo()`
 
-`getSceneinfo()` allows the user to list the information contained within a scene ID. Currently, only Landsat scene ID's are supported. For example, the scene ID ``LE71700552007309ASN00" tells us that the scene is from the Landsat 7 ETM+ sensor ('LE7'), path-row 170-55 ('170055') and was acquired on the 309th day of the year 2007 ('2007309'). Calling the following code will give a data.frame with one row showing all of this information:
+`getSceneinfo()` allows the user to list the information contained within a scene ID. Currently, only Landsat scene ID's are supported. For example, the scene ID ''LE71700552007309ASN00'' tells us that the scene is from the Landsat 7 ETM+ sensor ('LE7'), path-row 170-55 ('170055') and was acquired on the 309th day of the year 2007 ('2007309'). Calling `getSceneinfo('LE71700552007309ASN00')` will give a data.frame with one row showing all of this information:
 
 ```{r}
 getSceneinfo('LE71700552007309ASN00')
