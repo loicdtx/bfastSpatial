@@ -104,9 +104,9 @@ A few remarks about the above example:
 * Masking and cropping are optional but highly recomended if you intend to perform subsequent time-series analysis with the layers produced.
 * No output filename was required; that variable is automatically generated from the input file and the `vi` selected.
 * The extension of the output is by default .grd. This is the native format of the raster package. This format has many advantages over more common GeoTiff or ENVI formats.
-..* Original layer names are kept in multi-layer objects.
-..* There is a possibility to add a z dimension to multilayer objects, useful for storing time information for instance.
-..* Can be read and written without requiring the `rgdal` package (which is not always easy to install).
+    * Original layer names are kept in multi-layer objects.
+    * There is a possibility to add a z dimension to multilayer objects, useful for storing time information for instance.
+    * Can be read and written without requiring the `rgdal` package (which is not always easy to install).
 
 
 ### Running `processLandsat` in batch mode

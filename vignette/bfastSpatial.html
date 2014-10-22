@@ -143,7 +143,12 @@ plot(r &lt;- raster(list[1]))</code></pre>
 <li>No extent object (<code>e=</code>) was used in the example. However, it is advised to always use an extent to crop the layers produced. This way we ensure that all layers have exactly the same extent and can be used to create a multilayer object, which is the next step in the pre-processing chain. To obtain an extent, you may either use the interactive function <code>drawExtent()</code> to draw an extent manually, or use an existing spatial object (raster or vector).</li>
 <li>Masking and cropping are optional but highly recomended if you intend to perform subsequent time-series analysis with the layers produced.</li>
 <li>No output filename was required; that variable is automatically generated from the input file and the <code>vi</code> selected.</li>
-<li>The extension of the output is by default .grd. This is the native format of the raster package. This format has many advantages over more common GeoTiff or ENVI formats. ..* Original layer names are kept in multi-layer objects. ..* There is a possibility to add a z dimension to multilayer objects, useful for storing time information for instance. ..* Can be read and written without requiring the <code>rgdal</code> package (which is not always easy to install).</li>
+<li>The extension of the output is by default .grd. This is the native format of the raster package. This format has many advantages over more common GeoTiff or ENVI formats.
+<ul>
+<li>Original layer names are kept in multi-layer objects.</li>
+<li>There is a possibility to add a z dimension to multilayer objects, useful for storing time information for instance.</li>
+<li>Can be read and written without requiring the <code>rgdal</code> package (which is not always easy to install).</li>
+</ul></li>
 </ul>
 </div>
 <div id="running-processlandsat-in-batch-mode" class="section level3">
