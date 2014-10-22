@@ -1,13 +1,49 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass{article}
 
-\usepackage{hyperref}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=2cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+\usepackage{breakurl}
+% hyperref setup
+\definecolor{Red}{rgb}{0.5,0,0}
+\definecolor{Blue}{rgb}{0,0,0.5}
+\hypersetup{%
+  pdftitle = {Bfastspatial},
+  pdfsubject = {},
+  pdfkeywords = {},
+  pdfauthor = {},
+  %% change colorlinks to false for pretty printing
+  colorlinks = {true},
+  linkcolor = {Blue},
+  citecolor = {Blue},
+  urlcolor = {Red},
+  hyperindex = {true},
+  linktocpage = {true},
+}
+% \usepackage{lineno}
+% \linenumbers
 
-%% added by Ben:
-\usepackage{a4wide}
 
 \def\code#1{\texttt{#1}}
 
 \begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=90, tidy = TRUE, tidy.opts=list(keep.blank.line=FALSE, width.cutoff=70))
+@
 
 \title{bfastSpatial}
 \author{Lo\"{i}c Dutrieux, Ben DeVries, Jan Verbesselt}
@@ -22,21 +58,13 @@ The \code{bfastSpatial} provides utilities to performs change detection analysis
 There are no specific system requirements for Windows, besides having (a recent version of) R installed; installing the \code{bfastSpatial} package will automatically install the required dependencies.  
 \subsection{Linux \& Mac}
 Some pre-processing functions require the \code{rgdal} package, which is a binding between the gdal library and R. For \code{rgdal} to work on Linux and Mac systems, gdal should be installed and properly set-up. For that, please refer to the web page of the \href{http://www.gdal.org/}{gdal project} as well as \href{http://cran.r-project.org/web/packages/rgdal/index.html}{rgdal}.
-\subsection{Installing bfastSpatial}
-The package can be installed directly from github using devtools, provided you have git already installed on your system:
-<<installpackage, eval=FALSE, results='hide'>>=
-library(devtools)
-install_github('dutri001/bfastSpatial')
-# load the package
-library(bfastSpatial)
-@
 
-\section{Downloading Landsat data from Earth Explorer}
+\section{Downloading Landsat data from Earth Explorer/espa}
 Working with Landsat time-series often involves downloading large amounts of data. The full Landsat archive for one path/row may very well exceed 500 scenes in some parts of the world. The most common way to access the data is via the \href{http://earthexplorer.usgs.gov/}{Earth Explorer platform}. You need to have an account before being able to request data to be pre-processed.
 \subsection{Placing your order}
-USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows.
+USGS is planning to support the delivery of data in different formats (HDF, GeoTiff, binary). GeoTiff is a common and easy to handle format of raster data and should be your preferred choice if you are working in Windows. A convenient way of placing an order at the moment is via \href{http://espa.cr.usgs.gov/}{espa} (you will need to request a username/password, which is different from your USGS credentials). Once you have entered the credentials provided to you, you may use the interface to upload the list of scenes you want to have pre-processed, select the layers of interest and place your order. A scene list is a simple text file with a scene ID (eg: LT52302701999134) on each line. Note that this order system is likely to evolve in the future.
 \subsection{Downloading the data}
-Once you receive the e-mail from USGS notifying you that your order has been pre-processed, you will be able to proceed to the download of the data. Because the amount of scenes is usually large, the use of a download manager is highly recommended. Two options:
+Once you receive the e-mail from ESPA notifying you that your order has been pre-processed, you will be able to proceed to the download of the data. Because the amount of scenes is usually large, the use of a download manager is highly recommended. Two options:
 \begin{itemize}
 \item The Bulk Download Application
 \item The DownloadThemAll plugin of the firefox browser
@@ -44,7 +72,6 @@ Once you receive the e-mail from USGS notifying you that your order has been pre
 
 <<'loadpackage', echo=FALSE, results='hide', message=FALSE, warning=FALSE>>=
 library(bfastSpatial)
-library(igraph)
 @
 
 \section{Data pre-processing}
@@ -58,18 +85,98 @@ The \code{bfastSpatial} package includes utilities to pre-process Landsat surfac
 \end{itemize}
 
 The two important functions to perform the above mentioned steps are \code{processLandsat} and \code{processLandsatBatch}. The former is a wrapper that performs the above steps sequentially, automatically generating file names and deleting unnecessary intermediary outputs. The latter (\code{processLandsatBatch}) allows a user to run \code{processLandsat} in batch mode, over several scenes, with parallel support. Several vegetation indices are supported by both \code{processLandsat} and \code{processLandsatBatch}.
-Let's illustrate that with an example. We added subsets of Landsat data to the package in order to illustrate the pre-processing steps. The test datasets are stored under the \code{external/} directory of the installed package. To list the content of that directory, run the following comand.
-<<'listPackageData', results='hide'>>=
+Let's illustrate with an example how these functions work. We added subsets of Landsat data to the package in order to illustrate the pre-processing steps. The test datasets are stored under the \code{external/} directory of the installed package. To list the content of that directory, run the following comand.
+<<'listPackageData'>>=
 list.files(system.file('external', package='bfastSpatial'), full.names=TRUE)
 @
-Using the \code{full.names=TRUE} argument allows you to directly use the elements of the list create without having to set working directories.
+Using the \code{full.names=TRUE} argument allows you to directly use the elements of the list create without having to set working directories.\\
 
-% TODO add example here
+\subsection{Generate Vegetation Index Layer from a Landsat archive file}
 
-Once the vegetation index layers have been produced for several dates, they can be stacked, in order to create a multilayer raster object, with time dimention written in the file as well. The function to perform this operation on Landsat data is the \code{timeStack} function. By simply providing a list of file names or a directory containing the files, the function will create a multilayer object and directly parse through the file names to extract temporal information from them and write that information to the object created.
+Since these functions are meant to write new data to disk, we will make use as much as possible of the raster temporary directory in order to make the examples reproducible independently of the paths you set.The raster temporary directory is a variable set by the \code{raster} package. The example below first creates a sub-dirrectory in the temporary directory of your system and uses this location for storage of intermediary and final outputs of the function.
 
-% TODO add timeStack example here
+<<'processLandsat'>>=
+# Set the location of output and intermediary directories (everything in tmpdir in that case)
+# We use dirname(rasterTmpFile()) instead of rasterOptions()$tmpdir to reduce verbose
+srdir <- dirout <- file.path(dirname(rasterTmpFile()), 'bfmspatial')
+dir.create(dirout, showWarning=FALSE)
 
+# Get list of test data files
+list <- list.files(system.file('external', package='bfastSpatial'), full.names=TRUE)
+
+# Generate (or extract, depending on whether the layer is already in the archive or not) NDVI for the first archive file
+processLandsat(x=list[1], vi='ndvi', outdir=dirout, srdir=srdir, delete=TRUE, mask='fmask', keep=0, overwrite=TRUE)
+
+# Visualize one of the layers produced
+list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
+plot(r <- raster(list[1]))
+@
+A few remarks about the above example:
+\begin{itemize}
+    \item A mask (\code{mask=}) had to be selected; in that case \code{'fmask'}, which is one of the layers of the landsat archive file delivered by USGS/ESPA. For details about that mask and know which values to keep (\code{keep=}), you can visit \href{http://code.google.com/p/cfmask/}{this page}, or for general information on the layers provided in the archive, see the \href{http://landsat.usgs.gov/documents/cdr_sr_product_guide.pdf}{product guide}.
+    \item The option \code{delete=} does not delete the original tarball/zip file, but instead the intermediary output, which is the layers uncompressed from the archive later used to compute the vegetation indices. This option is usefull in case you want to keep the data in their compressed form only, hence reducing disk space usage.
+    \item No extent object (\code{e=}) was used in the example. However, it is advised to always use an extent to crop the layers produced. This way we ensure that all layers have exactly the same extent and can be used to create a multilayer object, which is the next step in the pre-processing chain. To obtain an extent, you may either use the interactive function \code{drawExtent()} to draw an extent manually, or use an existing spatial object (raster or vector).
+    \item Masking and cropping are optional but highly recomended if you intend to perform subsequent time-series analysis with the layers produced.
+    \item No output filename was required; that variable is automatically generated from the input file and the \code{vi} selected.
+    \item The extension of the output is by default .grd. This is the native format of the raster package. This format has many advantages over more common GeoTiff or ENVI formats.
+    \begin{itemize}
+        \item Original layer names are kept in multi-layer objects.
+        \item There is a possibility to add a z dimension to multilayer objects, useful for storing time information for instance.
+        \item Can be read and written without requiring the \code{rgdal} package (which is not always easy to install).
+    \end{itemize}
+\end{itemize}
+
+\subsection{Running \code{processLandsat} in batch mode}
+Now that we have seen how to generate 
+For that, use the \code{processLandsatBatch} function; it allows to perform the above step in batch mode over a list and supports parallel implementation for greater speed.\\
+
+We saw above that the test data directory of the package contains 2 files (zip archives); we will generate from both of them vegetation index layers. This is not a great challenge, and could very well be achieved by running twice the same line, but in a real case you may very well have hundreds of input files and it will save you a lot of time and energy if you can process them all in one line.
+<<'processLandsatBatch'>>=
+# Create a temporary directory to store the output files.
+srdir <- dirout <- file.path(dirname(rasterTmpFile()), 'bfmspatial_2')
+dir.create(dirout, showWarning=FALSE)
+
+# Get the directory where the Landsat archives are stored
+dir <- system.file('external', package='bfastSpatial')
+
+# Run the batch line
+processLandsatBatch(x=dir, pattern=glob2rx('*.zip'), outdir=dirout, srdir=srdir, delete=TRUE, vi='ndvi', mask='fmask', keep=0, overwrite=TRUE)
+
+# Visualize one of the layers produced
+list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
+# plot(r <- raster(list[1]))
+@
+
+If you visualize the two layers produced, you'll notice that they look similar; this is simply because they in fact are the same image. Only the file name for one of the two images has been altered to make it look like it has been acquired at a different date. The reason behind this trick is that at the time we are writting this tutorial, USGS has only released \textbf{test data} of the new Landsat delivery format, and for only a few scenes and one date for each of these scenes.
+
+\subsection{Creating a multi-temporal raster object}
+Once the vegetation index layers have been produced for several dates, they can be stacked, in order to create a multilayer raster object, with time dimention written in the file as well. The function to perform this operation on Landsat data is the \code{timeStack} function. By simply providing a list of file names or a directory containing the files, the function will create a multilayer object and directly parse through the file names to extract temporal information from them and write that information to the object created.\\
+
+Make sure you have ran the previous code chunk before running the code below.
+<<'timeStack'>>=
+# Make sure that the list object generated in the prvious code chunk
+# contains 2 elements only
+list
+# Create a new subdirectory in the temporary directory
+dirout <- file.path(dirname(rasterTmpFile()), 'stack')
+dir.create(dirout, showWarnings=FALSE)
+
+# Generate a file name for the output stack
+stackName <- file.path(dirout, 'stackTest.grd')
+
+# Stack the layers
+s <- timeStack(x=list, filename=stackName, datatype='INT2S')
+
+# Visualize both layers (They are the same for the reason stated above)
+plot(s)
+@
+About the example above:
+\begin{itemize}
+    \item It is absolutely necessary for this function to work that the input layers have the same extent. Two Landsat scenes belonging to the same path/row, but acquired at different times often have slightly different extents. We therefore recomend to always use an extent object in \code{processLandsat} and \code{processLandsatBatch}, even when working with full scenes.
+    \item Time information is automatically extracted from the layer names (using \code{getSceneInfo}) and written to the z dimention of the stack.
+    \item We chose to write the output to the .grd format, which allows the time information to be stored as well as the original layer names.
+    \item The \code{x=} argument can also simply be the directory containing the layers; in which case we recomend using \code{pattern=} as well in order to ensure that only the desired files are included.
+\end{itemize}
 
 \section{Data Inventory}
 
@@ -85,7 +192,7 @@ The following functions are included in the Data Inventory module:
 
 \subsection{Basic Scene Information: \code{getSceneinfo()}}
 
-\code{getSceneinfo()} allows the user to list the information contained within a scene ID. Currently, only Landsat scene ID's are supported. For example, the scene ID ``LE71700552007309ASN00" tells us that the scene is from the Landsat 7 ETM+ sensor ('LE7'), path-row 170-55 ('170055') and was acquired on the 309th day of the year 2007 ('2007309'). Calling the following code will give a data.frame with one row showing all of this information:
+\code{getSceneinfo()} allows the user to list the information contained within a scene ID. Currently, only Landsat scene ID's are supported. For example, the scene ID ``LE71700552007309ASN00" tells us that the scene is from the Landsat 7 ETM+ sensor ('LE7'), path-row 170-55 ('170055') and was acquired on the 309th day of the year 2007 ('2007309'). Calling \code{getSceneinfo('LE71700552007309ASN00')} will give a data.frame with one row showing all of this information.
 
 <<'getSceneinfo'>>=
 getSceneinfo('LE71700552007309ASN00')
@@ -93,7 +200,7 @@ getSceneinfo('LE71700552007309ASN00')
 
 When working with Landsat data, it is a good idea to assign and keep these sceneID's as layer names (see \code{?raster::names}) so the relevant information is associated to each raster layer.
 
-<<'getSceneinfo-tura', fig.show='hide'>>=
+<<'getSceneinfo-tura'>>=
 # show scene info from tura layers
 data(tura)
 head(names(tura))
@@ -101,8 +208,7 @@ s <- getSceneinfo(names(tura))
 head(s)
 # add a column for years and plot # of scenes per year
 s$year <- as.numeric(substr(s$date, 1, 4))
-hist(s$year, breaks=c(1984:2014), main="p170r55: Scenes per Year", 
-     xlab="year", ylab="# of scenes")
+hist(s$year, breaks=c(1984:2014), main="p170r55: Scenes per Year", xlab="year", ylab="# of scenes")
 @
 
 We can combine the dates and sensor information to get more of an idea of where our data are coming from.
@@ -119,7 +225,7 @@ More examples can be found under \code{?getSceneinfo}. Many other functions in t
 
 \subsection{Valid Observations: \code{countObs()}}
 
-The number of available observations in a raster time series can be calculated by using \code{countObs()}. This function "drills" through pixels of a time series and counts the number of pixels with a non-NA value. Optionally, any other value can be supplied as a substitute for NA (e.g. the number of non-zero values per pixel can also be queried).
+The number of available observations in a raster time series can be calculated by using countObs(). This function "drills" through pixels of a time series and counts the number of pixels with a non-NA value. Optionally, any other value can be supplied as a substitute for NA (e.g. the number of non-zero values per pixel can also be queried).
 
 <<'countObs'>>=
 data(tura)
@@ -130,7 +236,7 @@ summary(obs)
 
 Values can also be expressed as a percentage if \code{as.perc} is set to \code{TRUE}.
 
-<<'countObs-asperc', fig.show='hide', results='hide'>>=
+<<'countObs-asperc'>>=
 # valid observations
 obs <- countObs(tura, as.perc=TRUE)
 summary(obs)
@@ -144,21 +250,21 @@ summary(percNA)
 
 In this section, we will calculate summary statistics for the Tura RasterBrick. First, general statistics for the entire brick can be calculated using \code{summaryBrick()}. In fact, \code{countObs()} is essentially a specific version of \code{summaryBrick}. \code{summaryBrick()} takes a RasterBrick as its first argument and a function as its second argument, and all others are optional arguments. Calculating the mean of each pixel is simple.
 
-<<'summaryBrick-functions', fig.show='hide'>>=
+<<'summaryBrick-functions'>>=
 meanVI <- summaryBrick(tura, fun=mean) # na.rm=FALSE by default
 plot(meanVI)
 @
 
 The fact that there are no values in the result stems from the fact that an \code{na.rm} argument has not been supplied. By default, this is set to \code{NULL} to ensure that other functions that do not take an \code{na.rm} argument (like \code{length}, for example) can also be used as \code{fun}. Since there are many \code{NA} values scattered through our RasterBrick as a result of cloud masking, \code{na.rm} must be set to \code{TRUE} for functions like \code{mean}, \code{median} and other common stats functions.
 
-<<'summaryBrick-narm', fig.show='hide'>>=
+<<'summaryBrick-narm'>>=
 meanVI <- summaryBrick(tura, fun=mean, na.rm=TRUE)
 plot(meanVI)
 @
 
 \code{summaryBrick} can also take custom functions, provided these functinos are vectorized - in other words, they should be applicable to a vector extracted from a single pixel time series (for example, by taking a single cell number of the Tura RasterBrick: \code{x <- tura[500]}). Suppose we want to know how many observations per pixel exceed a certain threshold. First, we should define a function that can count the number of elements in a vector that exceed this threshold, and then pass this to \code{summaryBrick}. In this example, we will use 7000 as our threshold (remember that the values are scaled by 10000, so this corresponds to an NDVI of 0.7).
 
-<<summaryBrick-custom, fig.show='hide'>>=
+<<summaryBrick-custom>>=
 # define a function that takes a vector as an argument
 checkThresh <- function(x){
     # first, get rid of NA's
@@ -186,8 +292,7 @@ medVI <- summaryBrick(tura, fun=median, na.rm=TRUE)
 # only ETM+ layers
 medVI_ETM <- summaryBrick(tura, fun=median, na.rm=TRUE, sensor="ETM+")
 # all layers between 2000 and 2005 (inclusive)
-medVI_00_05 <- summaryBrick(tura, fun=median, na.rm=TRUE, minDate="2000-01-01", 
-                            maxDate="2005-12-31")
+medVI_00_05 <- summaryBrick(tura, fun=median, na.rm=TRUE, minDate="2000-01-01", maxDate="2005-12-31")
 # all layers after 2005
 medVI_06_13 <- summaryBrick(tura, fun=median, na.rm=TRUE, minDate=c(2006, 1))
 # plot and compare
@@ -205,7 +310,7 @@ Note that the Tura brick already has scene information included as layer names (
 
 \code{annualSummary} works similarly to \code{summaryBrick}, but provides a statistic for each year of the time series. At this time, this function is only applicable to Landsat data, and the scene IDs must be supplied either as \code{names(x)} or as a separate character vector to \code{sceneID}. In this sample, we will again calculate median NDVI on all ETM+ data, but this time we are interested in seeing the \emph{annual} median NDVI value.
 
-<<'annualSummary-ETM', fig.show='hold'>>=
+<<'annualSummary-ETM'>>=
 annualMed <- annualSummary(tura, fun=median, sensor="ETM+", na.rm=TRUE)
 plot(annualMed)
 @
@@ -227,8 +332,7 @@ Working with \code{bfastmonitor} (BFM) can be intimidating at first, especially 
 data(tura)
 # plot the 6h layer
 plot(tura, 6)
-# run bfmPixel() in interactive mode with a monitoring period 
-# starting @ the 1st day in 2009
+# run bfmPixel() in interactive mode with a monitoring period starting @ the 1st day in 2009
 bfm <- bfmPixel(tura, start=c(2009, 1), interactive=TRUE)
 @
 
@@ -236,7 +340,7 @@ Inspecting the output of this function, you will see that a list of length 2 has
 
 Let's run \code{bfmPixel} again, but this time indicating a specific cell number instead of using interactive mode. Note that by default \code{interactive=FALSE}, so there is no need to specify this if a value for \code{cell} is given.
 
-<<'bfmPixel-targcell', fig.show='hide'>>=
+<<'bfmPixel-targcell'>>=
 targcell <- 3492
 bfm <- bfmPixel(tura, cell=targcell, start=c(2009, 1))
 # inspect and plot the $bfm output
@@ -246,26 +350,22 @@ plot(bfm$bfm)
 
 Specifying a cell number gives the advantage of being able to test different parameters on the same pixel time series to see what impact these parameters have on the sensitivity of the algorithm. Note that a plot is immediately produced if \code{plot = TRUE}.
 
-<<'bfmPixel-args', fig.show='hide'>>=
+<<'bfmPixel-args'>>=
 # use a harmonic model only
-bfm1 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
-                 formula=response~harmon, plot=TRUE)
+bfm1 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon, plot=TRUE)
 # same, but with an order of 1
-bfm2 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
-                 formula=response~harmon, order=1, plot=TRUE)
+bfm2 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~harmon, order=1, plot=TRUE)
 # only trend
-bfm3 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
-                 formula=response~trend, plot=TRUE)
+bfm3 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), formula=response~trend, plot=TRUE)
 @
 
 Check out \code{?bfastmonitor} for more information on the parameters that are included in the method.
 
 A number of additional options are provided in \code{bfmPixel}. Specifying a value for \code{monend} will trim the time series after that date (thus limiting the monitoring period to a given period). This simple modification can have an impact on the resulting change magnitude, which is computed as the median residual between the predicted and observed values within the monitoring period.
 
-<<'bfmPixel-monend', fig.show='hide'>>=
+<<'bfmPixel-monend'>>=
 # bfmPixel using a 1-year monitoring period
-bfm4 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
-                 monend=c(2010, 1), plot=TRUE)
+bfm4 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), monend=c(2010, 1), plot=TRUE)
 @
 
 Finally, for Landsat time series the analysis can be limited to data of a specific sensor. The \code{sensor} parameter currently accepts the following possible character values:
@@ -280,8 +380,7 @@ Note that in our previous runs of \code{bfmPixel}, there is what seems to be a b
 
 <<'bfmPixel-sensor'>>=
 # apply bfmPixel only on ETM+ data
-bfm5 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), 
-                 sensor="ETM+", plot=TRUE)
+bfm5 <- bfmPixel(tura, cell=targcell, start=c(2009, 1), sensor="ETM+", plot=TRUE)
 @
 
 \subsection{Working with raster time series: \code{bfmSpatial}}
@@ -340,8 +439,7 @@ The change raster gives breakpoint timing values in decimal years. A better way 
 <<'changeMonth'>>=
 months <- changeMonth(change)
 # set up labels and colourmap for months
-monthlabs <- c("jan", "feb", "mar", "apr", "may", "jun", 
-               "jul", "aug", "sep", "oct", "nov", "dec")
+monthlabs <- c("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
 library(RColorBrewer)
 cols <- rev(brewer.pal(11, "RdYlBu"))
 # interpolate colormap (since max # of colours for "RdYlBu" is 11)
@@ -353,7 +451,7 @@ legend("bottomright", legend=monthlabs, cex=0.5, fill=cols, ncol=2)
 
 \code{bfmMagn} does the same as \code{bfmChange} to the second layer, but adds some other options (masking by breakpoint, applying a threshold). Magnitude is computed as the median residual between expected and observed values throughout the \emph{entire} monitoring period, meaning that all pixels are assigned a value regardless of whether or not a breakpoint has been detected. If we are only interested in looking at pixels where a breakpoint has been detected, we can use the \code{change} argument in the \code{bfmMagn}, which takes a raster of breakpoints to use as a filter.
 
-<<'bfmMagn', fig.show='hold'>>=
+<<'bfmMagn'>>=
 # extract magn raster, and include only change pixels
 magn <- bfmMagn(bfm, change=change)
 # compare with 'original' magn raster
@@ -393,7 +491,7 @@ magn09 <- bfmMagn(bfm09, change=change09) / 10000
 
 Suppose we know from field observations or other reference data that breakpoints with NDVI magnitudes of -0.05 are associated with high probability of detected actual deforestation. We can easily apply this threshold to our magnitude raster, or even pass this threshold as an additional argument to \code{bfmMagn}. In the later case, take care with the scaling of the data - the original \code{bfmSpatial} results are still in their ``raw" format. In this case, our threshold should be accordingly scaled. In this example, we will scale the final magnitude back, as above.
 
-<<'bfmMagn-thresh', fig.show='hold'>>=
+<<'bfmMagn-thresh'>>=
 # extract and rescale magnitude and apply a -500 threshold
 magn09thresh <- bfmMagn(bfm09, change=change09, thresh = -500) / 10000
 # compare
@@ -417,7 +515,7 @@ magn09_areasieve <- areaSieve(magn09thresh)# default thresh = 5000
 
 \code{areaSieve} passes additional arguments to \code{raster::clump}, which allows for considerations of direction when defining pixel neighbourhoods. \code{clump} adheres to the principle of ``queen's case" versus ``rook's case". In the former, pixels in all directions (default: \code{directions = 8}) are considered when defining clumps, whereas in the latter case, only pixels directly adjacent (excluding diagonals) are considered (\code{directions = 4}).
 
-<<'areaSieve-rook', fig.show='hold'>>=
+<<'areaSieve-rook'>>=
 magn09_as_rook <- areaSieve(magn09thresh, directions=4)
 # compare all magn rasters
 op <- par(mfrow=c(2, 2))
@@ -430,7 +528,7 @@ par(op)
 
 Once we have applied the desired filters and sieves to our bfm magnitude raster, we may want to calculate area statistics. This can be done with another simple function: \code{clumpSize}. This function is also based on the \code{raster::clumps} function and computes the size of each pixel clump and assigns that value back to each pixel in that clump. As in \code{areaSieve}, the queen's and rook's cases can also apply by adjusting the \code{directions} argument.
 
-<<'clumpSize', fig.show='hold'>>=
+<<'clumpSize'>>=
 changeSize_queen <- clumpSize(magn09_areasieve)
 changeSize_rook <- clumpSize(magn09_areasieve, directions=4)
 # compare

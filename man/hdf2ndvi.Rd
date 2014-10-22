@@ -1,8 +1,8 @@
-\name{sr2vi}
-\alias{sr2vi}
-\title{Calculate Vegetation Index from Landsat surface reflectance data file}
+\name{hdf2ndvi}
+\alias{hdf2ndvi}
+\title{Calculate NDVI from Landsat hdf file}
 \usage{
-sr2vi(x, e = NULL, mask = NULL, keep = c(0), ...)
+hdf2ndvi(x, e = NULL, mask = NULL, keep = c(0), ...)
 }
 \arguments{
   \item{x}{Character. File name of the hdf file containing

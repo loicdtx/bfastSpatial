@@ -7,12 +7,11 @@
 #' 
 #' @param x character. dir containing the files to be stacked or character list (the files). IN the former case, it is recommended to use the \code{pattern} argument
 #' @param pattern See \link{list.files}
-#' @param orderChrono Logical. Should layers in the output object be orderred chronologically. If set to FALSE, layer order will be alphabetical.
 #' @param ... Arguments to be passed to \link{writeRaster}. If specifying a filename, it is strongly recommended to also set a datatype.
 #' @author Loic Dutrieux
 #' @examples
-#' # 1 - Produce individual VI layers (using processLandsatBatch())
-#' # Get the directory where the Landsat archives are stored
+#' 1 - Produce individual VI layers (using processLandsatBatch())
+#' Get the directory where the Landsat archives are stored
 #' dir <- system.file('external', package='bfastSpatial')
 #' 
 #' # Set the location of output and intermediary directories (everything in tmpdir in that case)
@@ -40,7 +39,7 @@
 #' @export
 #' 
 
-timeStack <- function(x, pattern=NULL, orderChrono = TRUE, ...) {
+timeStack <- function(x, pattern=NULL, ...) {
     
     if(!is.character(x)){
         stop('x must be a character (directory) or a list of characters')
@@ -49,15 +48,12 @@ timeStack <- function(x, pattern=NULL, orderChrono = TRUE, ...) {
         x <- list.files(x, pattern=pattern, full.names=TRUE)
     }
     
-    orderChronoFun <- function(list) {
+    orderChrono <- function(list) {
         list2 <- list[order(substr(str_extract(string=basename(list), '(LT4|LT5|LE7|LC8)\\d{13}'), 4, 16))] 
         return(list2)        
     }
     
-    if(orderChrono){
-        x <- orderChronoFun(x)
-    }
-    
+    x <- orderChrono(x)
     s <- stack(x)
     
     time <- getSceneinfo(str_extract(string=basename(x), '(LT4|LT5|LE7|LC8)\\d{13}'))$date

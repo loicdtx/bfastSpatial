@@ -3,9 +3,9 @@
 #' @description Filter a time series RasterBrick or RasterStack using a static or statistical threshold in a defined historical period
 #' 
 #' @param x RasterBrick or RasterStack. Raster time series to be cleaned
-#' @param monperiod Numeric. Beginning of intended monitoring period in \code{\link{bfmSpatial}} in the form \code{c(year, Julian day)}. The filter will only be applied before this period (ie. to the history period). If set to \code{NULL}, the filter will be applied to the entire time series.
+#' @param monperiod Numeric. Beginning of intended monitoring period in \link{\code{bfmSpatial}} in the form \code{c(year, Julian day)}. The filter will only be applied before this period (ie. to the history period). If set to \code{NULL}, the filter will be applied to the entire time series.
 #' @param thresh Either a Numeric static threshold or \code{"IQR"} to calcalate the threshold per pixel based on the interquartile zone.
-#' @param dates Date. Vector of dates corresponding exactly to layers in x. If \code{NULL}, dates are either extracted from \code{sceneID} or \code{names(x)} using \code{\link{getSceneinfo}}.
+#' @param dates Date. Vector of dates corresponding exactly to layers in x. If \code{NULL}, dates are either extracted from \code{sceneID} or \code{names(x)} using \link{code{getSceneinfo}}.
 #' @param sceneID Character. Vector of Landsat sceneID's 
 #' @param is.max Logical. Is \code{thresh} to be treated as a maximum threshold (ie. all values higher will be removed)? If \code{FALSE}, all values lower than \code{thresh} will be removed (default).
 #' @param ... Additional parameters to pass to \code{\link{mc.calc}}
@@ -21,23 +21,13 @@
 #' 
 #' 
 
-cleanBrick <- function(x, monperiod, thresh, dates=NULL, is.max=FALSE, ...){
+cleanBrick <- function(x, monperiod, thresh, dates=NULL, sceneID=NULL, is.max=FALSE, ...){
     
-    # get dates (if is.null(dates))
-    if(is.null(dates)) {
-        if(is.null(getZ(x))) {
-            if(!.isLandsatSceneID(x)){ # Check if dates can be extracted from layernames
-                stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
-            } else {
-                dates <- as.Date(getSceneinfo(names(x))$date)
-            }
-        } else {
-            dates <- getZ(x)
-        }
-    } else {
-        if(length(dates) != nlayers(x)){
-            stop("dates should be of same length as nlayers(x)")
-        }
+    # if dates==NULL, get dates vector either from sceneID or from names(x)
+    if(is.null(dates) & !is.null(sceneID)){
+        dates <- getSceneinfo(sceneID)$date
+    } else if(is.null(dates) & is.null(sceneID)){
+        dates <- getSceneinfo(names(x))$date
     }
     
     # reformat monperiod

@@ -5,21 +5,17 @@
 #' 
 #' @param sourcefile Character. Filename of a landsat layer or dataset.
 #' @param ... Additional arguments to pass to \code{\link{write.csv}}.
-#' 
-#' @author Ben DeVries and Loic Dutrieux
-#' 
+#' @author Ben DeVries \email{devries.br@@gmail.com}
 #' @return a \code{data.frame} with parsed scene information from Landsat scene names
-#' 
 #' @import stringr
-#' 
 #' @examples 
 #' getSceneinfo(c('ndvi.LC82300702014234.tar.gz', 'ndvi.LT52300702008234.tif'))
 #' 
 #' # Load tura
 #' data(tura)
 #' getSceneinfo(names(tura))
-#' 
 #' @export
+
 
 
 getSceneinfo <- function(sourcefile, ...)
@@ -45,7 +41,7 @@ getSceneinfo <- function(sourcefile, ...)
       "ETM+ SLC-on"
     else if(sen == "LE7" & y > "2003-03-31")
       "ETM+ SLC-off"
-    else if(sen == "LT5" | sen == "LT4") 
+    else if(sen == "LT5" | x == "LT4") 
       "TM" 
     else if(sen == "LC8")
       "OLI"      

@@ -12,7 +12,7 @@
 #' @param ... Arguments to be passed to \code{\link{writeRaster}}
 #' @return A rasterLayer object
 #' @author Loic Dutrieux
-#' @seealso \code{\link{processLandsat}} and \code{\link{processLandsatBatch}} for wrapper and wrapper/batcher functions
+#' @seealso \code{\link{processLandsat}} for wrapper function
 #' @import gdalUtils
 #' @import raster
 #' @import rgdal
@@ -36,8 +36,8 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     
     
     
-    if(extension(x[1]) == '.hdf') { 
-        x <- unlist(sapply(FUN=function(x){try(get_subdatasets(x), silent=TRUE)}, X=x), use.names=FALSE) #get_subdataset returns an error in case one of the hdfs contains no more than one sds (which can be the case when VIs are ordered via espa)
+    if(extension(x[1]) == '.hdf') { # Also should be the only case when length(x) == 1
+        x <- get_subdatasets(x[1])
     }
     
     
@@ -45,8 +45,8 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     ###########################################################################
     # When the indices are already pre-processed ------------------------------
        
-    if(any(grepl(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x, ignore.case=TRUE))) { 
-        vi <- raster(grep(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x, value=TRUE, ignore.case=TRUE))
+    if(any(grepl(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x))) { 
+        vi <- raster(grep(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x, value=TRUE))
         if(!is.null(mask)) {
             mask <- raster(grep(pattern=sprintf("^.*%s($|\\.tif|_band$)", mask), x=x, value=TRUE)) # Called 'fmask_band' in the hdf file
         }
@@ -105,7 +105,7 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
             if(class(e) != 'extent') {
                 e <- extent(e)
             }
-            bands <- lapply(X=bands, FUN=crop, y=e)
+            s <- crop(s, e)
             if(!is.null(mask)) {
                 mask <- crop(mask, e)
             }

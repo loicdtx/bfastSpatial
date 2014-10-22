@@ -5,42 +5,31 @@
 #' @param x RasterBrick or RasterStack
 #' @param navalues Integer. Values representing NA's in time series. Defaults to NA, but multiple values can be supplied (e.g. \code{navalue = c(0, NA)})
 #' @param as.perc Logical. Express result as a percentage of nlayers(x)?
-#' @param ... Arguments to be passed to \code{\link{mc.calc}}
-#' 
-#' @return A raster layer with the number of valid observations per pixel, either as an absolute value or expressed as a percent of \code{nlayers(x)} if \code{is.perc = TRUE}.
-#' 
-#' @seealso \code{\link{summaryBrick}}
+#' @param ... Arguments to be passed to \link{\code{mc.calc}}
 #' 
 #' @import raster
 #' @import parallel
-#' 
-#' @author Ben DeVries
+#' @author Ben DeVries (\email{devries.br@@gmail.com})
 #' @export
 #' 
 
-countObs <- function(x, navalues=c(NA), sensor = NULL, as.perc=FALSE, ...){
+countObs <- function(x, navalues=c(NA), sensor = "all", as.perc=FALSE, ...){
     
-    # if sensor is given (!is.null(sensor)), then limit the analysis to a particular sensor
-    if(!is.null(sensor)){
+    # include data only from desired sensor(s)
+    if (sensor != "all") {
+        # get scene information from layer names
+        s <- getSceneinfo(names(x))
+        
         if ("ETM+" %in% sensor) {
             sensor <- unique(c(sensor, "ETM+ SLC-on", "ETM+ SLC-off"))
         }
-        if(!.isLandsatSceneID(x)){
-            warning("Scene IDs should be supplied as names(x) to subset by sensor. Ignoring...\n")
-            scenes <- NULL
-        } else {
-            # 'allowed' scenes
-            scenes <- which(getSceneinfo(names(x))$sensor %in% sensor)
-        }
-    } else {
-        scenes <- NULL
+        x <- dropLayer(x, which(!s$sensor %in% sensor))
+        s <- s[which(s$sensor %in% sensor), ]
+        names(x) <- row.names(s)
     }
     
     # function to calculate # of observations per pixel
     fun <- function(b){
-        if(!is.null(scenes)){
-            b <- b[scenes]
-        }
         n <- length(b[!b %in% navalues])
         if(as.perc)
             n <- n / nlayers(x) * 100
