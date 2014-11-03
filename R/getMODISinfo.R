@@ -12,5 +12,6 @@
 
 
 getMODISinfo <- function(x) {
-    as.Date(str_match(pattern='(\\.A)(\\d{7})(\\.)', basename(x))[,3], format="%Y%j")
+    date <- as.Date(str_match(pattern='(\\.A)(\\d{7})(\\.)', basename(x))[,3], format="%Y%j")
+    data.frame(date = date) # For consistency with getSceneinfo (Landsat)    
 }
