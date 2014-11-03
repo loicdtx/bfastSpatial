@@ -1,6 +1,6 @@
 #' @title Creates a time stack of Landsat layers
 #'
-#' @description Creates a stack of MODIS layers, with time written to z dimension
+#' @description Creates a stack of MODIS layers, with time written to z dimension. Works in anolog way to \link{\code{timeStack}}
 #'
 #' @param x character. dir containing the files to be stacked or character list (the files). IN the former case, it is recommended to use the \code{pattern} argument
 #' @param pattern See \link{list.files}
