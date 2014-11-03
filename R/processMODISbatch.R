@@ -1,4 +1,4 @@
-#' Wrapper to pre-process MODIS data
+#' Wrapper to pre-process MODIS data in batch mode
 #' 
 #' @description Processes MODIS data for subsequentent use in time-series analysis
 #' 
@@ -7,7 +7,7 @@
 #' @param outdir Character. Directory where the output should be written.
 
 
-processMODIS <- function(x, pattern = NULL, data_SDS, QC_SDS, bit=FALSE, QC_val, fill=NULL, outdir, mc.cores=1) {
+processMODISbatch <- function(x, pattern = NULL, data_SDS, QC_SDS, bit=FALSE, QC_val, fill=NULL, outdir, mc.cores=1) {
     if (!is.character(x)) {
         stop('x needs to be of class character')
     }
