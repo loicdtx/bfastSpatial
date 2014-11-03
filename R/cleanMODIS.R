@@ -22,6 +22,11 @@
 
 cleanMODIS <- function(x, data_SDS, QC_SDS, bit=FALSE, QC_val,  ...){
     
+    if(!'HDF4' %in% gdalDrivers()$name){
+        stop('This command requires rgdal to be configured with HDF4 driver')
+    }
+    
+    
     sds <- get_subdatasets(x)
     data <- raster(readGDAL(sds[data_SDS], as.is=TRUE))
     QC <- raster(sds[QC_SDS])
