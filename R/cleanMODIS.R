@@ -20,7 +20,7 @@
 #' 
 #' 
 
-cleanMODIS <- function(x, data_SDS, QC_SDS, bit=FALSE, QC_val, fill=NULL, ...){
+cleanMODIS <- function(x, data_SDS, QC_SDS, bit=FALSE, QC_val,  ...){
     
     sds <- get_subdatasets(x)
     data <- raster(readGDAL(sds[data_SDS], as.is=TRUE))
