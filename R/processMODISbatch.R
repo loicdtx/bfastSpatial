@@ -1,11 +1,21 @@
-#' Wrapper to pre-process MODIS data in batch mode
+#' Wrapper/batcher to pre-process MODIS data in batch mode
 #' 
-#' @description Processes MODIS data for subsequentent use in time-series analysis
+#' @description Processes MODIS data for subsequentent use in time-series analysis. Performs MODIS cleaning and mosaicking operations with parallel support. This function requires rgdal to be configured with HDF4 driver.
 #' 
 #' @param x Character. Directory where the data is located. Or list of file names.
-#' @param pattern Only useful if x if of length 1. See \link{list.files} for more details
+#' @param pattern Only useful if x is of length 1. See \link{list.files} for more details
+#' @param data_SDS See \link{cleanMODIS}.
+#' @param QC_SDS See \link{cleanMODIS}.
+#' @param bit See \link{cleanMODIS}.
+#' @param QC_val \link{cleanMODIS}.
+#' @param fill \link{cleanMODIS}.
+#' @param mc.cores Numeric. Number of cores to use for processing. See \link{mclapply}
 #' @param outdir Character. Directory where the output should be written.
 #' @param mosaic Logical. When working with several tiles, should these be mosaicked or kept as separate output files. Default is \code{TRUE}
+#' 
+#' @seealso \code{\link{cleanMODIS}}, and \code{\link{timeStackMODIS}} for stacking.
+#' 
+#' @return This function is used for its side effect of producing cleaned modis data, hence written to disk at \code{outdir} location
 #' 
 #' @import raster
 #' @import gdalUtils
