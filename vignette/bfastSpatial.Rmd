@@ -1,3 +1,12 @@
+---
+output:
+  html_document:
+    toc: true
+    theme: united
+bibliography: bfastspatial.bib
+cls: nature-no-superscript.csl
+---
+
 <!--
 %\VignetteEngine{knitr}
 %\VignetteIndexEntry{Introduction to bfastSpatial}
@@ -12,14 +21,12 @@ knitr::opts_chunk$set(
     tidy = FALSE)
 ```
 
-
-
 # Introduction to bfastSpatial
 *By Loïc Dutrieux, Ben DeVries and Jan Verbesselt*
 
 
 ## Preamble
-The `bfastSpatial` package provides utilities to performs change detection analysis on time-series of spatial gridded data, such as time-series of remote sensing images (Landsat, MODIS and the likes). The tools provided by `bfastSpatial` allows a user to perform all the steps of the change detection workflow, from pre-processing raw surface reflectance Landsat data, inventorying and preparing them for analysis to the production and formatting of change detection results. The present document aims at providing guidance to the users of `bfastSpatial` by detailing every steps of the process.
+The `bfastSpatial` package provides utilities to performs change detection analysis [see @Verbesselt2009a; @Verbesselt:rse:2011] on time-series of spatial gridded data, such as time-series of remote sensing images (Landsat, MODIS and the likes). The tools provided by `bfastSpatial` allows a user to perform all the steps of the change detection workflow, from pre-processing raw surface reflectance Landsat data, inventorying and preparing them for analysis to the production and formatting of change detection results. The present document aims at providing guidance to the users of `bfastSpatial` by detailing every steps of the process.
 
 ## Set up your system
 ### Windows
@@ -546,5 +553,4 @@ print(changeSize$stats)
 
 We can say that based on our analysis, the average size of change units in Tura in 2009 is estimated to be 6.3 hectares. In this case, the minimum is not suprising, since we had already applied an area sieve using 0.5 hectares as our threshold.
 
-References
-To be added.
+# References
