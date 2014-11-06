@@ -545,3 +545,6 @@ print(changeSize$stats)
 ```
 
 We can say that based on our analysis, the average size of change units in Tura in 2009 is estimated to be 6.3 hectares. In this case, the minimum is not suprising, since we had already applied an area sieve using 0.5 hectares as our threshold.
+
+References
+To be added.
