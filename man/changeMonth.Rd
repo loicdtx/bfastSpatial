@@ -19,7 +19,4 @@ Returns one RasterLayer for each year represented by the change results. Months 
 \author{
 Ben DeVries
 }
-\seealso{
-\code{\link{bfmChange}}
-}
 

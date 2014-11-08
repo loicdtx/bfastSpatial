@@ -2,8 +2,6 @@
 
 export(annualSummary)
 export(areaSieve)
-export(bfmChange)
-export(bfmMagn)
 export(bfmPixel)
 export(bfmSpatial)
 export(changeMonth)
