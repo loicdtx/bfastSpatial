@@ -13,7 +13,7 @@ cls: nature-no-superscript.csl
 -->
 
 ```{r, echo = FALSE, message = FALSE}
-library(bfastSpatial)
+suppressWarnings(library(bfastSpatial))
 knitr::opts_chunk$set(
     fig.align='center',
     comment = "#>",
@@ -195,23 +195,15 @@ When working with Landsat data, it is a good idea to assign and keep these scene
 ```{r, fig.show='hide'}
 # show scene info from tura layers
 data(tura)
-head(names(tura))
+
+# show the layer names
+names(tura)
 s <- getSceneinfo(names(tura))
-head(s)
+s
 # add a column for years and plot # of scenes per year
 s$year <- as.numeric(substr(s$date, 1, 4))
 hist(s$year, breaks=c(1984:2014), main="p170r55: Scenes per Year", 
      xlab="year", ylab="# of scenes")
-```
-
-We can combine the dates and sensor information to get more of an idea of where our data are coming from.
-
-```{r}
-library(ggplot2)
-p <- ggplot(data = s, aes(x = year))
-p <- p + geom_bar(aes(fill = sensor), binwidth=1, col="black")
-p <- p + labs(y="number of scenes")
-p
 ```
 
 More examples can be found under `?getSceneinfo`. Many other functions in the bfastSpatial package rely on getSceneinfo to extract relevant scene information, such as acquisition dates to be passed to `bfmSpatial()` or `bfmPixel()`.
@@ -233,7 +225,7 @@ Values can also be expressed as a percentage if `as.perc` is set to `TRUE`.
 # valid observations
 obs <- countObs(tura, as.perc=TRUE)
 summary(obs)
-# \% NA per pixel
+# % NA per pixel
 percNA <- 100 - countObs(tura, as.perc=TRUE)
 plot(percNA, main="percent NA per pixel")
 summary(percNA)
@@ -298,7 +290,7 @@ plot(medVI_06_13, main = "2006-2013")
 par(op)
 ```
 
-`minDate` and `maxDate` can be supplied in one of two ways: (1) as a character or date object in the format `"\%Y-\%m-\%d"` (eg. ``2013-01-31") or (2) as a numeric vector of length 2 representing the year and Julian day (e.g. `c(2013, 31)`).
+`minDate` and `maxDate` can be supplied in one of two ways: (1) as a character or date object in the format `"%Y-%m-%d"` (eg. ``2013-01-31") or (2) as a numeric vector of length 2 representing the year and Julian day (e.g. `c(2013, 31)`).
 
 Note that the Tura brick already has scene information included as layer names (see `names(tura)`). To run `annualSummary` on RasterBricks where no scene information is available, a dates vector **must** be supplied to be able to divide the layers into years. This vector is also required for `summaryBrick` when constraining the calculation by date using `minDate` and `maxDate`.
 
@@ -324,14 +316,15 @@ Working with `bfastmonitor` (BFM) can be intimidating at first, especially given
 ```{r, eval=FALSE}
 # load tura RasterBrick
 data(tura)
-# plot the 6h layer
-plot(tura, 6)
+# plot the 42nd layer
+plot(tura, 42)
 # run bfmPixel() in interactive mode with a monitoring period 
 # starting @ the 1st day in 2009
 bfm <- bfmPixel(tura, start=c(2009, 1), interactive=TRUE)
+# choose the pixel whose time series you want to see by clicking on the map you plotted a moment ago
 ```
 
-Inspecting the output of this function, you will see that a list of length 2 has been outputted. First, a list of class `bfastmonitor` is output under `$bfm`. Second, an integer indicating the cell number that has been clicked is output under `$cell`. The output is formatted this way so that if `bfmPixel` is run in interactive mode, a follow-up analysis can be done on that same cell without having to guess which cell was clicked before. In the above example, the cell number can be retrieved simply by typing `bfm$cell` in the console.
+Inspecting the output of this function, you will see that a list of length 2 has been returned. First, a list of class `bfastmonitor` is output under `$bfm`. Second, an integer indicating the cell number that has been clicked is output under `$cell`. The output is formatted this way so that if `bfmPixel` is run in interactive mode, a follow-up analysis can be done on that same cell without having to guess which cell was clicked before. In the above example, the cell number can be retrieved simply by typing `bfm$cell` in the console.
 
 Let's run `bfmPixel` again, but this time indicating a specific cell number instead of using interactive mode. Note that by default `interactive=FALSE`, so there is no need to specify this if a value for `cell` is given.
 
@@ -373,7 +366,6 @@ Finally, for Landsat time series the analysis can be limited to data of a specif
 * `"ETM+ SLC-off"`
 * `"TM"`
 
-
 Note that in our previous runs of `bfmPixel`, there is what seems to be a bias between TM data from the 80's and 90's (which can be found throughout the scene). This has a large effect on our model, especially when a trend is included. A very quick way to avoid this bias is to include only data from the ETM+ sensor, which was launched in 1999.
 
 ```{r}
@@ -408,7 +400,7 @@ Luckily for us, tura is a very small RasterBrick, and processing is not incredib
 
 ```{r, eval=FALSE}
 t2 <- system.time(
-    bfm <- bfmSpatial(tura, start=c(2009, 1), order=1, mc.cores=8)
+    bfm <- bfmSpatial(tura, start=c(2009, 1), order=1, mc.cores=2)
     )
 # compare processing time with previous run
 t1 - t2
@@ -420,16 +412,18 @@ t1 - t2
 
 ## Post-Processing of BFM output
 
-Three raster layers are output by `bfmSpatial`:
+By default, three raster layers are output by `bfmSpatial`:
 1. breakpoint timing - in decimal year format
 2. change magnitude - the medial residual between expected and observed values in the monitoring period
 3. error flag - possible values of 1 if an error has been encountered in a particular pixel, and NA where the algorithm was successful (or a mask had already been applied previously)
 
-The `bfastSpatial` package has some simple functions for 'unpacking' the `bfmSpatial` results. `bfmChange` simply extracts the first layer and saves it to a separate object.
+The `returnLayers` argument allows for additional outputs, including model parameters for each pixel, but we won't discuss those in this tutorial. See `?bfmSpatial` for more information.
+
+The output of `bfmSpatial` is a simple rasterBrick. Individual layers can be extracted as with any rasterBrick object. As noted above, the first layer is the breakpoint timing:
 
 ```{r}
 # extract change raster
-change <- bfmChange(bfm)
+change <- raster(bfm, 1)
 ```
 
 The change raster gives breakpoint timing values in decimal years. A better way to map change timing from these results may be to show the month of change (the validity of this depends on the temporal density of there input time series). `changeMonth` is a convenient way to convert breakpoint values to change months. The result is one or more raster layers with integer values between 1 and 12, representing the months of the year. In cases where multiple years are represented in the change raster, these are split into raster layers representing one layer per year.
@@ -439,31 +433,30 @@ months <- changeMonth(change)
 # set up labels and colourmap for months
 monthlabs <- c("jan", "feb", "mar", "apr", "may", "jun", 
                "jul", "aug", "sep", "oct", "nov", "dec")
-library(RColorBrewer)
-cols <- rev(brewer.pal(11, "RdYlBu"))
-# interpolate colormap (since max # of colours for "RdYlBu" is 11)
-cols <- colorRampPalette(cols)(12)
+cols <- rainbow(12)
 plot(months, col=cols, breaks=c(1:12), legend=FALSE)
 # insert custom legend
 legend("bottomright", legend=monthlabs, cex=0.5, fill=cols, ncol=2)
 ```
 
-`bfmMagn` does the same as `bfmChange` to the second layer, but adds some other options (masking by breakpoint, applying a threshold). Magnitude is computed as the median residual between expected and observed values throughout the **entire** monitoring period, meaning that all pixels are assigned a value regardless of whether or not a breakpoint has been detected. If we are only interested in looking at pixels where a breakpoint has been detected, we can use the `change` argument in the `bfmMagn`, which takes a raster of breakpoints to use as a filter.
+The second layer output by `bfmSpatial` is magnitude. Magnitude is computed as the median residual between expected and observed values throughout the **entire** monitoring period, meaning that all pixels are assigned a value regardless of whether or not a breakpoint has been detected.
 
 ```{r, fig.show='hold'}
-# extract magn raster, and include only change pixels
-magn <- bfmMagn(bfm, change=change)
-# compare with 'original' magn raster
+# extract magn raster
+magn <- raster(bfm, 2)
+# make a version showing only breakpoing pixels
+magn_bkp <- magn
+magn_bkp[is.na(change)] <- NA
 op <- par(mfrow=c(1, 2))
-plot(magn, main="Magnitude: breakpoints")
-plot(bfm[[2]], main="Magnitude: all pixels")
+plot(magn_bkp, main="Magnitude: breakpoints")
+plot(magn, main="Magnitude: all pixels")
 par(op)
 ```
 
 Note that the magnitude values are in the same scale as the input data, which had been scaled by 10000. Scaling back can be done by simple raster algebra, or with the `raster::calc` function to enable writing to file.
 
 ```{r}
-magn <- bfmMagn(bfm, change=change) / 10000
+magn <- raster(bfm, 2) / 10000
 ```
 
 The magnitude could be used to discriminate between actual deforestation and other factors that might give rise to breakpoints (such as noisy data). However, interpreting magnitude is complicated by the fact that follow-up dynamics can affect the magnitude value, since it is computed throughout the entire monitoring period. To circumvent this (not entirely), we will re-run `bfmSpatial` using a 1-year monitoring period, under the assumption that this monitoring window is too short for post-change dynamics to significantly affect the magnitude value. To do this, we will include the `monend` argument of `bfmSpatial`, which will limit the analysis to a specific time period. In this example, we will use a 2009-2010 monitoring period with all other parameters the same as above.
@@ -475,24 +468,29 @@ if(!file.exists("temp/bfmTura09.rda")){
     load("temp/bfmTura09.rda")
 }
 # extract change
-change09 <- bfmChange(bfm09)
+change09 <- raster(bfm09, 1)
 # extract and rescale magnitude
-magn09 <- bfmMagn(bfm09, change=change09) / 10000
+magn09 <- raster(bfm09, 2) / 10000
+# remove all non-breakpoints
+magn09[is.na(change09)] <- NA
 ```
 
 ```{r, eval=FALSE}
 bfm09 <- bfmSpatial(tura, start=c(2009, 1), monend=c(2010, 1), order=1)
 # extract change
-change09 <- bfmChange(bfm09)
+change09 <- raster(bfm09, 1)
 # extract and rescale magnitude
-magn09 <- bfmMagn(bfm09, change=change09) / 10000
+magn09 <- raster(bfm09, 2) / 10000
+# remove all non-breakpoints
+magn09[is.na(change09)] <- NA
 ```
 
-Suppose we know from field observations or other reference data that breakpoints with NDVI magnitudes of -0.05 are associated with high probability of detected actual deforestation. We can easily apply this threshold to our magnitude raster, or even pass this threshold as an additional argument to `bfmMagn`. In the later case, take care with the scaling of the data - the original `bfmSpatial` results are still in their ``raw" format. In this case, our threshold should be accordingly scaled. In this example, we will scale the final magnitude back, as above.
+Suppose we know from field observations or other reference data that breakpoints with NDVI magnitudes of -0.05 are associated with high probability of detected actual deforestation. We can easily apply this threshold to our magnitude raster by replacing all values above -0.05 with `NA`.
 
 ```{r, fig.show='hold'}
 # extract and rescale magnitude and apply a -500 threshold
-magn09thresh <- bfmMagn(bfm09, change=change09, thresh = -500) / 10000
+magn09thresh <- magn09
+magn09thresh[magn09 > -0.05] <- NA
 # compare
 op <- par(mfrow=c(1, 2))
 plot(magn09, main="magnitude")
@@ -500,19 +498,19 @@ plot(magn09thresh, main="magnitude < -0.05")
 par(op)
 ```
 
-A careful inspection of these results will show that applying the magnitude filter has changed the results somewhat, but since there isn't a great deal of noise in this example, the results were not dramatic. Another way we can clean up our results is to get rid of tiny clumps of change pixels that are not likely to represent actual change. For example, a simple raster sieve can eliminate single-pixel change clumps, which is justifiable given the fact that a Landsat pixel represents 900$m^2$, and detectable forest changes are expected to occur at larger scales. Note that the threshold has to be set on a ``less-than" basis, so we can use the area of 2 pixels as our cut-off.
+A careful inspection of these results will show that applying the magnitude filter has changed the results somewhat, but since there isn't a great deal of noise in this example, the results were not dramatic. Another way we can clean up our results is to apply a minimum mapping unit. `areaSieve` does this by using detected pixel clumps (see `?raster::clump`) and removing all clumps with an area less than the given threshold (in square metres). For example, we can use the area of 2 pixels (1800 squre metres) as our cut-off, which would correspond to a single-pixel sieve.
 
 ```{r}
 magn09_sieve <- areaSieve(magn09thresh, thresh=1800)
 ```
 
-With `areaSieve`, this can be taken a step further, and an area threshold can be supplied to apply to the raster. `areaSieve` only supports thresholds in $m^2$, so be sure to do the appopriate conversions before appling the sieve. The default value is 5000, which corresponds to the 0.5ha forest definition often applied in national assessments.
+The default value for `thresh` is 5000, corresponding to a forest definition of 0.5 hectares.
 
 ```{r}
-magn09_areasieve <- areaSieve(magn09thresh)# default thresh = 5000
+magn09_areasieve <- areaSieve(magn09thresh)
 ```
 
-`areaSieve` passes additional arguments to `raster::clump`, which allows for considerations of direction when defining pixel neighbourhoods. `clump` adheres to the principle of ``queen's case" versus ``rook's case". In the former, pixels in all directions (default: `directions = 8`) are considered when defining clumps, whereas in the latter case, only pixels directly adjacent (excluding diagonals) are considered (`directions = 4`).
+`areaSieve` passes additional arguments to `raster::clump`, which allows for considerations of direction when defining pixel neighbourhoods. `clump` adheres to the principle of 'queen's case' versus 'rook's case'. In the former, pixels in all directions (default: `directions = 8`) are considered when defining clumps, whereas in the latter case, only pixels directly adjacent (excluding diagonals) are considered (`directions = 4`).
 
 ```{r, fig.show='hold'}
 magn09_as_rook <- areaSieve(magn09thresh, directions=4)
@@ -537,14 +535,14 @@ plot(changeSize_rook, col=bpy.colors(50), main="Clump size: Rook's case")
 par(op)
 ```
 
-These clump sizes are in number of pixels, which might not be very useful when communicating our results to other parties. The `f` argument in `clumpSize` allows us to convert these to a useful area measure. In the case of Landsat, we know that each pixel covers 900$m^2$, and that one hectare equals 10000$m^2$. `clumpSize` can perform this conversion if a value for `f` is supplied.
+These clump sizes are in number of pixels, which might not be very useful when communicating our results. The `f` argument in `clumpSize` allows us to convert these to a useful area measure. In the case of Landsat, we know that each pixel covers 900m^2, and that one hectare equals 10000m^2. `clumpSize` can perform this conversion if a value for `f` is supplied.
 
 ```{r}
 changeSize <- clumpSize(magn09_areasieve, f=900/10000)
 plot(changeSize, col=bpy.colors(50), main="Clump size (hectares)")
 ```
 
-In order to calculate statistics of the changed area, it may be tempting to simply run `raster::summary`. But this function will produce misleading results, as \emph{each pixel} has been assigned the value of its respective clump size (rather than representing each clump as a singular object, as would be the case with a SpatialPolygons object). To circumvent this, a `stats` argument is included in `clumpSize`, which outputs an additional summary table based on clumps rather than on individual pixels. If `stats=TRUE`, rather than outputting a single raster layer, `clumpSize` returns a list with 2 objects: (1) a raster layer as above; and (2) a summary table (matrix) showing mean, min, and all quartiles of the clump sizes.
+In order to calculate statistics of the changed area, it may be tempting to simply run `raster::summary`. But this function will produce misleading results, as *each pixel* has been assigned the value of its respective clump size (rather than representing each clump as a singular object, as would be the case with a SpatialPolygons object). To circumvent this, a `stats` argument is included in `clumpSize`, which outputs an additional summary table based on clumps rather than on individual pixels. If `stats=TRUE`, rather than outputting a single raster layer, `clumpSize` returns a list with 2 objects: (1) a raster layer as above; and (2) a summary table (matrix) showing mean, min, and all quartiles of the clump sizes.
 
 ```{r}
 changeSize <- clumpSize(magn09_areasieve, f=900/10000, stats=TRUE)
