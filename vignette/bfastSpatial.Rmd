@@ -13,7 +13,7 @@ cls: nature-no-superscript.csl
 -->
 
 ```{r, echo = FALSE, message = FALSE}
-suppressWarnings(library(bfastSpatial))
+library(bfastSpatial)
 knitr::opts_chunk$set(
     fig.align='center',
     comment = "#>",
@@ -192,7 +192,7 @@ getSceneinfo('LE71700552007309ASN00')
 
 When working with Landsat data, it is a good idea to assign and keep these sceneID's as layer names (see '?raster::names') so the relevant information is associated to each raster layer.
 
-```{r, fig.show='hide'}
+```{r, fig.show='hide', results='hide'}
 # show scene info from tura layers
 data(tura)
 
@@ -361,10 +361,10 @@ bfm4 <- bfmPixel(tura, cell=targcell, start=c(2009, 1),
 ```
 
 Finally, for Landsat time series the analysis can be limited to data of a specific sensor. The `sensor` parameter currently accepts the following possible character values:
-* `"ETM+"`
-* `"ETM+ SLC-on"`
-* `"ETM+ SLC-off"`
-* `"TM"`
+* "ETM+"
+* "ETM+ SLC-on"
+* "ETM+ SLC-off"
+* "TM"
 
 Note that in our previous runs of `bfmPixel`, there is what seems to be a bias between TM data from the 80's and 90's (which can be found throughout the scene). This has a large effect on our model, especially when a trend is included. A very quick way to avoid this bias is to include only data from the ETM+ sensor, which was launched in 1999.
 
