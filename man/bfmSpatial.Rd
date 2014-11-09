@@ -5,7 +5,12 @@
 bfmSpatial(x, dates = NULL, pptype = "irregular", start,
   formula = response ~ trend + harmon, order = 3, lag = NULL,
   slag = NULL, history = c("ROC", "BP", "all"), type = "OLS-MOSUM",
+<<<<<<< HEAD
   h = 0.25, end = 10, level = 0.05, mc.cores = 1, ...)
+=======
+  h = 0.25, end = 10, level = 0.05, mc.cores = 1,
+  returnLayers = c("breakpoint", "magnitude", "error"), sensor = NULL, ...)
+>>>>>>> develop
 }
 \arguments{
   \item{x}{rasterBrick or rasterStack object, or file name
@@ -40,6 +45,7 @@ bfmSpatial(x, dates = NULL, pptype = "irregular", start,
   \item{mc.cores}{Numeric. Number of cores to be used for
   the job.}
 
+<<<<<<< HEAD
   \item{...}{Arguments to be passed to
   \code{\link{mc.calc}}}
 }
@@ -53,6 +59,49 @@ Implements bfastmonitor function, from the bfast package on
 any kind of rasterBrick object. Time information is
 provided as an extra object and the time series can be
 regular or irregular.
+=======
+\item{returnLayers}{Character. Result layers to be returned. Can be any combination of \code{c("breakpoint", "magnitude", "error", "history", "r.squared", "adj.r.squared", "coefficients")}. By default, \code{breakpoint}, \code{magnitude} and \code{error} are returned by the function. See \code{details} for more information.}
+
+\item{sensor}{Character. Optional: Limit analysis to one or more particular sensors. Can be any combintation of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", or "OLI")}}
+
+\item{...}{Arguments to be passed to \code{\link{mc.calc}}}
+
+\item{n}{See \code{\link{bfastmonitor}}}
+}
+\value{
+A rasterBrick with layers depending on what has been supplied to \code{returnLayers}. See details for more information.
+}
+\description{
+Implements bfastmonitor function, from the bfast package on any kind of rasterBrick object. Time information is provided as an extra object and the time series can be regular or irregular.
+}
+\details{
+\code{bfmSpatial} applies \code{\link{bfastmonitor}} over a raster time series. For large raster datasets, processing times can be long. Given the number of parameters that can be set, it is recommended to first run \code{\link{bfmPixel}} over some test pixels or \code{bfmSpatial} over a small test area to gain familiarity with the time series being analyzed and to test several parameters.
+
+Note that there is a difference between the \code{monend} argument included here and the \code{end} argument passed to \code{\link{bfastmonitor}}. Supplying a date in the format \code{c(year, Julian day)} to \code{monend} will result in the time series being trimmed \emph{before} running \code{\link{bfastmonitor}}. While this may seem identical to trimming the resulting \code{bfastmonitor} object per pixel, trimming the time series before running \code{bfastmonitor} will have an impact on the change magnitude layer, which is calculated as the median residual withint the entire monitoring period, whether or not a breakpoint is detected.
+
+While \code{bfmSpatial} can be applied over any raster time series with a time dimension (implicit or externally supplied), an additional feature relating to the type of Landsat sensor is also included here. This feature allows the user to specify data from a particular sensor, excluding all others. The \code{sensor} argument accepts any combination of the following characters (also see \code{\link{getSceneinfo}}): "all" - all layers; "TM" - Landsat 5 Thematic Mapper; "ETM+" - Landsat 7 Enhanced Thematic Mapper Plus (all); "ETM+ SLC-on" - ETM+ data before failure of Scan Line Corrector; ETM+ data after failure of the Scan Line Corrector.
+
+Note that for the \code{sensor} argument to work, \code{names(x)} must correspond to Landsat sceneID's (see \code{\link{getSceneinfo}}), otherwise any values passed to \code{sensor} will be ignored with a warning.
+
+\code{returnLayers} can be used to specify which \code{bfasmonitor} results to return. Regardless of which parameters are assigned, the output layers will always follow the order: \code{c("breakpoint", "magnitude", "error", "history", "r.squared", "adj.r.squared", "coefficients")}. This is important if \code{mc.cores} is set to be greater than 1, since this causes the layer names in the output brick to be lost, so it is important to know which layers have been requested and in which order they will be exported. Note that if "coefficients" is included, the output will include the following: "(Intercept)" and any trend and/or harmonic coefficients depending on the values of \code{formula} and \code{order}.
+}
+\examples{
+# load tura dataset
+data(tura)
+
+# run BFM over entire time series with a monitoring period starting at the beginning of 2009
+t1 <- system.time(bfm <- bfmSpatial(tura, start=c(2009, 1)))
+
+\dontrun{
+# with multi-core support (see ?mc.calc)
+t2 <- system.time(bfm <- bfmSpatial(tura, start=c(2009, 1), mc.cores=4))
+# difference processing time
+t1 - t2
+}
+
+# plot the result
+plot(bfm)
+>>>>>>> develop
 }
 \author{
 Loic Dutrieux
