@@ -20,34 +20,17 @@
 #' @param returnLayers Character. Result layers to be returned. Can be any combination of \code{c("breakpoint", "magnitude", "error", "history", "r.squared", "adj.r.squared", "coefficients")}. By default, \code{breakpoint}, \code{magnitude} and \code{error} are returned by the function. See \code{details} for more information.
 #' @param sensor Character. Optional: Limit analysis to one or more particular sensors. Can be any combintation of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", or "OLI")}
 #' @param ... Arguments to be passed to \code{\link{mc.calc}}
-<<<<<<< HEAD
-#' @return A rasterBrick, with 3 layers. (1) Breakpoints (time of change); (2) change magnitude; and (3) error flag (1, NA). See \code{\link{bfastmonitor}}
-=======
 #' 
 #' @return A rasterBrick with layers depending on what has been supplied to \code{returnLayers}. See details for more information.
->>>>>>> develop
 #' 
 #' @details
 #' \code{bfmSpatial} applies \link{\code{bfastmonitor}} over a raster time series. For large raster datasets, processing times can be long. Given the number of parameters that can be set, it is recommended to first run \link{\code{bfmPixel}} over some test pixels or \code{bfmSpatial} over a small test area to gain familiarity with the time series being analyzed and to test several parameters.
 #' 
-<<<<<<< HEAD
-#' Note that there is a difference between the \code{monend} argument included here and the \code{end} argument passed to \link{\code{bfastmonitor}}. Supplying a date in the format \code{c(year, Julian day)} to \code{monend} will result in the time series being trimmed \emph{before} running \link{\code{bfastmonitor}}. While this may seem identical to trimming the resulting \code{bfastmonitor} object per pixel, trimming the time serie before running \code{bfastmonitor} will have an impact on the change magnitude layer, which is calculated as the median residual withint the entire monitoring period, whether or not a breakpoint is detected.
-#' 
-#' While \code{bfmSpatial} can be applied over any raster time series with a time dimension (implicit or externally supplied), an additional feature relating to the type of Landsat sensor is also included here. This feature allows the user to specify data from a particular sensor, excluding all others. This can be useful if bias in a particular sensor is of concern, and can be tested without re-making the input RasterBrick. The \code{sensor} argument accepts any combination of the following characters (also see \link{\code{getSceneinfo}}):
-#' \begin{itemize}
-#' \item "all" - all layers
-#' \item "TM" - Landsat 5 Thematic Mapper
-#' \item "ETM+" - Landsat 7 Enhanced Thematic Mapper Plus (all)
-#' \item "ETM+ SLC-on" - ETM+ data before failure of Scan Line Corrector
-#' \item "ETM+ SLC-off" - ETM+ data after failure of the Scan Line Corrector
-#' \end{itemize}
-=======
 #' While \code{bfmSpatial} can be applied over any raster time series with a time dimension (implicit or externally supplied), an additional feature relating to the type of Landsat sensor is also included here. This feature allows the user to specify data from a particular sensor, excluding all others. The \code{sensor} argument accepts any combination of the following characters (also see \code{\link{getSceneinfo}}): "all" - all layers; "TM" - Landsat 5 Thematic Mapper; "ETM+" - Landsat 7 Enhanced Thematic Mapper Plus (all); "ETM+ SLC-on" - ETM+ data before failure of Scan Line Corrector; ETM+ data after failure of the Scan Line Corrector.
 #' 
 #' Note that for the \code{sensor} argument to work, \code{names(x)} must correspond to Landsat sceneID's (see \code{\link{getSceneinfo}}), otherwise any values passed to \code{sensor} will be ignored with a warning.
 #' 
 #' \code{returnLayers} can be used to specify which \code{bfasmonitor} results to return. Regardless of which parameters are assigned, the output layers will always follow the order: \code{c("breakpoint", "magnitude", "error", "history", "r.squared", "adj.r.squared", "coefficients")}. This is important if \code{mc.cores} is set to be greater than 1, since this causes the layer names in the output brick to be lost, so it is important to know which layers have been requested and in which order they will be exported. Note that if "coefficients" is included, the output will include the following: "(Intercept)" and any trend and/or harmonic coefficients depending on the values of \code{formula} and \code{order}.
->>>>>>> develop
 #' 
 #' @author Loic Dutrieux and Ben DeVries
 #' @import bfast
@@ -126,21 +109,6 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
         #optional: apply window() if monend is supplied
         if(!is.null(monend))
             ts <- window(ts, end=monend)
-<<<<<<< HEAD
-        # run bfastmonitor()
-        bfm <- try(bfastmonitor(data=ts, start=start,
-                                formula=formula,
-                                order=order, lag=lag, slag=slag,
-                                history=history,
-                                type=type, h=h,
-                                end=end, level=level), silent=TRUE)
-        if(class(bfm) == 'try-error') {
-            res <- cbind(NA, NA, 1)
-        } else {
-            res <- cbind(bfm$breakpoint, bfm$magnitude, NA)
-        }
-        names(res) <- c("breakpoint", "magnitude", "error")
-=======
         
         # run bfastmonitor(), or assign NA if only NA's (ie. if a mask has been applied)
         if(!all(is.na(ts))){
@@ -183,7 +151,6 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
         res <- res[which(names(res) %in% returnLayers)]
         if("coefficients" %in% returnLayers)
             res <- c(res, coefficients)
->>>>>>> develop
         return(res)
     }
     

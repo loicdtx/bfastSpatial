@@ -5,12 +5,8 @@
 bfmSpatial(x, dates = NULL, pptype = "irregular", start,
   formula = response ~ trend + harmon, order = 3, lag = NULL,
   slag = NULL, history = c("ROC", "BP", "all"), type = "OLS-MOSUM",
-<<<<<<< HEAD
-  h = 0.25, end = 10, level = 0.05, mc.cores = 1, ...)
-=======
   h = 0.25, end = 10, level = 0.05, mc.cores = 1,
   returnLayers = c("breakpoint", "magnitude", "error"), sensor = NULL, ...)
->>>>>>> develop
 }
 \arguments{
   \item{x}{rasterBrick or rasterStack object, or file name
@@ -45,21 +41,6 @@ bfmSpatial(x, dates = NULL, pptype = "irregular", start,
   \item{mc.cores}{Numeric. Number of cores to be used for
   the job.}
 
-<<<<<<< HEAD
-  \item{...}{Arguments to be passed to
-  \code{\link{mc.calc}}}
-}
-\value{
-A rasterBrick, with 2 layers. One layer is the timing of
-change and the other layer the magnitude of change. See
-\code{\link{bfastmonitor}}
-}
-\description{
-Implements bfastmonitor function, from the bfast package on
-any kind of rasterBrick object. Time information is
-provided as an extra object and the time series can be
-regular or irregular.
-=======
 \item{returnLayers}{Character. Result layers to be returned. Can be any combination of \code{c("breakpoint", "magnitude", "error", "history", "r.squared", "adj.r.squared", "coefficients")}. By default, \code{breakpoint}, \code{magnitude} and \code{error} are returned by the function. See \code{details} for more information.}
 
 \item{sensor}{Character. Optional: Limit analysis to one or more particular sensors. Can be any combintation of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", or "OLI")}}
@@ -101,7 +82,6 @@ t1 - t2
 
 # plot the result
 plot(bfm)
->>>>>>> develop
 }
 \author{
 Loic Dutrieux

@@ -5,16 +5,11 @@
 #' @param change. RasterLayer representing pixel breakpoints extracted from \code{\link{bfmSpatial}} output.
 #' @param ... Additional arguments to pass to \code{\link{writeRaster}}
 #' @return either a RasterLayer with values between 1 to 12 (representing month of change), or if multiple years are represented in the input change RasterLayer, a RasterBrick with one layer for each year, and values of 1 to 12 representing change months for each year.
-<<<<<<< HEAD
-#' @seealso \code{\link{bfmChange}}
-#' @author Ben DeVries \email{devries.br@@gmail.com}
-=======
 #' 
 #' @author Ben DeVries
 #' 
 #' @seealso \code{\link{bfmSpatial}}
 #' 
->>>>>>> develop
 #' @import raster
 #' @export
 

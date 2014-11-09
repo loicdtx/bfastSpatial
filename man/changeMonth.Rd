@@ -8,12 +8,7 @@ changeMonth(change, ...)
   \item{change.}{RasterLayer output from
   \code{\link{bfmChange}} representing pixel breakpoints.}
 
-<<<<<<< HEAD
-  \item{...}{Additional arguments to pass to
-  \code{\link{writeRaster}}}
-=======
 \item{change.}{RasterLayer representing pixel breakpoints extracted from \code{\link{bfmSpatial}} output.}
->>>>>>> develop
 }
 \value{
 either a RasterLayer with values between 1 to 12
