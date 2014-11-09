@@ -4,7 +4,7 @@
 \title{
 NDVI time series raster brick}
 \description{
-Time series raster brick for an area in Tura kebele, Kafa Zone, SW Ethiopia. Values are NDVI rescaled by a factor of 10000. Data originate from the Landsat 5 TM and Landsat 7 ETM+ sensors. Original Landsat scene names can be found by typing \code{names(tura)}. Dates are also contained in the z-dimension (\code{getZ(tura)}; see also \code{\link{timeStack}})}.
+Time series raster brick for an area in Tura kebele, Kafa Zone, SW Ethiopia. Values are NDVI rescaled by a factor of 10000. Data originate from the Landsat 5 TM and Landsat 7 ETM+ sensors. Original Landsat scene names can be found by typing \code{names(tura)}. Dates are also contained in the z-dimension (\code{getZ(tura)}; see also \code{\link{timeStack}}).}
 \usage{data(tura)}
 \source{
 http://earthexplorer.usgs.gov}
