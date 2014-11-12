@@ -23,6 +23,8 @@ install_github('dutri001/bfastSpatial')
 
 Full [tutorial](http://dutri001.github.io/bfastSpatial/) available to guide you through data pre-processing and analysis.
 
+If you are already familiar with R, the raster package and Landsat/MODIS data, you may skip the detailed tutorial and go directly to the [quick start guide](http://dutri001.github.io/bfastSpatial/quickStart#/).
+
 Feedback on the package is very much welcome. Send your feedback to Ben or Loic
 
 
