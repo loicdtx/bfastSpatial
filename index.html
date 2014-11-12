@@ -67,7 +67,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 <div id="preamble" class="section level2">
 <h2>Preamble</h2>
-<p>The <code>bfastSpatial</code> package provides utilities to performs change detection analysis <span class="citation">[see @Verbesselt2009a; @Verbesselt:rse:2011]</span> on time-series of spatial gridded data, such as time-series of remote sensing images (Landsat, MODIS and the likes). The tools provided by <code>bfastSpatial</code> allows a user to perform all the steps of the change detection workflow, from pre-processing raw surface reflectance Landsat data, inventorying and preparing them for analysis to the production and formatting of change detection results. The present document aims at providing guidance to the users of <code>bfastSpatial</code> by detailing every steps of the process.</p>
+<p>The <code>bfastSpatial</code> package provides utilities to performs change detection analysis <span class="citation">(see Verbesselt et al. 2010; Verbesselt, Zeileis, and Herold 2012)</span> on time-series of spatial gridded data, such as time-series of remote sensing images (Landsat, MODIS and the likes). The tools provided by <code>bfastSpatial</code> allows a user to perform all the steps of the change detection workflow, from pre-processing raw surface reflectance Landsat data, inventorying and preparing them for analysis to the production and formatting of change detection results. The present document aims at providing guidance to the users of <code>bfastSpatial</code> by detailing every steps of the process.</p>
 </div>
 <div id="set-up-your-system" class="section level2">
 <h2>Set up your system</h2>
@@ -523,9 +523,11 @@ print(changeSize$stats)</code></pre>
 #&gt; 3rd Qu.    3.73500
 #&gt; Max.      95.04000</code></pre>
 <p>We can say that based on our analysis, the average size of change units in Tura in 2009 is estimated to be 6.3 hectares. In this case, the minimum is not suprising, since we had already applied an area sieve using 0.5 hectares as our threshold.</p>
-</div>
-<div id="references" class="section level1">
+<div class="references">
 <h1>References</h1>
+<p>Verbesselt, J., R. Hyndman, G. Newnham, and D. Culvenor. 2010. “Detecting Trend and Seasonal Changes in Satellite Image Time Series.” <em>Remote Sensing of Environment</em> 114 (1): 106–115. doi:<a href="http://dx.doi.org/10.1016/j.rse.2009.08.014">10.1016/j.rse.2009.08.014</a>.</p>
+<p>Verbesselt, J., A. Zeileis, and M. Herold. 2012. “Near Real-Time Disturbance Detection Using Satellite Image Time Series.” <em>Remote Sensing of Environment</em> 123: 98–108. doi:<a href="http://dx.doi.org/10.1016/j.rse.2012.02.022">10.1016/j.rse.2012.02.022</a>.</p>
+</div>
 </div>
 
 
