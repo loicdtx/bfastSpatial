@@ -1,12 +1,8 @@
 ---
-output:
-  html_document:
-    toc: true
-    theme: united
-bibliography: bfastspatial.bib
-cls: nature-no-superscript.csl
+title: "Introduction to bfastSpatial"
+author: "Loïc Dutrieux, Ben DeVries and Jan Verbesselt"
+output: html_document
 ---
-
 <!--
 %\VignetteEngine{knitr}
 %\VignetteIndexEntry{Introduction to bfastSpatial}
@@ -20,9 +16,6 @@ knitr::opts_chunk$set(
     error = FALSE,
     tidy = FALSE)
 ```
-
-# Introduction to bfastSpatial
-*By Loïc Dutrieux, Ben DeVries and Jan Verbesselt*
 
 
 ## Preamble
