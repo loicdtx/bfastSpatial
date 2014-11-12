@@ -56,7 +56,18 @@ library(igraph)
 ```
 
 ## Data pre-processing
-The `bfastSpatial` package includes utilities to pre-process Landsat surface reflectance data and prepare them for subsequent analysis with the change detection functions such as `bfmSpatial`. The overall Landsat pre-processing requires to:
+The `bfastSpatial` package includes utilities to pre-process Landsat surface reflectance data and prepare them for subsequent analysis with the change detection functions such as `bfmSpatial`. Pre-processing chains for two categories of data are available. The following paragraphs describe the pre-processing steps for Landsat data and for MODIS data. 
+
+### Landsat pre-processing
+#### List of functions
+The landsat pre-processing category contains the following functions.
+
+* `processLandsat()`: The base function that brings a single landsat scene from its archive to a vegetation index raster layer, cropped to a certain extent and with clouds filtered out.
+* `processLandsatBatch()`: The batch processing implementation of `processLandsat()` with parallel computing support.
+* `timeStack()`: A function to create raster stacks of vegetation index layers, with time written in the object properties.
+
+#### Landsat pre-processing details
+The overall Landsat pre-processing requires to:
 
 * Extract data from the tar.gz archive
 * Calculate Vegetation Indices from surface reflectance bands (when not provided by USGS)
@@ -164,6 +175,16 @@ About the example above:
 * We chose to write the output to the .grd format, which allows the time information to be stored as well as the original layer names.
 * The `x=` argument can also simply be the directory containing the layers; in which case we recomend using `pattern=` as well in order to ensure that only the desired files are included.
 
+### MODIS pre-processing
+Note: Some of these functions require `rgdal` to be built with the HDF4 driver, which is not the case on most windows installations.
+
+#### List of functions
+The MODIS pre-processing category contains the following functions:
+
+* `cleanMODIS()`: The basic function to extract a vegetation index or other layer from its hdf archive and clean it using its associated Quality Control (QC) or Quality Assessment (QA) layer.
+* `cleanMODISbatch()`: A batcher for `cleanMODIS()` including support for parallel computing and the possibility to mosaic several tiles.
+* `timeStackMODIS`: A function to create raster stacks of MODIS layers, with time written in the object properties.
+
 ## Data Inventory
 
 A number of functions are available in the bfastSpatial package to help keep an inventory of data in a raster time series stack. These functions range from basic scene information (`getSceneinfo()`) to summary of pixel values per year in the time series (`annualSummary()`).
@@ -174,6 +195,7 @@ The following functions are included in the Data Inventory module:
 2. `countObs()`
 3. `summaryBrick()`
 4. `annualSummary()`
+5. `getMODISinfo()`
 
 ### Basic Scene Information: `getSceneinfo()`
 
@@ -200,6 +222,9 @@ hist(s$year, breaks=c(1984:2014), main="p170r55: Scenes per Year",
 ```
 
 More examples can be found under `?getSceneinfo`. Many other functions in the bfastSpatial package rely on getSceneinfo to extract relevant scene information, such as acquisition dates to be passed to `bfmSpatial()` or `bfmPixel()`.
+
+### Basic MODIS tile Information: `getMODISinfo()`
+`getMODISinfo()` is the equivalent of `getSceneinfo()`, for MODIS type of data.
 
 ### Valid Observations: `countObs()`
 
@@ -283,7 +308,7 @@ plot(medVI_06_13, main = "2006-2013")
 par(op)
 ```
 
-`minDate` and `maxDate` can be supplied in one of two ways: (1) as a character or date object in the format `"%Y-%m-%d"` (eg. ``2013-01-31") or (2) as a numeric vector of length 2 representing the year and Julian day (e.g. `c(2013, 31)`).
+`minDate` and `maxDate` can be supplied in one of two ways: (1) as a character or date object in the format `"%Y-%m-%d"` (eg. `"2013-01-31"`) or (2) as a numeric vector of length 2 representing the year and Julian day (e.g. `c(2013, 31)`).
 
 Note that the Tura brick already has scene information included as layer names (see `names(tura)`). To run `annualSummary` on RasterBricks where no scene information is available, a dates vector **must** be supplied to be able to divide the layers into years. This vector is also required for `summaryBrick` when constraining the calculation by date using `minDate` and `maxDate`.
 
