@@ -1,11 +1,12 @@
-#' @title Annual summary of a time series RasterBrick
+#' @title Annual composite from a time series RasterBrick
 #' 
-#' @description Calculates pixel-based statistics for every year represented by a time series RasterBrick
+#' @description Generates annual composites based on a time series RasterBrick, with the option of limiting to a specific period (e.g. season) in the year.
 #' 
 #' @param x RasterBrick or RasterStack
-#' @param fun Function to apply over each pixel for each year
-#' @param dates Date. Optional: vector of dates exactly corresponding to the layers of x. If not included, dates must be included in the z dimension of x (see \code{\link{getZ}}) or in \code{names(x)}
-#' @param years Numeric. Optional: Vector of years to which to limit the summary.
+#' @param fun Function to apply over each pixel for each period
+#' @param period Numeric. Optional: vector of julian days to limit the calculation. Can be used to restrict compositing to a specific season, for example.
+#' @param dates Date. Optional: vector of dates exactly corresponding to the layers of x. If not included, dates must be included in the z dimension of x (see \code{\link{getZ}}) or in \code{names(x)}.
+#' @param years Numeric. Optional: Vector of years to which to limit the composite.
 #' @param sensor Character. Optional: limit calculation to images from a particular sensor. Defaults to "all", but can take any of "TM", "ETM+", "ETM+ SLC-off" or "ETM+ SLC-on". Will be ignored with a warning if \code{names(x)} do not correspond to Landsat scene ID's.
 #' @param ... Arguments to be passed to \code{\link{mc.calc}}
 #' 
@@ -36,7 +37,7 @@
 #'  length(x[!is.na(x)])
 #' annualObs <- annualSummary(tura, fun=ff, sensor="ETM+")
 
-annualSummary <- function(x, fun, dates=NULL, years=NULL, sensor=NULL, na.rm=NULL, ...){
+annualComposite <- function(x, fun, period = NULL, dates=NULL, years=NULL, sensor=NULL, na.rm=NULL, ...){
 
     # if sensor is given (!is.null(sensor)), then limit the analysis to a particular sensor
     if(!is.null(sensor)){
@@ -79,6 +80,9 @@ annualSummary <- function(x, fun, dates=NULL, years=NULL, sensor=NULL, na.rm=NUL
     # extract years
     y <- substr(dates, 1, 4)
     
+    # vector of julian days (DOY)
+    jd <- as.numeric(format(dates, format = "%j"))
+    
     # vector of years over which to process
     yrs <- sort(unique(y))
     
@@ -88,8 +92,14 @@ annualSummary <- function(x, fun, dates=NULL, years=NULL, sensor=NULL, na.rm=NUL
     
     # function to be applied over each pixel in the RasterBrickStack
     pixStat <- function(b){
+        # subset vector b by sensor
         if(!is.null(scenes))
             b <- b[scenes]
+        # subset vectors b and y by period
+        if(!is.null(period)){
+            b <- b[which(jd %in% period)]
+            y <- y[which(jd %in% period)]
+        }
         ps <- vector("numeric", length(yrs))
         for(i in 1:length(yrs)){
             args <- list(b[which(y == yrs[i])])
