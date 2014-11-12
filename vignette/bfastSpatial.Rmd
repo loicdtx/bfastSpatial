@@ -1,8 +1,12 @@
 ---
 title: "Introduction to bfastSpatial"
 author: "Loïc Dutrieux, Ben DeVries and Jan Verbesselt"
+output:
+  html_document:
+    toc: true
+    theme: united
 bibliography: bfastSpatial.bib
-output: html_document
+cls: nature-no-superscript.csl
 ---
 <!--
 %\VignetteEngine{knitr}
