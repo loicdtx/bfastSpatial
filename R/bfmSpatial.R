@@ -21,7 +21,7 @@
 #' @param sensor Character. Optional: Limit analysis to one or more particular sensors. Can be any combintation of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", or "OLI")}
 #' @param ... Arguments to be passed to \code{\link{mc.calc}}
 #' 
-#' @return A rasterBrick with layers depending on what has been supplied to \code{returnLayers}. See details for more information.
+#' @return A rasterBrick with layers depending on what has been supplied to \code{returnLayers}. By default, 3 layers are returned: (1) breakpoint: timing of breakpoints detected for each pixel; (2) magnitude: the median of the residuals within the monitoring period; (3) error: a value of 1 for pixels where an error was encountered by the algorithm (see \code{\link{try}}), and NA where the method was successfully run. See \code{\link{bfastmonitor}} for more information on the other possible layers.
 #' 
 #' @details
 #' \code{bfmSpatial} applies \code{\link{bfastmonitor}} over a raster time series. For large raster datasets, processing times can be long. Given the number of parameters that can be set, it is recommended to first run \code{\link{bfmPixel}} over some test pixels or \code{bfmSpatial} over a small test area to gain familiarity with the time series being analyzed and to test several parameters.
