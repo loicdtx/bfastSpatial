@@ -4,6 +4,7 @@ author: "Loïc Dutrieux, Ben DeVries and Jan Verbesselt"
 output:
   html_document:
     toc: true
+    toc_depth: 4
     theme: united
 bibliography: bfastSpatial.bib
 cls: nature-no-superscript.csl
