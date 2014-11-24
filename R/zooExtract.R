@@ -16,14 +16,14 @@
 #' 
 #' @examples
 #' 
-#' # Single time-series selcted interactively
+#' # Single time-series selected interactively
 #' data(tura)
 #' plot(tura, 2)
 #' zooExtract(x = tura, sample = 'click', file = file.path(tempdir(), 'zooClick.rds'))
 #' 
 #' # Then in order to explore the time series and the bfastmonitor parameters, run the following line
 #' \dontrun{
-#' runGitHub( "bfmApp", "dutri001")
+#' runGitHub("bfmApp", "dutri001")
 #' }
 #' # And upload the file zooClick.rds
 #' 
@@ -49,9 +49,10 @@ zooExtract <- function(x, sample = 'click', dates = NULL, file = NULL) {
         }
     }
     
-    
-    if(sample == 'click') {
-        v <- click(x, show=FALSE)        
+    if(is.character(sample)) {
+        if(sample == 'click') {
+            v <- click(x, show=FALSE)        
+        }
     } else {
         v <- extract(x, sample)
     }
