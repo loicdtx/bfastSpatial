@@ -17,5 +17,6 @@ Depends:
     gdalUtils,
     stringr,
     rgdal,
-    bitops
+    bitops,
+    zoo
 License: tbd
