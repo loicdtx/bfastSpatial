@@ -64,4 +64,6 @@ zooExtract <- function(x, sample = 'click', dates = NULL, file = NULL, ...) {
         saveRDS(out, file = file)
     }
     
+    return(out)
+    
 }
