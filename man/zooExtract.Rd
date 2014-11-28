@@ -3,7 +3,7 @@
 \alias{zooExtract}
 \title{Utility to extract a zoo object from a raster time-series}
 \usage{
-zooExtract(x, sample = "click", dates = NULL, file = NULL)
+zooExtract(x, sample = "click", dates = NULL, file = NULL, ...)
 }
 \arguments{
 \item{x}{rasterBrick or rasterStack object, or file name to a multilayer raster object stored on disk.}
@@ -13,6 +13,8 @@ zooExtract(x, sample = "click", dates = NULL, file = NULL)
 \item{dates}{A date vector (optional, only if time is not yet contained in the z dimension of the raster object, or comprised in its layer names.)}
 
 \item{file}{character rds filename where to write the output.}
+
+\item{...}{Arguments to be passed to \link{extract}.}
 }
 \value{
 A zoo object that may contain multiple time-series
