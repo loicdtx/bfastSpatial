@@ -6,6 +6,7 @@
 #' @param sample The point(s) to extract. Default to 'click' where a point is interactively choosen by clicking. Or any of object accepted by \code{\link{extract}}. (points represented by a two-column matrix or data.frame, or \code{\link{SpatialPoints}*}; \code{\link{SpatialPolygons}*}; \code{\link[sp]{SpatialLines}}; \code{\link{Extent}}; or a numeric vector representing cell numbers). For 'click', a layer of \code{x} needs to be plotted first.
 #' @param dates A date vector (optional, only if time is not yet contained in the z dimension of the raster object, or comprised in its layer names.)
 #' @param file character rds filename where to write the output.
+#' @param ... Arguments to be passed to \link{extract}.
 #'
 #' @author Loic Dutrieux
 #' @return A zoo object that may contain multiple time-series
@@ -30,7 +31,7 @@
 #' @export
 
 
-zooExtract <- function(x, sample = 'click', dates = NULL, file = NULL) {
+zooExtract <- function(x, sample = 'click', dates = NULL, file = NULL, ...) {
     
     if(is.character(x)) {
         x <- brick(x)
@@ -54,7 +55,7 @@ zooExtract <- function(x, sample = 'click', dates = NULL, file = NULL) {
             v <- click(x, show=FALSE)        
         }
     } else {
-        v <- extract(x, sample)
+        v <- extract(x, sample, ...)
     }
     
     out <- zoo(t(v), dates)
@@ -62,5 +63,7 @@ zooExtract <- function(x, sample = 'click', dates = NULL, file = NULL) {
     if(!is.null(file)) {
         saveRDS(out, file = file)
     }
+    
+    return(out)
     
 }
