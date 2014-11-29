@@ -11,7 +11,7 @@
 #' @param slag See \code{\link{bfastmonitor}}
 #' @param history See \code{\link{bfastmonitor}}
 #' @param type See \code{\link{bfastmonitor}}
-#' @param n See \code{\link{bfastmonitor}}
+#' @param h See \code{\link{bfastmonitor}}
 #' @param level See \code{\link{bfastmonitor}}
 #' @param mc.cores Numeric NUmber of cores to use (for parallel processing)
 #' @param ... Arguments to be passed to \link{zooExtract}

@@ -14,7 +14,7 @@
 #' @param slag See \code{\link{bfastmonitor}}
 #' @param history See \code{\link{bfastmonitor}}
 #' @param type See \code{\link{bfastmonitor}}
-#' @param n See \code{\link{bfastmonitor}}
+#' @param h See \code{\link{bfastmonitor}}
 #' @param level See \code{\link{bfastmonitor}}
 #' @param mc.cores Numeric. Number of cores to be used for the job.
 #' @param returnLayers Character. Result layers to be returned. Can be any combination of \code{c("breakpoint", "magnitude", "error", "history", "r.squared", "adj.r.squared", "coefficients")}. By default, \code{breakpoint}, \code{magnitude} and \code{error} are returned by the function. See \code{details} for more information.
