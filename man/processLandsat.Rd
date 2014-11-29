@@ -9,7 +9,7 @@ processLandsat(x, vi = "ndvi", srdir, outdir, untar = TRUE,
 \arguments{
 \item{x}{Character. filename of the tarball or zip archive of the hdf/tiff file.}
 
-\item{vi}{Character. Vegetation index to be computed or extracted from the archive. Can be either 'ndvi', 'evi', 'savi', 'ndmi'*, 'nbr', 'nbr2'* or 'msavi'*. Indices with * need to be present in the archive.}
+\item{vi}{Character. Vegetation index to be computed or extracted from the archive. Can be either 'ndvi', 'evi', 'savi', 'ndmi'*, 'nbr', 'nbr2'* or 'msavi'*. Indices with * need to be present in the archive. Note that it is also possible to extract single bands using the \code{vi=} argument. \code{vi='sr_band1'} for instance will extract surface reflectance band 1 from the archive and perform the same pre-processing steps as if it was a vegetation index layer.}
 
 \item{srdir}{Character. Directory where the tarball should be uncompressed. Can be ommited if \code{untar} is set to \code{FALSE}}
 
