@@ -32,6 +32,8 @@ bfmSpatial(x, dates = NULL, pptype = "irregular", start, monend = NULL,
 
 \item{type}{See \code{\link{bfastmonitor}}}
 
+\item{h}{See \code{\link{bfastmonitor}}}
+
 \item{level}{See \code{\link{bfastmonitor}}}
 
 \item{mc.cores}{Numeric. Number of cores to be used for the job.}
@@ -41,11 +43,9 @@ bfmSpatial(x, dates = NULL, pptype = "irregular", start, monend = NULL,
 \item{sensor}{Character. Optional: Limit analysis to one or more particular sensors. Can be any combintation of \code{c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off", "TM", or "OLI")}}
 
 \item{...}{Arguments to be passed to \code{\link{mc.calc}}}
-
-\item{n}{See \code{\link{bfastmonitor}}}
 }
 \value{
-A rasterBrick with layers depending on what has been supplied to \code{returnLayers}. See details for more information.
+A rasterBrick with layers depending on what has been supplied to \code{returnLayers}. By default, 3 layers are returned: (1) breakpoint: timing of breakpoints detected for each pixel; (2) magnitude: the median of the residuals within the monitoring period; (3) error: a value of 1 for pixels where an error was encountered by the algorithm (see \code{\link{try}}), and NA where the method was successfully run. See \code{\link{bfastmonitor}} for more information on the other possible layers.
 }
 \description{
 Implements bfastmonitor function, from the bfast package on any kind of rasterBrick object. Time information is provided as an extra object and the time series can be regular or irregular.

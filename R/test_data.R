@@ -8,3 +8,18 @@
 NULL
 
 
+#' SpatialPolygons object
+#' @aliases turaSp
+#' @name turaSp
+#' @description Three polygons located in the tura area (ethiopia)
+#' @docType data
+#' @usage data(turaSp)
+#' @author Ben DeVries
+#' @keywords data
+#' @examples
+#' data(turaSp)
+#' data(tura)
+#' plot(tura, 2)
+#' plot(turaSp, add = TRUE)
+
+NULL

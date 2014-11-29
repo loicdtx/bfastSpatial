@@ -59,70 +59,72 @@
                 fun=fun))
 }
 
-# Tasseled Cap Components -------------------------------------------------
+# Tasseled Cap Components ------------------------------------------------- 
 
-.tcbright <- function(sensor) {
-    ind <- c('band1','band2','band3','band4','band5','band7') 
-    # make compatible with getSceneinfo() output
-    if(sensor %in% c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off"))
-        sensor <- 7
-    if(sensor == "TM")
-        sensor <- 5
+.tcbright <- function(sensor) { 
+    ind <- c('band1','band2','band3','band4','band5','band7')  
+    # make compatible with getSceneinfo() output 
+    if(sensor %in% c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off")) 
+        sensor <- 7 
+    if(sensor == "TM") 
+        sensor <- 5 
     
-    if(sensor == 5) {
-        tc_coef <- c(0.3037, 0.2793, 0.4743, 0.5585, 0.5082, 0.1863)
-    } else if (sensor == 7) {
+    if(sensor == 5) { 
+        tc_coef <- c(0.2043, 0.4158, 0.5524, 0.5741, 0.3124, 0.2303) 
+    } else if (sensor == 7) { 
         tc_coef <- c(0.3561, 0.3972, 0.3904, 0.6966, 0.2286, 0.1596)
-    }
+    } 
     
-    fun <- function(x1, x2, x3, x4, x5, x7) {
-        tcbright <- sum(c(x1, x2, x3, x4, x5, x7) * tc_coef)
-    }
+    fun <- function(x1, x2, x3, x4, x5, x7) { 
+        tcbright <- sum(c(x1, x2, x3, x4, x5, x7) * tc_coef) 
+    } 
     
-    return(list(ind=ind,
-                fun=fun))
-}
+    return(list(ind=ind, 
+                fun=fun)) 
+} 
 
-.tcgreen <- function(sensor) {
-    ind <- c('band1','band2','band3','band4','band5','band7')
-    # make compatible with getSceneinfo() output
-    if(sensor %in% c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off"))
-        sensor <- 7
-    if(sensor == "TM")
-        sensor <- 5
-    
-    if(sensor == 5) {
-        tc_coef <- c(-0.2848, -0.2435, -0.5436, 0.7243, 0.0840, -0.1800)
-    } else if (sensor == 7) {
-        tc_coef <- c(-0.3344, -0.3544, -0.4556, 0.6966, -0.0242, -0.263)
-    }
-    
-    fun <- function(x1, x2, x3, x4, x5, x7) {
-        tcbright <- sum(c(x1, x2, x3, x4, x5, x7) * tc_coef)
-    }
-    
-    return(list(ind=ind,
-                fun=fun))
-}
 
-.tcwet <- function(sensor) {
-    ind <- c('band1','band2','band3','band4','band5','band7')
-    # make compatible with getSceneinfo() output
-    if(sensor %in% c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off"))
-        sensor <- 7
-    if(sensor == "TM")
-        sensor <- 5
+.tcgreen <- function(sensor) { 
+    ind <- c('band1','band2','band3','band4','band5','band7') 
+    # make compatible with getSceneinfo() output 
+    if(sensor %in% c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off")) 
+        sensor <- 7 
+    if(sensor == "TM") 
+        sensor <- 5 
     
-    if(sensor == 5) {
-        tc_coef <- c(0.1509, 0.1973, 0.3279, 0.3406, -0.7112, -0.4572)
-    } else if (sensor == 7) {
-        tc_coef <- c(0.2626, 0.2141, 0.0926, 0.0656, -0.7629, -0.5388)
-    }
+    if(sensor == 5) { 
+        tc_coef <- c(-0.1603, -0.2819, -0.4934,  0.7940, 0.0002, -0.1446) 
+    } else if (sensor == 7) { 
+        tc_coef <- c(-0.3344, -0.3544, -0.4556,  0.6966, -0.0242,-0.2630)
+    } 
     
-    fun <- function(x1, x2, x3, x4, x5, x7) {
-        tcbright <- sum(c(x1, x2, x3, x4, x5, x7) * tc_coef)
-    }
+    fun <- function(x1, x2, x3, x4, x5, x7) { 
+        tcbright <- sum(c(x1, x2, x3, x4, x5, x7) * tc_coef) 
+    } 
     
-    return(list(ind=ind,
-                fun=fun))
-}
+    return(list(ind=ind, 
+                fun=fun)) 
+} 
+
+
+.tcwet <- function(sensor) { 
+    ind <- c('band1','band2','band3','band4','band5','band7') 
+    # make compatible with getSceneinfo() output 
+    if(sensor %in% c("ETM+", "ETM+ SLC-on", "ETM+ SLC-off")) 
+        sensor <- 7 
+    if(sensor == "TM") 
+        sensor <- 5 
+    
+    if(sensor == 5) { 
+        tc_coef <- c(0.0315,  0.2021,  0.3102,  0.1594, 0.6806, -0.6109) 
+    } else if (sensor == 7) { 
+        tc_coef <- c(0.2626, 0.2141, 0.0926, 0.0656, -0.7629, -0.5388) 
+    } 
+    
+    fun <- function(x1, x2, x3, x4, x5, x7) { 
+        tcbright <- sum(c(x1, x2, x3, x4, x5, x7) * tc_coef) 
+    } 
+    
+    return(list(ind=ind, 
+                fun=fun)) 
+} 
