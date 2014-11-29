@@ -31,7 +31,12 @@
 #' 
 #' # Visualize the results
 #' plot(tura, 166)
-#' points(out, col= out$breakpoint, pch=16, cex = abs(out$magnitude/max(out$magnitude)))
+#' 
+#' # Build color palette
+#' colfunc <- colorRampPalette(c("yellow", "red"))
+#' colList <- colfunc(2013 - 2005)
+#' points(out, col= colList[out$breakpoint - 2005], pch=16, cex = abs(out$magnitude/max(out$magnitude)))
+#' # Color corresponds to timing of break and size to magnitude
 #' 
 #' # 2 - SpatialPolygons case
 #' data(turaSp)
@@ -40,7 +45,12 @@
 #' 
 #' # Visualize
 #' plot(tura, 166)
-#' plot(out2, col = out2$breakpoint, add = TRUE)
+#' # Build color palette
+#' colfunc <- colorRampPalette(c("yellow", "red"))
+#' colList <- colfunc(2013 - 2002)
+#' plot(out2, col = colList[out2$breakpoint - 2002], add = TRUE)
+#' # Interpretation: The redder the latter the break was detected. If transparent, no break detected in spatially aggregated polygon time-series.
+#'
 #' 
 #' @import raster
 #' @import sp
