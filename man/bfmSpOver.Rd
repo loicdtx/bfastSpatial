@@ -27,13 +27,13 @@ bfmSpOver(x, y, start, formula = response ~ trend + harmon, order = 3,
 
 \item{type}{See \code{\link{bfastmonitor}}}
 
+\item{h}{See \code{\link{bfastmonitor}}}
+
 \item{level}{See \code{\link{bfastmonitor}}}
 
 \item{mc.cores}{Numeric NUmber of cores to use (for parallel processing)}
 
 \item{...}{Arguments to be passed to \link{zooExtract}}
-
-\item{n}{See \code{\link{bfastmonitor}}}
 }
 \description{
 Runs \link{bfastmonitor} on a rasterBrick object for a set of locations, determined by an object of class \link{Spatial-class}.
