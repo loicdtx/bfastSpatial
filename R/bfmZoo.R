@@ -18,7 +18,7 @@
 
 bfmZoo <- function(x, mc.cores = 1, ...) {
     
-    ts <- bfastts(x, index(ext), 'irregular')
+    ts <- bfastts(x, index(x), 'irregular')
     out <- mclapply(X = ts, FUN = bfastmonitor, mc.cores = mc.cores, ...)
     # Unlist
     data.frame(breakpoint = sapply(X = out, function(x) x$breakpoint),
