@@ -18,9 +18,30 @@
 
 bfmZoo <- function(x, mc.cores = 1, ...) {
     
+    bfm2df <- function(x) {
+        if(class(x) == 'bfastmonitor') {
+            data.frame(breakpoint = x$breakpoint,
+                       magnitude = x$magnitude,
+                       history = (x$history[2] - x$history[1]),
+                       rsq = summary(x$model)$r.squared,
+                       adj_rsq = summary(x$model)$adj.r.squared)
+        } else if(class(x) == 'try-error') {
+            data.frame(breakpoint = NA,
+                       magnitude = NA,
+                       history = NA,
+                       rsq = NA,
+                       adj_rsq = NA)
+        }
+        
+    }
+    
+    bfastmonitorFun <- function(x, ...) {
+        bfm <- try(bfastmonitor(x, ...))
+        bfm2df(bfm)
+    }
+    
     ts <- bfastts(x, index(x), 'irregular')
-    out <- mclapply(X = ts, FUN = bfastmonitor, mc.cores = mc.cores, ...)
-    # Unlist
-    data.frame(breakpoint = sapply(X = out, function(x) x$breakpoint),
-               magnitude = sapply(out, function(x) x$magnitude))
+    out <- mclapply(X = ts, FUN = bfastmonitorFun, mc.cores = mc.cores, ...)
+    # Convert list to df
+    do.call(rbind, out)
 }
