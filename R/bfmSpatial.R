@@ -135,14 +135,13 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
     else
     {
       
-      spt<-ts( x,start=c(2000,7),end=c(2013,44),frequency=46)
-      #spt<-zoo(x,dates)
-      #frequency(spt)<-46
-      #  na.new <- function(x) ts(na.exclude(x), frequency = 46)
-      
-      # stlmon<-stl(spt, na.action = na.new, s.window = "per")
-      #spt <- ts(rowSums(stlmon$time.series)) 
-      #tsp(spt) <- tsp(stlmon$time.series)
+      #spt<-ts( x,start=c(2000,7),end=c(2013,44),frequency=46)
+      spt<-zoo(x,dates)
+      frequency(spt)<-46
+      na.new <- function(x) ts(na.exclude(x), frequency = 46)
+      stlmon<-stl(spt, na.action = na.new, s.window = "per")
+      spt <- ts(rowSums(stlmon$time.series)) 
+      tsp(spt) <- tsp(stlmon$time.series)
       ts<-spt
     }
      
