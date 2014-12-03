@@ -111,7 +111,7 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
     if("harmon" %in% modterms)
         coef_len <- coef_len + (order * 2) # sin and cos terms
 
-    fun <- function(x, aggre=aggre,dates=dates) {
+    fun <- function(x) {
         # subset x by sensor
         if(!is.null(sensor))
             x <- x[which(s$sensor %in% sensor)]
