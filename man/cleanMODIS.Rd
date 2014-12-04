@@ -18,7 +18,7 @@ cleanMODIS(x, data_SDS, QC_SDS, bit = FALSE, QC_val, fill = NULL, ...)
 
 \item{fill}{(vector of) Numeric or NULL. Fill values in the data layer to be filtered out. (important to do before reprojection with resampling method other than Nearest Neighbours)}
 
-\item{...}{Arguments to be passed to \link{\code{writeRaster}}.}
+\item{...}{Arguments to be passed to \code{\link{writeRaster}}.}
 }
 \value{
 A rasterLayer

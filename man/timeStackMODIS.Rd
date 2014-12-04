@@ -13,7 +13,7 @@ timeStackMODIS(x, pattern = NULL, ...)
 \item{...}{Arguments to be passed to \link{writeRaster}. If specifying a filename, it is strongly recommended to also set a datatype.}
 }
 \description{
-Creates a stack of MODIS layers, with time written to z dimension. Works in anolog way to \link{\code{timeStack}}
+Creates a stack of MODIS layers, with time written to z dimension. Works in anolog way to \code{\link{timeStack}}
 }
 \author{
 Loic Dutrieux
