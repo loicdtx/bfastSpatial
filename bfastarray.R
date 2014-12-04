@@ -1,4 +1,4 @@
-bfmarray<- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
+bfmarray<- function(x, dates=NULL,  pptype='irregular', start, monend=NULL,
                     formula = response ~ trend + harmon, order = 3, lag = NULL, slag = NULL,
                     history = c("ROC", "BP", "all"), aggre="month",
                     type = "OLS-MOSUM", h = 0.25, end = 10, level = 0.05, mc.cores=1, returnLayers = c("breakpoint", "magnitude", "error"), sensor=NULL, ...) {
