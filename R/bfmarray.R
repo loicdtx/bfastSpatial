@@ -3,40 +3,7 @@ bfmarray<- function(x, dates=NULL,  pptype='irregular', start, monend=NULL,
                     history = c("ROC", "BP", "all"), aggre="month",
                     type = "OLS-MOSUM", h = 0.25, end = 10, level = 0.05, mc.cores=1, returnLayers = c("breakpoint", "magnitude", "error"), sensor=NULL, ...) {
   
-  # if(is.character(x)) {
-  #  x <- brick(x)
-  #}
-  
-  #if(is.null(dates)) {
-  #  if(is.null(getZ(x))) {
-  #    if(!.isLandsatSceneID(x)){ # Check if dates can be extracted from layernames
-  #      stop('A date vector must be supplied, either via the date argument, the z dimension of x or comprised in names(x)')
-  #    } else {
-  #      dates <- as.Date(getSceneinfo(names(x))$date)
-  #    }
-  #  } else {
-  #    dates <- getZ(x)
-  #  }
-  #}
-  
-  # optional: reformat sensor if needed
-  #if("ETM+" %in% sensor)
-  #  sensor <- c(sensor, "ETM+ SLC-on", "ETM+ SLC-off")
-  
-  # optional: get Landsat sceneinfo if sensor is supplied
-  # ignore sensor if names(x) are not Landsat sceneID's
-  #if(!is.null(sensor)){
-  #  if(!.isLandsatSceneID(x)){
-  #    warning("Cannot subset by sensor if names(x) do not correspond to Landsat sceneID's. Ignoring...\n")
-  #    sensor <- NULL
-  #  } else {
-  #    s <- getSceneinfo(names(x))
-  #    s <- s[which(s$sensor %in% sensor), ]
-  #  }
-  #}
-  
-  # determine length of coefficient vector
-  # = intercept [+ trend] [+ harmoncos*order] [+ harmonsin*order]
+ 
   coef_len <- 1 # intercept
   modterms <- attr(terms(formula), "term.labels")
   if("trend" %in% modterms)
@@ -126,7 +93,7 @@ bfmarray<- function(x, dates=NULL,  pptype='irregular', start, monend=NULL,
     return(res)
   }
   
-  out <- apply(x=x, c(1,2), fun=fun)
+  out <- apply(x , c(1,2),  fun)
   
   return(out)
 }
