@@ -8,8 +8,8 @@ list.files()
 load("a1.saved")
 load("fevi8.Rdata")
 
-fevi9b9<-fevi8[1:9,1:9,] # input example array
-
+fevi20b20<-fevi8[1:20,1:20,] # input example array
+ 
 output1<-bfmarray(fevi9b9,dates=a1,aggre='month',start=9) # bfast monitor
 
 ## convert time to time dimension
@@ -32,14 +32,14 @@ which(!is.na(t3darr),arr.ind=TRUE)
 image(t3darr[,,176]) #test: bfastmonitor magnitude
 
 #test bfast
-
+output2 <-bfaarray(fevi9b9,dates=a1,aggre='month',season="harmonic",max.iter=3)
 dimt=23*12
 dimx<-20
 dimy<-20
 newarray<-array(,c(dimx,dimy,dimt)) #newarr
  
 mag<- array(100,c(20,20))
-app1
+ 
 t3dbfaarr<-timeasdimbfa(newarray,app1,mag)
 which(!is.na(t3dbfaarr),arr.ind=TRUE)
-getwd()
+ 
