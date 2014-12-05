@@ -23,7 +23,23 @@ dimt<-max(mtime[!is.na(mtime)])
 newarray<-array(,c(dimx,dimy,dimt)) #newarr
 
 mag<- output1[2,,]   # variablearr (magnitude)
+ 
+#load("C:/Users/m_lu0002/Dropbox/mengluchu/bfast/app1.R")
+
 t3darr<-timeasdim(newarray,mtime,mag) # 3 dimensional array with magnitude 
 
 which(!is.na(t3darr),arr.ind=TRUE)
 image(t3darr[,,176]) #test: bfastmonitor magnitude
+
+#test bfast
+
+dimt=23*12
+dimx<-20
+dimy<-20
+newarray<-array(,c(dimx,dimy,dimt)) #newarr
+ 
+mag<- array(100,c(20,20))
+app1
+t3dbfaarr<-timeasdimbfa(newarray,app1,mag)
+which(!is.na(t3dbfaarr),arr.ind=TRUE)
+getwd()
