@@ -52,4 +52,3 @@ mc.calc <- function(x, fun, mc.cores=1, ...) {
     }
     
 }
-1+1=2
