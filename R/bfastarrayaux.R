@@ -13,7 +13,7 @@ timeasdim<-function(newarr,timearr,variablearr)
   
 }  
 
-timeasdimbfa<-function(newarr,timearr,variablearr) # for bfast
+timeasdimbfa<-function(newarr,timearr,variablearr) # for bfast if only time dimension has been stored
 {
   for (x in 1:dim(timearr)[1])
   {
@@ -36,6 +36,24 @@ timeasdimbfa<-function(newarr,timearr,variablearr) # for bfast
 }  
 
 
+tasd.bfa.mul<-function(newarr,timearr,variablearr)
+{
+  for (x in 1:dim(timearr)[2])
+  {
+    for (y in 1: dim(timearr)[3])
+      
+    { 
+      nb<-length(  timearr[,x,y])
+      
+      if ( nb >=1)
+      {
+        for(i in 1:nb)
+          newarr[x,y,timearr[i,x,y]]<- variablearr[i,x,y]   
+      }
+    }
+  }
+  return(newarr)
+}  
 
 monthofyears<-function(x)
 {
@@ -47,3 +65,4 @@ dayofyears<-function(x,frequency)
   mdays <- c(31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)
   return(trunc(x)*mdays[trunc(x)]*12+round((x-trunc(x))*frequency)*mdays[trunc(x)])
 }
+
