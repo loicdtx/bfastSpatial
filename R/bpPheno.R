@@ -27,10 +27,16 @@ bpPheno <- function(x, order=1, formula = response ~ trend + harmon, breaks = NU
             if(class(bpOut) == 'try-error') {
                 nBreaksOut <- -1 # So that -1 breaks means that an error occured
             } else {
-                nBreaksOut <- length(bpOut$breakpoints)
-                df[2:nBreaksOut + 1] <- pp$time[breaks$breakpoints]
+                if(!is.na(bpOut$breakpoints)) {
+                    nBreaksOut <- length(bpOut$breakpoints)
+                    df[1,2:(nBreaksOut + 1)] <- pp$time[bpOut$breakpoints]
+                } else {
+                    nBreaksOut <- 0
+                }
+                
             }
             df[,'nbreaks'] <- nBreaksOut
+            return(df)
         } else {
             stop('specify a maximum number of breaks ((Nb of observation * h) -1)')
         }
