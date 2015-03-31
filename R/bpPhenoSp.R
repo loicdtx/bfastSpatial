@@ -21,12 +21,25 @@
 #' # Generate SpatialPoints
 #' sp <- sampleRegular(x = tura, size = 20, sp=TRUE)
 #' 
-#' # Run 
+#' # Run for each pixel overlapped by a point
+#' out <- bpPhenoSp(tura, sp, formula = response ~ trend, h = 0.1)
+#' 
+#' # Visualize the results
+#' plot(tura, 166)
+#' plot(out, pch=16, cex = out$nbreaks, add = TRUE)
 #' 
 #' # 2 - SpatialPolygons case
 #' data(turaSp)
-#'
 #' 
+#' out2 <- bpPhenoSp(tura, turaSp, fun = mean, formula = response ~ trend, h = 0.1)
+#' # Visualize
+#' plot(tura, 166)
+#' # Build color palette
+#' colfunc <- colorRampPalette(c("yellow", "red"))
+#' colList <- colfunc(2008 - 1987)
+#' plot(out2, col = colList[floor(out2$break1) - 1986], add = TRUE)
+#' # Interpretation: The redder the latter the first break was detected. If transparent, no break detected in spatially aggregated polygon time-series.
+#'
 #' @import raster
 #' @import sp
 #' @import strucchange
