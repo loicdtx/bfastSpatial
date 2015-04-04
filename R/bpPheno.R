@@ -33,7 +33,7 @@ bpPheno <- function(x, order=1, formula = response ~ trend + harmon, breaks = NU
                     # Input breaks timing into output df
                     df[1,2:(nBreaksOut + 1)] <- pp$time[bpOut$breakpoints]
                     # Input Segments properties
-                    segments <- c(pp$time[c(1,bp$breakpoints, nrow(pp))])
+                    segments <- c(pp$time[c(1,bpOut$breakpoints, nrow(pp))])
                     for (i in 1:(length(segments) - 1)) {
                         # To deal with begining of time-series boundary
                         if (i == 1) {
@@ -50,7 +50,7 @@ bpPheno <- function(x, order=1, formula = response ~ trend + harmon, breaks = NU
                         duration <- diff(range(subDf$time))
                         segNum <- i - 1
                         colNames0 <- c('meanSeg', 'slopeSeg', 'yBeginSeg', 'yEndSeg', 'durationSeg')
-                        colNames <- sprintf('%s%d', colNames0, i)
+                        colNames <- sprintf('%s%d', colNames0, segNum)
                         # Fill dataframe 
                         df[1, colNames] <- c(m, sl, yBegin, yEnd, duration)
                     }
