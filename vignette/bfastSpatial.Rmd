@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 
 
 ## Preamble
-The `bfastSpatial` package provides utilities to performs change detection analysis [see @Verbesselt2009a; @Verbesselt:rse:2011] on time-series of spatial gridded data, such as time-series of remote sensing images (Landsat, MODIS and the likes). The tools provided by `bfastSpatial` allows a user to perform all the steps of the change detection workflow, from pre-processing raw surface reflectance Landsat data, inventorying and preparing them for analysis to the production and formatting of change detection results. The present document aims at providing guidance to the users of `bfastSpatial` by detailing every steps of the process.
+The `bfastSpatial` package provides utilities to performs change detection analysis [see @DeVries2015; @Dutrieux2015; @Verbesselt2009a; @Verbesselt:rse:2011] on time-series of spatial gridded data, such as time-series of remote sensing images (Landsat, MODIS and the likes). The tools provided by `bfastSpatial` allows a user to perform all the steps of the change detection workflow, from pre-processing raw surface reflectance Landsat data, inventorying and preparing them for analysis to the production and formatting of change detection results. The present document aims at providing guidance to the users of `bfastSpatial` by detailing every steps of the process.
 
 ## Set up your system
 ### Windows
