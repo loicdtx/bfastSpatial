@@ -2,10 +2,8 @@
 title: "Introduction to bfastSpatial"
 author: "Loïc Dutrieux, Ben DeVries and Jan Verbesselt"
 output:
-  html_document:
-    toc: true
-    toc_depth: 4
-    theme: united
+  knitrBootstrap::bootstrap_document:
+    menu: FALSE
 bibliography: bfastSpatial.bib
 cls: nature-no-superscript.csl
 ---
@@ -13,6 +11,7 @@ cls: nature-no-superscript.csl
 %\VignetteEngine{knitr}
 %\VignetteIndexEntry{Introduction to bfastSpatial}
 -->
+
 
 ```{r, echo = FALSE, message = FALSE}
 library(bfastSpatial)
@@ -23,15 +22,22 @@ knitr::opts_chunk$set(
     tidy = FALSE)
 ```
 
+# Introduction to bfastSpatial
+
+*Loïc Dutrieux, Ben DeVries and Jan Verbesselt*
 
 ## Preamble
+
 The `bfastSpatial` package provides utilities to performs change detection analysis [see @DeVries2015; @Dutrieux2015; @Verbesselt2009a; @Verbesselt:rse:2011] on time-series of spatial gridded data, such as time-series of remote sensing images (Landsat, MODIS and the likes). The tools provided by `bfastSpatial` allows a user to perform all the steps of the change detection workflow, from pre-processing raw surface reflectance Landsat data, inventorying and preparing them for analysis to the production and formatting of change detection results. The present document aims at providing guidance to the users of `bfastSpatial` by detailing every steps of the process.
 
 ## Set up your system
+
 ### Windows
+
 There are no specific system requirements for Windows, besides having (a recent version of) R installed; installing the `bfastSpatial` package will automatically install the required dependencies.  
 
 ### Linux & Mac
+
 Some pre-processing functions require the `rgdal` package, which is a binding between the gdal library and R. For `rgdal` to work on Linux and Mac systems, gdal should be installed and properly set-up. For that, please refer to the web page of the [gdal project](http://www.gdal.org/) as well as [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html).
 
 ### Installing bfastSpatial
@@ -320,7 +326,7 @@ Note that the Tura brick already has scene information included as layer names (
 
 `annualSummary` works similarly to `summaryBrick`, but provides a statistic for each year of the time series. At this time, this function is only applicable to Landsat data, and the scene IDs must be supplied either as `names(x)` or as a separate character vector to `sceneID`. In this sample, we will again calculate median NDVI on all ETM+ data, but this time we are interested in seeing the **annual** median NDVI value.
 
-```{r, fig.show='hold'}
+```{r, fig.align='center'}
 annualMed <- annualSummary(tura, fun=median, sensor="ETM+", na.rm=TRUE)
 plot(annualMed)
 ```
@@ -465,7 +471,7 @@ legend("bottomright", legend=monthlabs, cex=0.5, fill=cols, ncol=2)
 
 The second layer output by `bfmSpatial` is magnitude. Magnitude is computed as the median residual between expected and observed values throughout the **entire** monitoring period, meaning that all pixels are assigned a value regardless of whether or not a breakpoint has been detected.
 
-```{r, fig.show='hold'}
+```{r, fig.align='center'}
 # extract magn raster
 magn <- raster(bfm, 2)
 # make a version showing only breakpoing pixels
@@ -511,7 +517,7 @@ magn09[is.na(change09)] <- NA
 
 Suppose we know from field observations or other reference data that breakpoints with NDVI magnitudes of -0.05 are associated with high probability of detected actual deforestation. We can easily apply this threshold to our magnitude raster by replacing all values above -0.05 with `NA`.
 
-```{r, fig.show='hold'}
+```{r, fig.align='center'}
 # extract and rescale magnitude and apply a -500 threshold
 magn09thresh <- magn09
 magn09thresh[magn09 > -0.05] <- NA
@@ -536,7 +542,7 @@ magn09_areasieve <- areaSieve(magn09thresh)
 
 `areaSieve` passes additional arguments to `raster::clump`, which allows for considerations of direction when defining pixel neighbourhoods. `clump` adheres to the principle of 'queen's case' versus 'rook's case'. In the former, pixels in all directions (default: `directions = 8`) are considered when defining clumps, whereas in the latter case, only pixels directly adjacent (excluding diagonals) are considered (`directions = 4`).
 
-```{r, fig.show='hold'}
+```{r, fig.align='center'}
 magn09_as_rook <- areaSieve(magn09thresh, directions=4)
 # compare all magn rasters
 op <- par(mfrow=c(2, 2))
@@ -549,7 +555,7 @@ par(op)
 
 Once we have applied the desired filters and sieves to our bfm magnitude raster, we may want to calculate area statistics. This can be done with another simple function: `clumpSize`. This function is also based on the `raster::clumps` function and computes the size of each pixel clump and assigns that value back to each pixel in that clump. As in `areaSieve`, the queen's and rook's cases can also apply by adjusting the `directions` argument.
 
-```{r, fig.show='hold'}
+```{r, fig.align='center'}
 changeSize_queen <- clumpSize(magn09_areasieve)
 changeSize_rook <- clumpSize(magn09_areasieve, directions=4)
 # compare
