@@ -72,7 +72,8 @@ bpPhenoSp <- function(x, y, formula = response ~ trend + harmon, order = 1, h = 
             y <- SpatialPoints(y) # Not sure if that is necessary
             out <- SpatialPointsDataFrame(y, data = bp)
         } else if(inherits(y, 'SpatialPolygons')) {
-            out <- SpatialPolygonsDataFrame(y, data = bp, match.ID = FALSE)
+            rownames(bp) <- sapply(seq(length(y)), function(x){y@polygons[[x]]@ID}) # This is a bit of an inelegant hack to make the chunk version below work -- Loic
+            out <- SpatialPolygonsDataFrame(y, data = bp)
         } else if(inherits(y, 'SpatialLines')) {
             out <- SpatialLinesDataFrame(y, data = bp, match.ID = FALSE)
         } else if(class(y) == 'extent') {
