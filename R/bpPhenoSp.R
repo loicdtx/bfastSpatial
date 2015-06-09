@@ -83,12 +83,12 @@ bpPhenoSp <- function(x, y, formula = response ~ trend + harmon, order = 1, h = 
         return(out)
     } # End of function definition
     
-    l <- lenghth(y)
+    l <- length(y)
     if(l > maxFeatures) { # Case when y has more features than maxFeatures
-        chunkID <- c(seq(1, l, maxFeatures), maxFeatures + 1)
+        chunkID <- c(seq(1, l, maxFeatures), l + 1)
         listOut <- list()
         for (i in head(seq(chunkID), -1)) { # Chunk processing loop
-            ySub <- y[chunkID[i]:chunkID[i + 1] - 1,]
+            ySub <- y[chunkID[i]:(chunkID[i + 1] - 1),]
             listOut[[i]] <- fun(x = x, y = ySub, formula = formula, order = order, h = h, breaks = breaks, mc.cores = mc.cores, ...)
         }
         do.call(rbind, listOut) # It stops here
