@@ -8,7 +8,8 @@
 #' @param order See \code{\link{bfastpp}}
 #' @param breaks See \code{\link{breakpoints}}
 #' @param h See \code{\link{breakpoints}}
-#' @param mc.cores Numeric NUmber of cores to use (for parallel processing)
+#' @param mc.cores Numeric Number of cores to use (for parallel processing)
+#' @param maxFeatures Numeric Number of features to use per chunk. Chunk processing is only done when \code{length(y)} exceeds \code{maxFeatures}. This is implemented to avoid memory problems when working with large objects. 
 #' @param ... Arguments to be passed to \link{zooExtract}
 #' 
 #' @author Loic Dutrieux
@@ -48,35 +49,52 @@
 #' 
 #' @export
 
-bpPhenoSp <- function(x, y, formula = response ~ trend + harmon, order = 1, h = 0.1, breaks = NULL, mc.cores = 1, ...) {
+bpPhenoSp <- function(x, y, formula = response ~ trend + harmon, order = 1, h = 0.1, breaks = NULL, mc.cores = 1, maxFeatures = 10000, ...) {
     
-    ts <- zooExtract(x, y, ...)
+    fun <- function(x, y, formula, order, h, breaks, mc.cores, ...) {
+        ts <- zooExtract(x, y, ...)
+        
+        # Get max segments
+        nl <- nlayers(x)
+        if (!is.null(breaks)) {
+            segMax <- breaks + 1
+        } else {
+            segMax <- ceiling(nl * h)
+        }
+        
+        
+        # Run function (must apply to a zoo object with multiple ts and return a dataframe)
+        bp <- bpPheno(x = ts, order = order, formula = formula, breaks = breaks, h = h, nbreaks = segMax, mc.cores = mc.cores)
+        
+        
+        
+        if(inherits(y, 'SpatialPoints')) {
+            y <- SpatialPoints(y) # Not sure if that is necessary
+            out <- SpatialPointsDataFrame(y, data = bp)
+        } else if(inherits(y, 'SpatialPolygons')) {
+            out <- SpatialPolygonsDataFrame(y, data = bp, match.ID = FALSE)
+        } else if(inherits(y, 'SpatialLines')) {
+            out <- SpatialLinesDataFrame(y, data = bp, match.ID = FALSE)
+        } else if(class(y) == 'extent') {
+            y <- as(y, 'SpatialPolygons')
+            out <- SpatialPolygonsDataFrame(y, data = bp, match.ID = FALSE)
+            proj4string(out) <- CRS(projection(x))
+        }
+        return(out)
+    } # End of function definition
     
-    # Get max segments
-    nl <- nlayers(x)
-    if (!is.null(breaks)) {
-        segMax <- breaks + 1
-    } else {
-        segMax <- ceiling(nl * h)
+    l <- lenghth(y)
+    if(l > maxFeatures) { # Case when y has more features than maxFeatures
+        chunkID <- c(seq(1, l, maxFeatures), maxFeatures + 1)
+        listOut <- list()
+        for (i in head(seq(chunkID), -1)) { # Chunk processing loop
+            ySub <- y[chunkID[i]:chunkID[i + 1] - 1,]
+            listOut[[i]] <- fun(x = x, y = ySub, formula = formula, order = order, h = h, breaks = breaks, mc.cores = mc.cores, ...)
+        }
+        do.call(rbind, listOut) # It stops here
+        
+    } else { # Normal case
+        fun(x = x, y = y, formula = formula, order = order, h = h, breaks = breaks, mc.cores = mc.cores, ...)
     }
     
-    
-    # Run function (must apply to a zoo object with multiple ts and return a dataframe)
-    bp <- bpPheno(x = ts, order = order, formula = formula, breaks = breaks, h = h, nbreaks = segMax, mc.cores = mc.cores)
-    
-    
-    
-    if(inherits(y, 'SpatialPoints')) {
-        y <- SpatialPoints(y) # Not sure if that is necessary
-        out <- SpatialPointsDataFrame(y, data = bp)
-    } else if(inherits(y, 'SpatialPolygons')) {
-        out <- SpatialPolygonsDataFrame(y, data = bp, match.ID = FALSE)
-    } else if(inherits(y, 'SpatialLines')) {
-        out <- SpatialLinesDataFrame(y, data = bp, match.ID = FALSE)
-    } else if(class(y) == 'extent') {
-        y <- as(y, 'SpatialPolygons')
-        out <- SpatialPolygonsDataFrame(y, data = bp, match.ID = FALSE)
-        proj4string(out) <- CRS(projection(x))
-    }
-    return(out)
 }
