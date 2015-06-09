@@ -83,7 +83,7 @@ bpPhenoSp <- function(x, y, formula = response ~ trend + harmon, order = 1, h = 
         return(out)
     } # End of function definition
     
-    l <- lenghth(y)
+    l <- length(y)
     if(l > maxFeatures) { # Case when y has more features than maxFeatures
         chunkID <- c(seq(1, l, maxFeatures), maxFeatures + 1)
         listOut <- list()
