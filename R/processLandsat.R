@@ -9,7 +9,8 @@
 #' @param untar Logical. Is there a need to untar data, or have they been previously unpacked.
 #' @param delete Logical. Should surface reflectance files (hdf/tiff) be deleted after vegetation index calculated? (usefull for disk space management; surface reflectance files are very voluminous and a user may want to keep the Landsat archive in compressed format only)
 #' @param mask Character or NULL. The name of the mask to be applied to the bands (e.g.: \code{mask = 'fmask'})
-#' @param L Numeric. Soil-adjustment factor for SAVI (ignored if vi != 'savi'). L can take on values between 0 and 1, and a default of 0.5 is typically used.
+#' @param L Numeric. Soil-adjustment factor for SAVI (ignored if \code{vi != 'savi'}). L can take on values between 0 and 1, and a default of 0.5 is typically used.
+#' @param fileExt Character. Extension of the file to be generated. Note that \code{filename} is automatically generated
 #' @param ... Arguments to be passed to \link{sr2vi}. Do not specify \code{filename} since it is automatically generated
 #' @author Loic Dutrieux
 #' @return rasterLayer Object also written to file (in \code{outdir}) with an automatically generated filename
@@ -38,7 +39,7 @@
 #' @export
 #' 
 
-processLandsat <- function(x, vi='ndvi', srdir, outdir, untar=TRUE, delete=FALSE, mask=NULL, L=0.5, ...) {
+processLandsat <- function(x, vi='ndvi', srdir, outdir, untar=TRUE, delete=FALSE, mask=NULL, L=0.5, fileExt = 'grd', ...) {
     # x is the full path of a tarball containing the Landsat data or the path of a hdf file
     # hdf dir is where the hdf files are extracted
     # Output layers (NDVI for example) are generated in outdir
@@ -94,7 +95,7 @@ processLandsat <- function(x, vi='ndvi', srdir, outdir, untar=TRUE, delete=FALSE
     name <- str_extract(string=basename(x[1]), '(LT4|LT5|LE7|LC8)\\d{13}')   
     # Filename generation (below) will have to be edited when dynamic indices will be implemented
     # Also note that in case of geotiff length(x)>1
-    sr2vi(x=x, vi=vi, filename=sprintf('%s/%s.%s.grd', outdir, vi, name), datatype='INT2S', mask=mask, ...)
+    sr2vi(x=x, vi=vi, filename=sprintf('%s/%s.%s.%s', outdir, vi, name, fileExt), datatype='INT2S', mask=mask, ...)
     if(delete) {
         file.remove(x)
     } 
