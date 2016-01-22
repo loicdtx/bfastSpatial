@@ -139,24 +139,13 @@
     
     if(sensor == 'OLI') {
         ind <- c('band2','band3','band4','band5','band6','band7') 
-        tc_coef <- rbind(c(0, 0, 0, 0, 0, 0),
-                         c(0, 0, 0, 0, 0, 0),
-                         c(0, 0, 0, 0, 0, 0)) ## TODO: find these!
-        
-    } else if(grepl("ETM+", sensor)) {
+    } else {
         ind <- c('band1', 'band2', 'band3', 'band4', 'band5', 'band7')
-        tc_coef <- rbind(c(0.3561, 0.3972, 0.3904, 0.6966, 0.2286, 0.1596),
-                         c(-0.3344, -0.3544, -0.4556, 0.6966, -0.0242,-0.2630),
-                         c(0.2626, 0.2141, 0.0926, 0.0656, -0.7629, -0.5388))
-                         
-    } else if(sensor == 'TM') {
-        ind <- c('band1', 'band2', 'band3', 'band4', 'band5', 'band7')
-        tc_coef <- rbind(c(0.2043, 0.4158, 0.5524, 0.5741, 0.3124, 0.2303),
-                         c(-0.1603, -0.2819, -0.4934, 0.7940, 0.0002, -0.1446),
-                         c(0.0315,  0.2021,  0.3102,  0.1594, -0.6806, -0.6109))
-        
-        # TODO: check coefs and get appropriate citations for documentation
     }
+    
+    tc_coef <- rbind(c(0.2043, 0.4158, 0.5524, 0.5741, 0.3124, 0.2303 ),
+                     c(-0.1603, 0.2819, -0.4934, 0.7940, -0.0002, -0.1446),
+                     c(0.0315, 0.2021, 0.3102, 0.1594, -0.6806, -0.6109))
     
     # choose component
     if(component == 'brightness') {
@@ -167,10 +156,11 @@
         tcc <- tc_coef[3, ]
     }
     
-    # TODO: allow coefficients to be passed by user as vectors for a given index for each sensor type
+    # TODO: allow (custom) tc coefficients to be passed by user as vectors for a given index for each sensor type
     
     fun <- function(x1, x2, x3, x4, x5, x6) {
-        tcbright <- sum(c(x1, x2, x3, x4, x5, x6) * tcc) 
+        tc <- x1*tcc[1] + x2*tcc[2] + x3*tcc[3] + x4*tcc[4] + x5*tcc[5] + x6*tcc[6]
+        return(tc)
     } 
     
     return(list(ind=ind, 
@@ -178,3 +168,4 @@
 }
 
 
+library(mapview)
