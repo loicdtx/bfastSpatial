@@ -34,6 +34,9 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
         return(x)
     }
     
+    # get sceneinfo (for sensor to be passed to vi formula)
+    s <- getSceneinfo(x[1])
+    sensor <- s$sensor
     
     
     if(extension(x[1]) == '.hdf') { 
@@ -71,24 +74,36 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     
     ###########################################################################
     # vi needs to be processed ------------------------------    
-    
+    # see R/LandsatVIs.R for formulas
+        
+        # convert vi to lower case
+        vi <- tolower(vi)
     
         if(vi == 'ndvi') {
-            viFormula <- .ndvi()
+            viFormula <- .ndvi(sensor = sensor)
         } else if(vi == 'evi') {
-            viFormula <- .evi()
+            viFormula <- .evi(sensor = sensor)
         } else if(vi == 'nbr') {
-            viFormula <- .nbr()
+            viFormula <- .nbr(sensor = sensor)
         } else if(vi == 'savi') {
-            viFormula <- .savi(L=L)
+            viFormula <- .savi(sensor = sensor, L = L)
+        } else if(vi == 'ndmi') {
+            viFormula <- .ndmi(sensor = sensor)
+        } else if(vi == 'ndwi') {
+            viFormula <- .ndwi(sensor = sensor)
+        } else if(vi == 'mndwi') {
+            viFormula <- .mndwi(sensor = sensor)
+        } else if(vi %in% c('tcbright', 'tcbrightness', 'brightness', 'tcb')) {
+            viFormula <- .tasscap(sensor = sensor, component = 'brightness')
+        } else if(vi %in% c('tcgreen', 'tcgreenness', 'greenness', 'tcg')) {
+            viFormula <- .tasscap(sensor = sensor, component = 'greenness')
+        } else if(vi %in% c('tcwet', 'tcwetness', 'wetness', 'tcw')) {
+            viFormula <- .tasscap(sensor = sensor, component = 'wetness')
         } else {
             stop("Unsupported vi")
         }
-        # TODO: for tasseled cap to work, information on the Landsat sensor is needed here:
-        # e.g. 
-            # if(sensor==7 & vi=="tcgreen") viFormula <- .tcgreen(sensor=7)
-        # or if 'sensor' is added as an argument, simply:
-            # if(vi == "tcgreen") viFormula <- .tcgreen(sensor=sensor)
+
+        
         
         ind <- viFormula$ind
         x0 <- grep(pattern=sprintf("^.*(%s)($|\\.tif)", paste(ind, collapse='|')), x=x, value=TRUE)
