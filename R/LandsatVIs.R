@@ -166,6 +166,3 @@
     return(list(ind=ind, 
                 fun=fun)) 
 }
-
-
-library(mapview)
