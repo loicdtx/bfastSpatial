@@ -40,8 +40,8 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     }
     
     # get sceneinfo (for sensor to be passed to vi formula)
-    s <- getSceneinfo(x[1])
-    sensor <- s$sensor
+    s <- getSceneinfo(basename(x[1]))
+    sensor <- as.character(s$sensor)
     
     
     if(extension(x[1]) == '.hdf') { 
