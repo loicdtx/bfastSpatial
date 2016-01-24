@@ -3,7 +3,7 @@
 #' 
 #' @description Processes a single Landsat scene, from tarball or zip archive (or hdf/tiff if untar is set to FALSE) to vegetation index. Easy to batch using sapply or mclapply for parallel implementation. Data obtained from espi may already contained pre-processed indices layers, in which case they are directly used.
 #' @param x Character. filename of the tarball or zip archive of the hdf/tiff file.
-#' @param vi Character. Vegetation index to be computed or extracted from the archive. Can be either 'ndvi', 'evi', 'savi', 'ndmi', 'nbr', 'nbr2'* or 'msavi'*. Indices with * need to be present in the archive. Note that it is also possible to extract single bands using the \code{vi=} argument. \code{vi='sr_band1'} for instance will extract surface reflectance band 1 from the archive and perform the same pre-processing steps as if it was a vegetation index layer.
+#' @param vi Character. Vegetation index to be computed or extracted from the archive. Can be either 'ndvi', 'evi', 'savi', 'ndmi', 'ndwi', 'mndwi', 'tcb', 'tcg', 'tcw', 'nbr', 'nbr2'* or 'msavi'*. Indices with * need to be present in the archive. Note that it is also possible to extract single bands using the \code{vi=} argument. \code{vi='sr_band1'} for instance will extract surface reflectance band 1 from the archive and perform the same pre-processing steps as if it was a vegetation index layer.
 #' @param srdir Character. Directory where the tarball should be uncompressed. Can be ommited if \code{untar} is set to \code{FALSE}
 #' @param outdir Character. Directory where the vegetation index rasterLayer should be written.
 #' @param untar Logical. Is there a need to untar data, or have they been previously unpacked.
