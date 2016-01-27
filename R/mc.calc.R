@@ -21,10 +21,35 @@
 
 mc.calc <- function(x, fun, mc.cores=1, ...) {
     
+    
+    ## filename checks (if given)
+    if(!hasArg(overwrite))
+        overwrite <- FALSE
+    
+    if(hasArg(filename)) {
+        
+        # check if it exists
+        if(file.exists(filename) & !overwrite) {
+            stop(sprintf("%s exists, use overwrite=TRUE to overwrite.", filename))
+            
+        # check if it can be overwritten
+        } else if(file.exists(filename) & overwrite) {
+            if(file.access(filename, mode = 2) == -1) {
+                stop(sprintf("%s cannot be overwritten. Check permissions or enter a different filename.", filename))
+            }
+        }
+        
+        
+    }
+    
+    
+    
     if(mc.cores == 1) { # Normal calc
+        
         out <- calc(x=x, fun=fun, ...)
         return(out)
-    } else {
+        
+    } else { # mc.calc
         
         s <- blockSize(x, minblocks=mc.cores)
         blocs <- seq(1, s$n)
