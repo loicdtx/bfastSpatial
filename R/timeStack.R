@@ -5,10 +5,13 @@
 #' 
 #' 
 #' 
-#' @param x character. dir containing the files to be stacked or character list (the files). IN the former case, it is recommended to use the \code{pattern} argument
+#' @param x character. dir containing the files to be stacked or character list (the files). In the former case, it is recommended to use the \code{pattern} argument
 #' @param pattern See \link{list.files}
 #' @param orderChrono Logical. Should layers in the output object be orderred chronologically. If set to FALSE, layer order will be alphabetical.
 #' @param ... Arguments to be passed to \link{writeRaster}. If specifying a filename, it is strongly recommended to also set a datatype.
+#' 
+#' @return RasterStack with time written to z dimension
+#' 
 #' @author Loic Dutrieux
 #' @examples
 #' # 1 - Produce individual VI layers (using processLandsatBatch())

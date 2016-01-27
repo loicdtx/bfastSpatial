@@ -7,13 +7,16 @@
 timeStack(x, pattern = NULL, orderChrono = TRUE, ...)
 }
 \arguments{
-\item{x}{character. dir containing the files to be stacked or character list (the files). IN the former case, it is recommended to use the \code{pattern} argument}
+\item{x}{character. dir containing the files to be stacked or character list (the files). In the former case, it is recommended to use the \code{pattern} argument}
 
 \item{pattern}{See \link{list.files}}
 
 \item{orderChrono}{Logical. Should layers in the output object be orderred chronologically. If set to FALSE, layer order will be alphabetical.}
 
 \item{...}{Arguments to be passed to \link{writeRaster}. If specifying a filename, it is strongly recommended to also set a datatype.}
+}
+\value{
+RasterStack with time written to z dimension
 }
 \description{
 Creates a stack of Landsat layers, reordering them chronologically
