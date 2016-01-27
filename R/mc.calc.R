@@ -23,11 +23,15 @@ mc.calc <- function(x, fun, mc.cores=1, ...) {
     
     
     ## filename checks (if given)
-    if(!hasArg(overwrite))
+    # use dots from mc.calc (for some reason, filename and overwrite are not found if passed from ...)
+    filename <- list(...)$filename
+    overwrite <- list(...)$overwrite
+    
+    if(is.null(overwrite))
         overwrite <- FALSE
     
-    if(hasArg(filename)) {
-        
+    if(!is.null(filename)) {
+
         # check if it exists
         if(file.exists(filename) & !overwrite) {
             stop(sprintf("%s exists, use overwrite=TRUE to overwrite.", filename))
@@ -39,6 +43,8 @@ mc.calc <- function(x, fun, mc.cores=1, ...) {
             }
         }
         
+        # check validity of file path
+        ## TODO...
         
     }
     
