@@ -4,19 +4,24 @@
 #' @description Extract layers, apply mask (optional), crop (optional), calculate NDVI (possible other indices supported in the future) and write output to file (optional)
 #' 
 #' @param x Character. File name of the hdf file containing the bands, or list of filenames (geoTiffs).
-#' @param vi Character. Vegetation index to be computed. 'ndvi', 'evi' and 'savi' are supported at the moment. The function will first attempt to find if a pre-processed version of the index is present in the list supplied or in the .hdf file and will use that layer when available.
+#' @param vi Character. Vegetation index to be computed. See 'details' for a list of the supported indices. The function will first attempt to find if a pre-processed version of the index is present in the list supplied or in the .hdf file and will use that layer when available.
 #' @param e Extent object or object that can be coerced as extent.
 #' @param mask Character or NULL. The name of the cloud/Land mask to be applied to the output (e.g.: \code{mask='fmask'}) 
 #' @param keep Numeric. Can take multiple values. Which values of the mask layer should be kept?
 #' @param L Numeric. Soil-adjustment factor for SAVI (ignored if vi != 'savi'). L can take on values between 0 and 1, and a default of 0.5 is typically used.
 #' @param ... Arguments to be passed to \code{\link{writeRaster}}
 #' @return A rasterLayer object
-#' @author Loic Dutrieux
+#' @author Loic Dutrieux and Ben DeVries
 #' @seealso \code{\link{processLandsat}} and \code{\link{processLandsatBatch}} for wrapper and wrapper/batcher functions
 #' @import gdalUtils
 #' @import raster
 #' @import rgdal
 #' @export
+#' 
+#' @details
+#' A number of indices can be passed to \code{vi} at the moment, includeing \code{ndvi}, \code{evi}, \code{savi}, \code{nbr}, \code{ndmi}, \code{ndwi} and \code{mndwi}. Three tasseled cap components - brightness, greenness and wetness - are also supported. For brightness, \code{tcb}, \code{brightness} and \code{tcbright} are all acceptable arguments for \code{vi}. The same holds true for the other 2 indices.
+#' 
+#' For tasseled cap components, note that at the moment only a single set of coefficients for surface reflectance are used (Crist, 1985). Be aware that this may cause issues if OLI data are being used with ETM+ and TM data due to radiometric differences between OLI and the other sensors.
 
 sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {      
     
@@ -34,6 +39,9 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
         return(x)
     }
     
+    # get sceneinfo (for sensor to be passed to vi formula)
+    s <- getSceneinfo(basename(x[1]))
+    sensor <- as.character(s$sensor)
     
     
     if(extension(x[1]) == '.hdf') { 
@@ -71,24 +79,36 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     
     ###########################################################################
     # vi needs to be processed ------------------------------    
-    
+    # see R/LandsatVIs.R for formulas
+        
+        # convert vi to lower case
+        vi <- tolower(vi)
     
         if(vi == 'ndvi') {
-            viFormula <- .ndvi()
+            viFormula <- .ndvi(sensor = sensor)
         } else if(vi == 'evi') {
-            viFormula <- .evi()
+            viFormula <- .evi(sensor = sensor)
         } else if(vi == 'nbr') {
-            viFormula <- .nbr()
+            viFormula <- .nbr(sensor = sensor)
         } else if(vi == 'savi') {
-            viFormula <- .savi(L=L)
+            viFormula <- .savi(sensor = sensor, L = L)
+        } else if(vi == 'ndmi') {
+            viFormula <- .ndmi(sensor = sensor)
+        } else if(vi == 'ndwi') {
+            viFormula <- .ndwi(sensor = sensor)
+        } else if(vi == 'mndwi') {
+            viFormula <- .mndwi(sensor = sensor)
+        } else if(vi %in% c('tcbright', 'tcbrightness', 'brightness', 'tcb')) {
+            viFormula <- .tasscap(sensor = sensor, component = 'brightness')
+        } else if(vi %in% c('tcgreen', 'tcgreenness', 'greenness', 'tcg')) {
+            viFormula <- .tasscap(sensor = sensor, component = 'greenness')
+        } else if(vi %in% c('tcwet', 'tcwetness', 'wetness', 'tcw')) {
+            viFormula <- .tasscap(sensor = sensor, component = 'wetness')
         } else {
             stop("Unsupported vi")
         }
-        # TODO: for tasseled cap to work, information on the Landsat sensor is needed here:
-        # e.g. 
-            # if(sensor==7 & vi=="tcgreen") viFormula <- .tcgreen(sensor=7)
-        # or if 'sensor' is added as an argument, simply:
-            # if(vi == "tcgreen") viFormula <- .tcgreen(sensor=sensor)
+
+        
         
         ind <- viFormula$ind
         x0 <- grep(pattern=sprintf("^.*(%s)($|\\.tif)", paste(ind, collapse='|')), x=x, value=TRUE)

@@ -59,8 +59,9 @@ timeStack <- function(x, pattern=NULL, orderChrono = TRUE, ...) {
     }
     
     s <- stack(x)
+    names(s) <- row.names(getSceneinfo(x))
     
-    time <- getSceneinfo(str_extract(string=basename(x), '(LT4|LT5|LE7|LC8)\\d{13}'))$date
+    time <- getSceneinfo(x)$date
     s <- setZ(x=s, z=time)
     
     if(hasArg(filename)) {
