@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/21430/dutri001/bfastSpatial.svg)](https://zenodo.org/badge/latestdoi/21430/dutri001/bfastSpatial)
+
 # bfastSpatial
 
 ```
@@ -14,6 +16,8 @@
 
 Package to pre-process gridded time-series data in order for them to be analyzed with change detection algorithms such as bfast. Uses classes from the raster package and includes utilities to run the algorithms and post-process the results.
 
+## Installation
+
 The package can be installed directly from github using devtools
 
 ```R
@@ -21,12 +25,26 @@ library(devtools)
 install_github('dutri001/bfastSpatial')
 ```
 
-Full [tutorial](http://dutri001.github.io/bfastSpatial/) available to guide you through data pre-processing and analysis.
+## Tutorials
 
-If you are already familiar with R, the raster package and Landsat/MODIS data, you may skip the detailed tutorial and go directly to the [quick start guide](http://dutri001.github.io/bfastSpatial/quickStart#/).
+- [Introductory tutorial](http://www.loicdutrieux.com/talks/SCERIN-2015-bfastSpatial/) that presents the general functionalities of the package and how to quickly explore a dataset and generate change results.
+- [Full tutorial](http://dutri001.github.io/bfastSpatial/) in which *everything* is covered, from data download to pre-processing and analysis.
+- If you are already familiar with R, the raster package and Landsat/MODIS data, you may skip the detailed tutorial and go directly to the [quick start guide](http://dutri001.github.io/bfastSpatial/quickStart#/).
 
-Feedback on the package is very much welcome. Send your feedback to Ben or Loic
 
+Feedback on the package and the documentation is very much welcome. Send your feedback to Ben or Loic
 
-## For external contributors
-External contributions are welcome. If you would like to contribute additional features and improvements to the package; fork the repository on gitHub, commit your changes and make a pull request. Always use the develop branch as a starting point for your work. Your contribution will be reviewed for quality, relevance and consistency with the rest of the package before being merged.
+## Citation
+
+The package can be cited in (scientific) publications by using the following citing information.
+
+```
+@software{bfastSpatial,
+  author = {Dutrieux, Lo\"{i}c and DeVries, Ben},
+  title = {{bfastSpatial: Set of utilities and wrappers to perform change detection on satellite image time-series}},
+  url = {https://github.com/dutri001/bfastSpatial},
+  version = {0.6.2},
+  date = {2014-12-04},
+  doi = {10.5281/zenodo.49693}
+}
+```
