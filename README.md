@@ -18,10 +18,10 @@ The package can be installed directly from github using devtools
 
 ```R
 library(devtools)
-install_github(repo='bfastSpatial', username='dutri001')
+install_github(repo='bfastSpatial', username='loicdtx')
 ```
 
-Full [tutorial](http://dutri001.github.io/bfastSpatial/) available to guide you through data pre-processing and analysis.
+Full [tutorial](http://loicdtx.github.io/bfastSpatial/) available to guide you through data pre-processing and analysis.
 
 Feedback on the package is very much welcome. Send your feedback to Ben or Loic
 

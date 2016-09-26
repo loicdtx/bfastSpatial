@@ -45,7 +45,7 @@ The package can be installed directly from github using devtools, provided you h
 
 ```{r, eval=FALSE, results='hide'}
 library(devtools)
-install_github('dutri001/bfastSpatial')
+install_github('loicdtx/bfastSpatial')
 # load the package
 library(bfastSpatial)
 ```
