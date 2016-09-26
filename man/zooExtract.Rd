@@ -32,7 +32,7 @@ zooExtract(x = tura, sample = 'click', file = file.path(tempdir(), 'zooClick.rds
 
 # Then in order to explore the time series and the bfastmonitor parameters, run the following line
 \dontrun{
-runGitHub("bfmApp", "dutri001")
+runGitHub("bfmApp", "loicdtx")
 }
 # And upload the file zooClick.rds
 
