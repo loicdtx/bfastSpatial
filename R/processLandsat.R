@@ -59,8 +59,8 @@ processLandsat <- function(x, vi='ndvi', srdir, outdir, untar=TRUE, delete=FALSE
         if(any(grepl(pattern="^.*\\.hdf$", x=tarlist))) { # are there any hdf files
             x0 <- grep(pattern="^.*\\.hdf$", x=tarlist, value=TRUE)
         } else if (any(grepl(pattern="^.*\\.tif$", x=tarlist))) { # Contains tiff
-            if(any(grepl(pattern=sprintf("^.*%s\\.tif$", vi), x=tarlist))) { # Contains pre-processed vi
-                x0 <- grep(pattern=sprintf("^.*%s\\.tif$", vi), x=tarlist, value=TRUE)
+            if(any(grepl(pattern=sprintf("^.*_%s\\.tif$", vi), x=tarlist))) { # Contains pre-processed vi
+                x0 <- grep(pattern=sprintf("^.*_%s\\.tif$", vi), x=tarlist, value=TRUE)
             } else { # extract the bands needed to process vi
                 # Get viFormula object (in order to know which bands to extract)
                 if(vi == 'ndvi') {
@@ -74,7 +74,7 @@ processLandsat <- function(x, vi='ndvi', srdir, outdir, untar=TRUE, delete=FALSE
                 } else {
                     stop("Unsupported vi")
                 }
-                x0 <- grep(pattern=sprintf("^.*(%s)\\.tif$", paste(viFormula$ind, collapse='|')), x=tarlist, value=TRUE)
+                x0 <- grep(pattern=sprintf("^.*_(%s)\\.tif$", paste(viFormula$ind, collapse='|')), x=tarlist, value=TRUE)
             }
             
         } else {
