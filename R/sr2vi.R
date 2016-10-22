@@ -54,7 +54,7 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
     # When the indices are already pre-processed ------------------------------
        
     if(any(grepl(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x, ignore.case=TRUE))) { 
-        vi <- raster(grep(pattern=sprintf("^.*%s($|\\.tif)", vi), x=x, value=TRUE, ignore.case=TRUE))
+        vi <- raster(grep(pattern=sprintf("^.*_%s($|\\.tif)", vi), x=x, value=TRUE, ignore.case=TRUE))
         if(!is.null(mask)) {
             mask <- raster(grep(pattern=sprintf("^.*%s($|\\.tif|_band$)", mask), x=x, value=TRUE)) # Called 'fmask_band' in the hdf file
         }
@@ -111,7 +111,7 @@ sr2vi <- function(x, vi='ndvi', e=NULL, mask=NULL, keep=c(0), L=0.5, ...) {
         
         
         ind <- viFormula$ind
-        x0 <- grep(pattern=sprintf("^.*(%s)($|\\.tif)", paste(ind, collapse='|')), x=x, value=TRUE)
+        x0 <- grep(pattern=sprintf("^.*_(%s)($|\\.tif)", paste(ind, collapse='|')), x=x, value=TRUE)
         
         bands <- lapply(X=x0, FUN=raster)
         
