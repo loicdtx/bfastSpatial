@@ -67,7 +67,7 @@
 
 bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
                        formula = response ~ trend + harmon, order = 3, lag = NULL, slag = NULL,
-                       history = c("ROC", "BP", "all"),
+                       history = c("ROC", "BP", "all"), aggre="month",
                        type = "OLS-MOSUM", h = 0.25, end = 10, level = 0.05, mc.cores=1, returnLayers = c("breakpoint", "magnitude", "error"), sensor=NULL, ...) {
     
     if(is.character(x)) {
@@ -117,8 +117,34 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
             x <- x[which(s$sensor %in% sensor)]
         
         # convert to bfast ts
-        ts <- bfastts(x, dates=dates, type=pptype)
-        
+       # ts <- bfastts(x, dates=dates, type=pptype)
+        if (aggre  == "month")
+    {  
+      spt<-zoo(x,dates)
+      monmean <- aggregate(spt, as.Date(as.yearmon(dates)), mean)
+      
+      frequency(monmean)<-12
+      na.new <- function(x) ts(na.exclude(x), frequency = 12)
+      
+      stlmon<-stl(monmean, na.action = na.new, s.window = "per")
+   
+      datamon <- ts(rowSums(stlmon$time.series)) 
+      tsp(datamon) <- tsp(stlmon$time.series)
+      ts<-datamon
+    }
+    else
+    {
+      
+      #spt<-ts( x,start=c(2000,7),end=c(2013,44),frequency=46)
+      spt<-zoo(x,dates)
+      frequency(spt)<-46
+      na.new <- function(x) ts(na.exclude(x), frequency = 46)
+      stlmon<-stl(spt, na.action = na.new, s.window = "per")
+      spt <- ts(rowSums(stlmon$time.series)) 
+      tsp(spt) <- tsp(stlmon$time.series)
+      ts<-spt
+    }
+     
         #optional: apply window() if monend is supplied
         if(!is.null(monend))
             ts <- window(ts, end=monend)
