@@ -20,6 +20,8 @@ Depends:
     bitops,
     zoo,
     sp
+Suggests:
+    testthat
 RoxygenNote: 5.0.1
 License: GPL-3
 RoxygenNote: 5.0.1
