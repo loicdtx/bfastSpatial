@@ -8,6 +8,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
                       path = 230,
                       row = 70,
                       date = as.Date('2014234', '%Y%j'),
+                      tier = NA,
                       stringsAsFactors = FALSE)
     ##
     name2 <- '/home/username/LT51970291984107-SC20161024054752.tar.gz'
@@ -16,6 +17,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
                       path = 197,
                       row = 29,
                       date = as.Date('1984107', '%Y%j'),
+                      tier = NA,
                       stringsAsFactors = FALSE)
     ##
     name3 <- 'LE71960292016244NSG00_sr_band7.tif'
@@ -24,6 +26,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
                       path = 196,
                       row = 29,
                       date = as.Date('2016244', '%Y%j'),
+                      tier = NA,
                       stringsAsFactors = FALSE)
     ##
     name4 <- 'LE71960292002244NSG00-SC20161024054752.tar.gz'
@@ -32,6 +35,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
                       path = 196,
                       row = 29,
                       date = as.Date('2002244', '%Y%j'),
+                      tier = NA,
                       stringsAsFactors = FALSE)
     ##
     name5 <- '/home/username/LC08_L1TP_019046_20170311_20170317_01_T1_sr_band4.tif'
@@ -40,11 +44,22 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
                       path = 19,
                       row = 46,
                       date = as.Date('20170311', '%Y%m%d'),
+                      tier = 'T1',
+                      stringsAsFactors = FALSE)
+    ##
+    name6 <- '/home/username/LE070190462017013001T1-SC20170330202642.tar.gz'
+    df6 <- data.frame(row.names = 'LE070190462017013001T1',
+                      sensor = 'ETM+ SLC-off',
+                      path = 19,
+                      row = 46,
+                      date = as.Date('20170130', '%Y%m%d'),
+                      tier = 'T1',
                       stringsAsFactors = FALSE)
     expect_identical(getSceneinfo(name1), df1)
     expect_identical(getSceneinfo(name2), df2)
     expect_identical(getSceneinfo(name3), df3)
     expect_identical(getSceneinfo(name4), df4)
+    expect_identical(getSceneinfo(name5), df5)
     expect_identical(getSceneinfo(name5), df5)
     
 })
