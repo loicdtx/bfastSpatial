@@ -37,4 +37,3 @@ Processes MODIS data for subsequentent use in time-series analysis. Performs MOD
 \seealso{
 \code{\link{cleanMODIS}}, and \code{\link{timeStackMODIS}} for stacking.
 }
-

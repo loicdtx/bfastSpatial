@@ -22,6 +22,5 @@ Depends:
     sp
 Suggests:
     testthat
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 License: GPL-3
-RoxygenNote: 5.0.1

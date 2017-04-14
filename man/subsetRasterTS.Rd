@@ -26,4 +26,3 @@ This function only supports Landsat data with associated scene ID's as \code{nam
 \author{
 Ben DeVries
 }
-

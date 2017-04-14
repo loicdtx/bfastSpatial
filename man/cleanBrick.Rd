@@ -33,4 +33,3 @@ If \code{dates} is not supplied, these will be extracted from sceneID's, with on
 \author{
 Ben DeVries (\email{devries.br@gmail.com}) and Jan Verbesselt
 }
-

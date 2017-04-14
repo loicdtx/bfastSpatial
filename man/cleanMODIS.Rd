@@ -48,10 +48,9 @@ plot(MODISclean)
 }
 
 }
-\author{
-Loic Dutrieux
-}
 \seealso{
 \code{\link{processMODISbatch}} for batcher
 }
-
+\author{
+Loic Dutrieux
+}

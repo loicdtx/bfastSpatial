@@ -43,10 +43,9 @@ plot(r <- raster(list[1]))
 
 
 }
-\author{
-Loic Dutrieux
-}
 \seealso{
 \link{processLandsat} and \link{sr2vi}
 }
-
+\author{
+Loic Dutrieux
+}

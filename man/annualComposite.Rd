@@ -69,10 +69,9 @@ plot(nobsRain, zlim = c(0, 16))
 plot(nobsDry - nobsRain, zlim = c(-10, 10))
 
 }
-\author{
-Ben DeVries
-}
 \seealso{
 \code{\link{summaryBrick}}
 }
-
+\author{
+Ben DeVries
+}

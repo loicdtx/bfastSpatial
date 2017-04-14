@@ -20,4 +20,3 @@ plot(turaSp, add = TRUE)
 Ben DeVries
 }
 \keyword{data}
-

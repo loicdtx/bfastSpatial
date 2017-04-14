@@ -37,10 +37,9 @@ runGitHub("bfmApp", "loicdtx")
 # And upload the file zooClick.rds
 
 }
-\author{
-Loic Dutrieux
-}
 \seealso{
 \link{sr2vi}
 }
-
+\author{
+Loic Dutrieux
+}

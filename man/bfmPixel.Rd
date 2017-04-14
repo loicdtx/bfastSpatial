@@ -78,10 +78,9 @@ plot(bfm$bfm)
 }
 
 }
-\author{
-Ben DeVries
-}
 \seealso{
 \code{\link{bfastmonitor}}, \code{\link{bfmSpatial}}
 }
-
+\author{
+Ben DeVries
+}

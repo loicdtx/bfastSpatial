@@ -27,4 +27,3 @@ Note that if \code{stats=TRUE}, a summary table is also produced. This table is 
 \author{
 Ben DeVries
 }
-

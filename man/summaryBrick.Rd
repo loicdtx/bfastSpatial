@@ -69,10 +69,9 @@ plot(valRange)
 # returns a brick with min and max values
 # see ?range
 }
-\author{
-Ben DeVries
-}
 \seealso{
 \code{\link{calc}} \code{\link{annualSummary}}
 }
-
+\author{
+Ben DeVries
+}

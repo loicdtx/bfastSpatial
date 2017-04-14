@@ -18,7 +18,7 @@ a \code{data.frame} with parsed scene information from Landsat scene names
 Parses through typical Landsat filenames and retrieves information on sensor and acquisition date. Vectorized over \code{sourcefile}.
 }
 \examples{
-getSceneinfo(c('ndvi.LC82300702014234.tar.gz', 'ndvi.LT52300702008234.tif'))
+getSceneinfo(c('ndvi.LC82300702014234.tar.gz', 'ndvi.LT52300702008234.tif', '/home/username/LC08_L1TP_019046_20170311_20170317_01_T1_sr_band4.tif'))
 
 # Load tura
 data(tura)
@@ -28,4 +28,3 @@ getSceneinfo(names(tura))
 \author{
 Ben DeVries and Loic Dutrieux
 }
-

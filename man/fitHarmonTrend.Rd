@@ -25,4 +25,3 @@ Fit harmonic and/or trend model to a raster time series, or temporal subset ther
 \details{
 If \code{start} and \code{end} are left as \code{NULL}, the model will be fit to the entire time series. A \code{numeric} can be supplied to either or both arguments to subset the time series as in \code{\link{window}}.
 }
-

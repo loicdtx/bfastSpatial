@@ -21,10 +21,9 @@ A raster layer with the number of valid observations per pixel, either as an abs
 \description{
 Calculates the number of valid observations per pixel of a time series RasterBrick.
 }
-\author{
-Ben DeVries
-}
 \seealso{
 \code{\link{summaryBrick}}
 }
-
+\author{
+Ben DeVries
+}

@@ -25,10 +25,9 @@ e <- saveExtent() # draw extent on the plot, and associated extent() command wil
 }
 
 }
-\author{
-Ben DeVries
-}
 \seealso{
 \code{\link{drawExtent}}
 }
-
+\author{
+Ben DeVries
+}

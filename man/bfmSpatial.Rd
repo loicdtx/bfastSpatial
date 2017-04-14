@@ -80,10 +80,9 @@ t1 - t2
 plot(bfm)
 
 }
-\author{
-Loic Dutrieux and Ben DeVries
-}
 \seealso{
 \code{\link{bfastmonitor}}, \code{\link{bfmPixel}}
 }
-
+\author{
+Loic Dutrieux and Ben DeVries
+}

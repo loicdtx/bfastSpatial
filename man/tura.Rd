@@ -34,11 +34,10 @@ x <- subsetRasterTS(tura, sensor = "ETM+")
 # plot time series from the revised brick
 plot(getZ(x), x[50], xlab="time", ylab="NDVI (x 10000)")
 }
-\author{
-Ben DeVries
-}
 \references{
 DeVries B., Verbesselt J., Kooistra L. and Herold M. (2015). Robust Monitoring of Small-Scale Forest Disturbances in an Afromontane Forest Using Landsat Time Series. Remote Sensing of Environment, 161:107-121.
 }
+\author{
+Ben DeVries
+}
 \keyword{data}
-

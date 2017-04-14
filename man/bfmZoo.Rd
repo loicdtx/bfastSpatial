@@ -22,4 +22,3 @@ This function is analog to the \link{bfastmonitor} function, but differs in term
 \author{
 Loic Dutrieux
 }
-

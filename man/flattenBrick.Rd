@@ -42,4 +42,3 @@ plot(filled)
 \author{
 Ben DeVries
 }
-

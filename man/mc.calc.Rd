@@ -22,10 +22,9 @@ Allows functions to be applied to raster objects, with multicore support.
 \details{
 For further help, see \code{\link{calc}}. Warnings of the parallel package (see \code{\link{mclapply}} for instance) apply to this function.
 }
-\author{
-Loic Dutrieux
-}
 \seealso{
 \code{\link{calc}}
 }
-
+\author{
+Loic Dutrieux
+}

@@ -11,4 +11,3 @@ subset of Landsat surface reflectance data for testing pre-processing steps.
 NASA/USGS
 }
 \keyword{data}
-

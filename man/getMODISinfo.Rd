@@ -32,4 +32,3 @@ getMODISinfo(fileNames)$date
 \author{
 Loic Dutrieux
 }
-

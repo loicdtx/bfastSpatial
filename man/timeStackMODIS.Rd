@@ -19,4 +19,3 @@ Creates a stack of MODIS layers, with time written to z dimension. Works in anol
 \author{
 Loic Dutrieux
 }
-

@@ -77,4 +77,3 @@ plot(out2, col = colList[out2$breakpoint - 2002], add = TRUE)
 \author{
 Loic Dutrieux
 }
-

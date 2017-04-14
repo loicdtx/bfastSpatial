@@ -33,10 +33,9 @@ A number of indices can be passed to \code{vi} at the moment, includeing \code{n
 
 For tasseled cap components, note that at the moment only a single set of coefficients for surface reflectance are used (Crist, 1985). Be aware that this may cause issues if OLI data are being used with ETM+ and TM data due to radiometric differences between OLI and the other sensors.
 }
-\author{
-Loic Dutrieux and Ben DeVries
-}
 \seealso{
 \code{\link{processLandsat}} and \code{\link{processLandsatBatch}} for wrapper and wrapper/batcher functions
 }
-
+\author{
+Loic Dutrieux and Ben DeVries
+}

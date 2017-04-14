@@ -50,4 +50,3 @@ plot(s)
 \author{
 Loic Dutrieux
 }
-

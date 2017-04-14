@@ -50,10 +50,9 @@ list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
 plot(r <- raster(list[1]))
 
 }
-\author{
-Loic Dutrieux
-}
 \seealso{
 \link{sr2vi}
 }
-
+\author{
+Loic Dutrieux
+}

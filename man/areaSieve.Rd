@@ -67,10 +67,9 @@ plot(rs, ext=e, legend=FALSE)
 par(op)
 
 }
-\author{
-Ben DeVries
-}
 \seealso{
 \code{\link{clump}}
 }
-
+\author{
+Ben DeVries
+}
