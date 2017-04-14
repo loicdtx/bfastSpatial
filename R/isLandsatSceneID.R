@@ -10,9 +10,13 @@
 #' 
 
 .isLandsatSceneID <- function(x){
-        if(is.character(x)) {
-            all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x))
-        } else if(inherits(x, 'RasterStackBrick')) {
-            all(grepl(pattern='(LT4|LT5|LE7|LC8)\\d{13}', x=names(x)))
-        }
+    p1 <- 'L(C|T|E)\\d{2}_[A-Z0-9]{4}_\\d{6}_\\d{8}_\\d{8}_\\d{2}_[A-Z0-9]{2}'
+    p2 <- 'L(C|T|E)\\d{18}[A-Z0-9]{2}'
+    p3 <- 'L(T|C|E)\\d{14}'
+    pc <- paste(c(p1, p2, p3), collapse = '|')
+    if(is.character(x)) {
+        all(grepl(pattern=pc, x))
+    } else if(inherits(x, 'RasterStackBrick')) {
+        all(grepl(pattern=pc, x=names(x)))
+    }
 }
