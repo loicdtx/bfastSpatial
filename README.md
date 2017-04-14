@@ -1,3 +1,5 @@
+[![Build Status (dev)](https://travis-ci.org/loicdtx/bfastSpatial.png?branch=develop)](https://travis-ci.org/loicdtx/bfastSpatial)
+[![Build Status (master)](https://travis-ci.org/loicdtx/bfastSpatial.png?branch=develop)](https://travis-ci.org/loicdtx/bfastSpatial)
 [![DOI](https://zenodo.org/badge/21430/dutri001/bfastSpatial.svg)](https://zenodo.org/badge/latestdoi/21430/dutri001/bfastSpatial)
 
 # bfastSpatial
