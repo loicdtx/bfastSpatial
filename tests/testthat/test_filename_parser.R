@@ -13,7 +13,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
     ##
     name2 <- '/home/username/LT51970291984107-SC20161024054752.tar.gz'
     df2 <- data.frame(row.names = 'LT51970291984107',
-                      sensor = 'LT5',
+                      sensor = 'TM',
                       path = 197,
                       row = 29,
                       date = as.Date('1984107', '%Y%j'),
