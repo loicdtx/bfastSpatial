@@ -55,11 +55,23 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
                       date = as.Date('20170130', '%Y%m%d'),
                       tier = 'T1',
                       stringsAsFactors = FALSE)
+    ##
+    name7 <- '/home/username/L2/A2008009000500.L2_LAC_OC.nc'
+    df7 <- data.frame(row.names = '/home/username/L2/A2008009000500.L2_LAC_OC.nc',
+                      sensor = NA,
+                      path = NA,
+                      row = NA,
+                      date = NA,
+                      tier = NA,
+                      stringsAsFactors = FALSE)
+    ##
     expect_identical(getSceneinfo(name1), df1)
     expect_identical(getSceneinfo(name2), df2)
     expect_identical(getSceneinfo(name3), df3)
     expect_identical(getSceneinfo(name4), df4)
     expect_identical(getSceneinfo(name5), df5)
-    expect_identical(getSceneinfo(name5), df5)
+    expect_identical(getSceneinfo(name6), df6)
+    expect_warning(getSceneinfo(name7), 'Some of the characters provided do not contain recognized Landsat5/7/8 scene ID')
+    expect_identical(getSceneinfo(name7), df7)
     
 })
