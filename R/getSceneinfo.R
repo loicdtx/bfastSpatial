@@ -54,6 +54,7 @@ getSceneinfo <- function(sourcefile, ...)
             date <- as.Date(groups[,7], '%Y%m%d')
             sensor_letter <- groups[,2]
             df <- data.frame(row.names = groups[,1],
+                             sensor_letter = sensor_letter,
                              sensor = letterToSensor(sensor_letter, date),
                              path = as.numeric(groups[,5]),
                              row = as.numeric(groups[,6]),
@@ -65,6 +66,7 @@ getSceneinfo <- function(sourcefile, ...)
             date <- as.Date(groups[,6], '%Y%m%d')
             sensor_letter <- groups[,2]
             df <- data.frame(row.names = groups[,1],
+                             sensor_letter = sensor_letter,
                              sensor = letterToSensor(sensor_letter, date),
                              path = as.numeric(groups[,4]),
                              row = as.numeric(groups[,5]),
@@ -76,6 +78,7 @@ getSceneinfo <- function(sourcefile, ...)
             date <- as.Date(groups[,6], '%Y%j')
             sensor_letter <- groups[,2]
             df <- data.frame(row.names = groups[,1],
+                             sensor_letter = sensor_letter,
                              sensor = letterToSensor(sensor_letter, date),
                              path = as.numeric(groups[,4]),
                              row = as.numeric(groups[,5]),
@@ -84,6 +87,7 @@ getSceneinfo <- function(sourcefile, ...)
                              stringsAsFactors = FALSE)
         } else {
             df <- data.frame(row.names = x,
+                             sensor_letter = NA,
                              sensor = NA,
                              path = NA,
                              row = NA,

@@ -4,6 +4,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
     ##
     name1 <- 'ndvi.LC82300702014234.tar.gz'
     df1 <- data.frame(row.names = 'LC82300702014234',
+                      sensor_letter = 'C',
                       sensor = 'OLI',
                       path = 230,
                       row = 70,
@@ -13,6 +14,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
     ##
     name2 <- '/home/username/LT51970291984107-SC20161024054752.tar.gz'
     df2 <- data.frame(row.names = 'LT51970291984107',
+                      sensor_letter = 'T',
                       sensor = 'TM',
                       path = 197,
                       row = 29,
@@ -22,6 +24,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
     ##
     name3 <- 'LE71960292016244NSG00_sr_band7.tif'
     df3 <- data.frame(row.names = 'LE71960292016244',
+                      sensor_letter = 'E',
                       sensor = 'ETM+ SLC-off',
                       path = 196,
                       row = 29,
@@ -31,6 +34,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
     ##
     name4 <- 'LE71960292002244NSG00-SC20161024054752.tar.gz'
     df4 <- data.frame(row.names = 'LE71960292002244',
+                      sensor_letter = 'E',
                       sensor = 'ETM+ SLC-on',
                       path = 196,
                       row = 29,
@@ -40,6 +44,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
     ##
     name5 <- '/home/username/LC08_L1TP_019046_20170311_20170317_01_T1_sr_band4.tif'
     df5 <- data.frame(row.names = 'LC08_L1TP_019046_20170311_20170317_01_T1',
+                      sensor_letter = 'C',
                       sensor = 'OLI',
                       path = 19,
                       row = 46,
@@ -49,6 +54,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
     ##
     name6 <- '/home/username/LE070190462017013001T1-SC20170330202642.tar.gz'
     df6 <- data.frame(row.names = 'LE070190462017013001T1',
+                      sensor_letter = 'E',
                       sensor = 'ETM+ SLC-off',
                       path = 19,
                       row = 46,
@@ -58,6 +64,7 @@ test_that("getSceneinfo parses filenames properly for different landsat collecti
     ##
     name7 <- '/home/username/L2/A2008009000500.L2_LAC_OC.nc'
     df7 <- data.frame(row.names = '/home/username/L2/A2008009000500.L2_LAC_OC.nc',
+                      sensor_letter = NA,
                       sensor = NA,
                       path = NA,
                       row = NA,
