@@ -46,8 +46,21 @@
     return(pp)
 }
 
-
-.ppInit <- function(x, outdir, vi='ndvi', srdir = NULL,  delete=FALSE, mask=NULL, keep=c(0), e=NULL, fileExt='grd'){
+#' Creates a list containing organizing all information required for the following pre-processing steps
+#' 
+#' @param x character. Path to a tar.gz archive or to a directory containing landsat surface reflectance bands
+#' @param outdir character. Directory where the pre-processed data will be written
+#' @param vi character or list of characters. The vegetation indices to be processed.
+#' @param srdir character. Optional directory where the intermediary surface reflectance and espa processed vegetation indices will be stored after unpacking. If NULL (default), a temporary directory will be used. srdir can also be a directory that already contains some (but possibly not all) of surface reflectance bands contained in the archive.
+#' @param delete Logical. Should surface reflectance files be deleted after vegetation index calculated? (usefull for disk space management; surface reflectance files are very voluminous and a user may want to keep the Landsat archive in compressed format only)
+#' @param mask Character or NULL. The name of the mask to be applied to the bands (e.g.: \code{mask = 'cfmask'})
+#' @param keep Numeric. Can take multiple values. Which values of the mask layer should be kept?
+#' @param e Extent object or object that can be coerced as extent.
+#' @param fileExt Character. Extension of the file to be generated. Note that \code{filename} is automatically generated
+#' 
+#' @return A list with parameters for further pre-processing
+#' 
+.ppInit <- function(x, outdir, vi='ndvi', srdir=NULL, delete=FALSE, mask=NULL, keep=c(0), e=NULL, fileExt='grd'){
     pp <- list(x=x,
                sensor_letter=getSceneinfo(x)$sensor_letter,
                archivedBands=NULL,
@@ -60,7 +73,8 @@
                fileExt=fileExt,
                mask=mask,
                keep=keep,
-               e=e)
+               e=e,
+               delete=delete)
     if(is.null(srdir)) {
         pp$srdir <- file.path(tmpDir(), row.names(getSceneinfo(x)))
     }
