@@ -11,7 +11,8 @@
         # check if vi is directly present in unpackedBand
         processingMeta <- list(vi = vi,
                               needProcessing = FALSE,
-                              vi_file = grep(pattern = viPattern, x = pp$unpackedBands, value = TRUE))
+                              vi_file = grep(pattern = viPattern, x = pp$unpackedBands, value = TRUE),
+                              filename = file.path(pp$outdir, vi, sprintf('%s_%s.%s', pp$sceneID, vi, pp$fileExt)))
         pp$processingMeta <- c(pp$processingMeta, processingMeta)
     } else if(any(grepl(pattern = viPattern, x = pp$archivedBands))) {
         # check if vi is directly present in archived bands
@@ -19,7 +20,8 @@
         pp$toExtract <- union(pp$toExtract, archived_band)
         processingMeta <- list(vi = vi,
                               needProcessing = FALSE,
-                              vi_file = file.path(pp$srdir, archived_band))
+                              vi_file = file.path(pp$srdir, archived_band),
+                              filename = file.path(pp$outdir, vi, sprintf('%s_%s.%s', pp$sceneID, vi, pp$fileExt)))
         pp$processingMeta <- c(pp$processingMeta, processingMeta)
     } else {
         # We need to get the SR bands
@@ -31,7 +33,8 @@
                                   sr_files = unname(sapply(sr_bands, function(x){grep(pattern = sprintf('.*_%s\\.(tif|grd)$', x), pp$unpackedBands, value = TRUE)})),
                                   # sapply above is to keep the same order as supplied in the VEGETATION_INDICES variable
                                   fun = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['fun']],
-                                  datatype = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['datatype']])
+                                  datatype = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['datatype']],
+                                  filename = file.path(pp$outdir, vi, sprintf('%s_%s.%s', pp$sceneID, vi, pp$fileExt)))
             pp$processingMeta <- c(pp$processingMeta, processingMeta)
         } else { # We need to extract the SR bands from the archive
             pp$toExtract <- union(pp$toExtract, grep(pattern = bands_pattern, x = pp$archivedBands, value = TRUE))
@@ -39,7 +42,8 @@
                                   needProcessing = TRUE,
                                   sr_files = file.path(pp$srdir, unname(sapply(sr_bands, function(x){grep(pattern = sprintf('.*_%s\\.(tif|grd)$', x), pp$archivedBands, value = TRUE)}))),
                                   fun = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['fun']],
-                                  datatype = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['datatype']])
+                                  datatype = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['datatype']],
+                                  filename = file.path(pp$outdir, vi, sprintf('%s_%s.%s', pp$sceneID, vi, pp$fileExt)))
             pp$processingMeta <- c(pp$processingMeta, processingMeta)
         }
     }
@@ -57,12 +61,14 @@
 #' @param keep Numeric. Can take multiple values. Which values of the mask layer should be kept?
 #' @param e Extent object or object that can be coerced as extent.
 #' @param fileExt Character. Extension of the file to be generated. Note that \code{filename} is automatically generated
+#' @param overwrite overwrite existing files?
 #' 
 #' @return A list with parameters for further pre-processing
 #' 
-.ppInit <- function(x, outdir, vi='ndvi', srdir=NULL, delete=FALSE, mask=NULL, keep=c(0), e=NULL, fileExt='grd'){
+.ppInit <- function(x, outdir, vi='ndvi', srdir=NULL, delete=FALSE, mask=NULL, keep=c(0), e=NULL, fileExt='grd', overwrite=FALSE){
     pp <- list(x=x,
                sensor_letter=getSceneinfo(x)$sensor_letter,
+               sceneID=row.names(getSceneinfo(x)), # TODO: This is not ideal since archive name has old conventions
                archivedBands=NULL,
                unpackedBands=NULL,
                srdir=NULL,
@@ -74,7 +80,8 @@
                mask=mask,
                keep=keep,
                e=e,
-               delete=delete)
+               delete=delete,
+               overwrite=overwrite)
     if(is.null(srdir)) {
         pp$srdir <- file.path(tmpDir(), row.names(getSceneinfo(x)))
     }
@@ -113,28 +120,46 @@
 }
 
 .extract <- function(pp){
-    
+    # UNpack required bands from the archive
+    if(length(pp$toExtract) > 0) {
+        untar(pp$x, files=pp$toExtract, exdir=pp$srdir)
+    }
 }
 
-.process <- function(pp){
-    
+.process <- function(pp, vi){
+    # Also includes cropping and masking
+    # Prepare extent
+    e <- pp$e
+    if(!is.null(e)) {
+        if(class(e) != 'extent') {
+            e <- extent(e)
+        }
+    }
+    if(pp$processingMeta[[vi]]$needProcessing) {
+        # Crop
+        # Compute
+        # Mask
+        # Write to disk
+    } else { # Does not need processing
+        # Crop
+        # Mask
+        # Write to disk
+    }
 }
 
-.mask <- function(pp){
-    
+
+.delete <- function(pp){
+    if(pp$delete) {
+        to_delete <- file.path(pp$srdir, pp$toExtract)
+        file.remove(to_delete)
+    }
 }
 
-.crop <- function(pp){
-    
+processLandsat <- function(x, outdir, vi='ndvi', srdir=NULL, delete=FALSE, mask=NULL, keep=c(0), e=NULL, fileExt='grd', overwrite=overwrite) {
+    pp <- .ppInit(x=x, outdir=outdir, vi=vi, srdir=srdir, delete=delete, mask=mask, keep=keep, e=e, fileExt=fileExt)
+    .extract(pp)
+    for (vi in pp$vis) {
+        .process(pp, vi)
+    }
+    .delete(pp)
 }
-
-.clean <- function(pp){
-    
-}
-
-# x, vi='ndvi', srdir, outdir, untar=TRUE, delete=FALSE, mask=NULL, L=0.5, fileExt = 'grd', ...
-
-archive <- '/home/ldutrieux/sandbox/test_data/landsat/LE070190462017013001T1-SC20170330202642.tar.gz'
-.ppInit(archive, outdir='/media/loic')
-.ppInit(archive, outdir='/media/loic', c('ndvi', 'tcg'), mask = 'cfmask')
-.ppInit('/home/ldutrieux/sandbox/test_data/landsat/LC080190462017031101T1-SC20170330215812/', outdir = '/media/loic', c('ndvi', 'tcg'))
