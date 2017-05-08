@@ -196,10 +196,10 @@
     }
 }
 
-#' @title Wrapper function to process Landsat data
+#' @title Wrapper functions to process Landsat data
 #' 
-#' @description Processes a single Landsat scene, from tarball or directory containing surface reflectance bands to vegetation index. The data must be surface reflectance obtained from espa (\url{https://espa.cr.usgs.gov/}). These data may already contained pre-processed indices layers, in which case they are directly used.
-#' @param x Character. filename of the tarball or directory containing geotiff files.
+#' @description Processes Landsat data (a single scene for \code{processLandsat} and multiple scenes for \code{processLandsatBatch}), from tarball or directory containing surface reflectance bands to vegetation index. The data must be surface reflectance obtained from espa (\url{https://espa.cr.usgs.gov/}). These data may already contained pre-processed indices layers, in which case they are directly used. The batcher (\code{processLandsatBatch}) allows to process multiple scenes with one command; sequentially or in parallel (parallel processing only work on unix systems (linux and mac)).
+#' @param x Character. filename of the tarball or directory containing geotiff files. Or simply a directory containing the archives in the case of the batcher (\code{processLandsatBatch}).
 #' @param outdir Character. Parent directory where the vegetation index rasterLayer should be written. Each vegetation index (or band) processed will be written to a sub directory of outdir.
 #' @param vi Character or vector of characters. Vegetation index to be computed or extracted from the archive. The supported indices at the moment are 'ndvi', 'evi', 'savi', 'ndmi', 'ndwi', 'mndwi', 'tcb', 'tcg', 'tcw', 'nbr', 'nbr2'* or 'msavi'*. Indices with * need to be present in the archive. Note that the \code{vi=} argument can also be used to directly extract surface reflectance bands. \code{vi='sr_band1'} for instance will extract surface reflectance band 1 from the archive and perform the same pre-processing steps as if it was a vegetation index layer.
 #' @param srdir Character. Directory where the tarball should be uncompressed. If set to NULL (default), a temporary location (see \code{raster::tmpDir()}) is used. When the \code{x} argument points to a directory, the same value is automatically assigned to both arguments. 
@@ -209,6 +209,8 @@
 #' @param e Extent object or object that can be coerced as extent.
 #' @param fileExt Character. Extension of the file to be generated. Note that \code{filename} is automatically generated
 #' @param overwrite Logical. Overwrite exiting files if they already exist.
+#' @param pattern character. Applies only to \code{landsatProcessBatch} when \code{x} is of length 1. Allows to 'filter' the input files or directories. See \link{list.files} for more details.
+#' @param mc.cores Numeric. \code{landsatProcessBatch} only. For multicore implementation only. See \link{mclapply}
 #' @author Loic Dutrieux
 #' @return The function is used for its side effect of processing raster files written to subdirectories of \code{outdir} and does not return anything.
 #' 
@@ -239,4 +241,19 @@ processLandsat <- function(x, outdir, vi='ndvi', srdir=NULL, delete=FALSE, mask=
         .process(pp, vi)
     }
     .delete(pp)
+}
+
+
+#' @importFrom parallel mclapply
+#' @export
+#' @rdname processLandsat
+processLandsatBatch <- function(x, pattern=NULL, outdir, mc.cores=1, ...) {
+    if (!is.character(x)) {
+        stop('x needs to be of class character')
+    }
+    if(length(x) == 1) {
+        x <- list.files(path=x, pattern=pattern, full.names=TRUE)
+    }
+    mclapply(X=x, FUN=processLandsat, outdir=outdir, mc.cores=mc.cores, ...)
+    
 }
