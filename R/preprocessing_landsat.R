@@ -13,7 +13,7 @@
                               needProcessing = FALSE,
                               vi_file = grep(pattern = viPattern, x = pp$unpackedBands, value = TRUE),
                               filename = file.path(pp$outdir, vi, sprintf('%s_%s.%s', pp$sceneID, vi, pp$fileExt)))
-        pp$processingMeta <- c(pp$processingMeta, processingMeta)
+        pp$processingMeta[[vi]] <- processingMeta
     } else if(any(grepl(pattern = viPattern, x = pp$archivedBands))) {
         # check if vi is directly present in archived bands
         archived_band <- grep(pattern = viPattern, x = pp$archivedBands, value = TRUE)
@@ -22,7 +22,7 @@
                               needProcessing = FALSE,
                               vi_file = file.path(pp$srdir, archived_band),
                               filename = file.path(pp$outdir, vi, sprintf('%s_%s.%s', pp$sceneID, vi, pp$fileExt)))
-        pp$processingMeta <- c(pp$processingMeta, processingMeta)
+        pp$processingMeta[[vi]] <- processingMeta
     } else {
         # We need to get the SR bands
         sr_bands <- VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['bands']]
@@ -35,7 +35,7 @@
                                   fun = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['fun']],
                                   datatype = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['datatype']],
                                   filename = file.path(pp$outdir, vi, sprintf('%s_%s.%s', pp$sceneID, vi, pp$fileExt)))
-            pp$processingMeta <- c(pp$processingMeta, processingMeta)
+            pp$processingMeta[[vi]] <- processingMeta
         } else { # We need to extract the SR bands from the archive
             pp$toExtract <- union(pp$toExtract, grep(pattern = bands_pattern, x = pp$archivedBands, value = TRUE))
             processingMeta <- list(vi = vi,
@@ -44,7 +44,7 @@
                                   fun = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['fun']],
                                   datatype = VEGETATION_INDICES[[pp$sensor_letter]][[vi]][['datatype']],
                                   filename = file.path(pp$outdir, vi, sprintf('%s_%s.%s', pp$sceneID, vi, pp$fileExt)))
-            pp$processingMeta <- c(pp$processingMeta, processingMeta)
+            pp$processingMeta[[vi]] <- processingMeta
         }
     }
     return(pp)
@@ -75,7 +75,7 @@
                outdir=outdir,
                vis=vi,
                toExtract=NULL,
-               processingMeta=NULL,
+               processingMeta=list(),
                fileExt=fileExt,
                mask=mask,
                keep=keep,
@@ -119,11 +119,34 @@
     return(pp)
 }
 
+.createDirs <- function(pp){
+    dir.create(pp$srdir, showWarnings = FALSE)
+    for (vi in pp$vis){
+        dir.create(file.path(pp$outdir, vi), showWarnings = FALSE)
+    }
+}
+
 .extract <- function(pp){
     # UNpack required bands from the archive
     if(length(pp$toExtract) > 0) {
         untar(pp$x, files=pp$toExtract, exdir=pp$srdir)
     }
+}
+
+.crop <- function(x, e){
+    # Handles case where the extent is NULL
+    # x is a character NOT a RasterLayer
+    r <- raster(x)
+    if(!is.null(e)){
+        r <- crop(r, e)
+    }
+    return(r)
+}
+
+# Function to be passed to overlay for data cleaning (masking)
+.clean <- function(x, y) {
+    x[!(y %in% pp$keep)] <- NA
+    return(x)
 }
 
 .process <- function(pp, vi){
@@ -137,13 +160,29 @@
     }
     if(pp$processingMeta[[vi]]$needProcessing) {
         # Crop
+        r_list <- sapply(X = pp$processingMeta[[vi]]$sr_files, FUN = .crop, e = pp$e)
+        if(!is.null(pp$mask)){
+            mask_sub <- .crop(pp$mask, pp$e)
+        }
         # Compute
+        overlayList <- c(unname(r_list), fun=pp$processingMeta[[vi]]$fun)
+        r_out <- do.call(what=raster::overlay, args=overlayList)
         # Mask
+        if(!is.null(pp$mask)){
+            r_out <- overlay(x=r_out, y=mask_sub, fun=.clean)
+        }
         # Write to disk
+        writeRaster(r_out, filename = pp$processingMeta[[vi]]$filename, datatype = pp$processingMeta[[vi]]$datatype, overwrite=pp$overwrite)
     } else { # Does not need processing
         # Crop
+        vi_sub <- .crop(pp$processingMeta[[vi]]$vi_file, pp$e)
         # Mask
+        if(!is.null(pp$mask)){
+            mask_sub <- .crop(pp$mask, pp$e)
+            r_out <- overlay(x=vi_sub, y=mask_sub, fun=.clean)
+        }
         # Write to disk
+        writeRaster(r_out, filename = pp$processingMeta[[vi]]$filename, datatype = dataType(vi_sub), overwrite=pp$overwrite)
     }
 }
 
@@ -155,8 +194,9 @@
     }
 }
 
-processLandsat <- function(x, outdir, vi='ndvi', srdir=NULL, delete=FALSE, mask=NULL, keep=c(0), e=NULL, fileExt='grd', overwrite=overwrite) {
-    pp <- .ppInit(x=x, outdir=outdir, vi=vi, srdir=srdir, delete=delete, mask=mask, keep=keep, e=e, fileExt=fileExt)
+processLandsat <- function(x, outdir, vi='ndvi', srdir=NULL, delete=FALSE, mask=NULL, keep=c(0), e=NULL, fileExt='grd', overwrite=FALSE) {
+    pp <- .ppInit(x=x, outdir=outdir, vi=vi, srdir=srdir, delete=delete, mask=mask, keep=keep, e=e, fileExt=fileExt, overwrite=overwrite)
+    .createDirs(pp)
     .extract(pp)
     for (vi in pp$vis) {
         .process(pp, vi)
