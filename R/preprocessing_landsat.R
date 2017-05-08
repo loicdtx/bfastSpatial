@@ -216,7 +216,10 @@
 #' 
 #' 
 #' @examples
+#' ### processLandsat Example
 #' # Get list of test data files
+#' library(raster)
+#' 
 #' dir <- system.file('external', package='bfastSpatial')
 #' list <- list.files(dir, full.names=TRUE)
 #' 
@@ -230,6 +233,18 @@
 #' list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
 #' plot(r <- raster(list[1]))
 #' 
+#' ### processLandsatBatch Example
+#' # Get the directory where the Landsat archives are stored
+#' dir <- system.file('external', package='bfastSpatial')
+#' 
+#' # Set the location of output directory (we'll use the temporary directory from the raster package)
+#' dirout <- file.path(rasterOptions()$tmpdir, 'bfmspatial')
+#' dir.create(dirout, showWarning=FALSE)
+#' processLandsatBatch(x=dir, pattern=glob2rx('*.gz'), outdir=dirout, delete=TRUE, vi=c('ndvi', 'sr_band4'), mask='cfmask', keep=0, overwrite=TRUE)
+#' 
+#' # Visualize one of the layers produced
+#' list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
+#' plot(r <- raster(list[1]))
 #' @export
 #' 
 # TODO: implement L= argument for savi to work
