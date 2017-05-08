@@ -133,6 +133,7 @@
     }
 }
 
+#' @importFrom raster crop raster
 .crop <- function(x, e){
     # Handles case where the extent is NULL
     # x is a character NOT a RasterLayer
@@ -149,6 +150,7 @@
     return(x)
 }
 
+#' @importFrom raster extent overlay raster writeRaster dataType
 .process <- function(pp, vi){
     # Also includes cropping and masking
     # Prepare extent
@@ -194,6 +196,41 @@
     }
 }
 
+#' @title Wrapper function to process Landsat data
+#' 
+#' @description Processes a single Landsat scene, from tarball or directory containing surface reflectance bands to vegetation index. The data must be surface reflectance obtained from espa (\url{https://espa.cr.usgs.gov/}). These data may already contained pre-processed indices layers, in which case they are directly used.
+#' @param x Character. filename of the tarball or directory containing geotiff files.
+#' @param outdir Character. Parent directory where the vegetation index rasterLayer should be written. Each vegetation index (or band) processed will be written to a sub directory of outdir.
+#' @param vi Character or vector of characters. Vegetation index to be computed or extracted from the archive. The supported indices at the moment are 'ndvi', 'evi', 'savi', 'ndmi', 'ndwi', 'mndwi', 'tcb', 'tcg', 'tcw', 'nbr', 'nbr2'* or 'msavi'*. Indices with * need to be present in the archive. Note that the \code{vi=} argument can also be used to directly extract surface reflectance bands. \code{vi='sr_band1'} for instance will extract surface reflectance band 1 from the archive and perform the same pre-processing steps as if it was a vegetation index layer.
+#' @param srdir Character. Directory where the tarball should be uncompressed. If set to NULL (default), a temporary location (see \code{raster::tmpDir()}) is used. When the \code{x} argument points to a directory, the same value is automatically assigned to both arguments. 
+#' @param delete Logical. Should surface reflectance files that have been unpacked (in \code{srdir}) for the processing be deleted at the end of the process? (usefull for disk space management; surface reflectance files are very voluminous and a user may want to keep the Landsat archive in compressed format only)
+#' @param mask Character or NULL. The name of the mask to be applied to the bands (e.g.: \code{mask = 'fmask'})
+#' @param keep Numeric. Can take multiple values. Which values of the mask layer should be kept?
+#' @param e Extent object or object that can be coerced as extent.
+#' @param fileExt Character. Extension of the file to be generated. Note that \code{filename} is automatically generated
+#' @param overwrite Logical. Overwrite exiting files if they already exist.
+#' @author Loic Dutrieux
+#' @return The function is used for its side effect of processing raster files written to subdirectories of \code{outdir} and does not return anything.
+#' 
+#' 
+#' @examples
+#' # Get list of test data files
+#' dir <- system.file('external', package='bfastSpatial')
+#' list <- list.files(dir, full.names=TRUE)
+#' 
+#' # Set the location of output directory (in tmpdir for the example)
+#' dirout <- file.path(rasterOptions()$tmpdir, 'bfastSpatial')
+#' dir.create(dirout, showWarning=FALSE)
+#' # Generate (or extract, depending on whether the layers are already in the archive or not) NDVI and tcg for the first archive file
+#' processLandsat(x=list[1], vi=c('ndvi', 'tcg'), outdir=dirout, delete=TRUE, mask='cfmask', keep=0, overwrite=TRUE)
+#' 
+#' # Visualize one of the layers produced
+#' list <- list.files(dirout, pattern=glob2rx('*.grd'), full.names=TRUE)
+#' plot(r <- raster(list[1]))
+#' 
+#' @export
+#' 
+# TODO: implement L= argument for savi to work
 processLandsat <- function(x, outdir, vi='ndvi', srdir=NULL, delete=FALSE, mask=NULL, keep=c(0), e=NULL, fileExt='grd', overwrite=FALSE) {
     pp <- .ppInit(x=x, outdir=outdir, vi=vi, srdir=srdir, delete=delete, mask=mask, keep=keep, e=e, fileExt=fileExt, overwrite=overwrite)
     .createDirs(pp)
