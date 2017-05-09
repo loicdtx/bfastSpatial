@@ -1,4 +1,5 @@
-VEGETATION_INDICES <- list(
+bfastSpatial.env <- new.env()
+bfastSpatial.env$VEGETATION_INDICES <- list(
     ### LAndsat 4/5
     T = list(ndvi = list(bands = c('sr_band3', 'sr_band4'),
                          fun = function(x1, x2){10000 * (x2 - x1) / (x1 + x2)},
@@ -68,5 +69,5 @@ VEGETATION_INDICES <- list(
     )
 )
 
-VEGETATION_INDICES$E <- VEGETATION_INDICES$T
+bfastSpatial.env$VEGETATION_INDICES$E <- bfastSpatial.env$VEGETATION_INDICES$T
                     

@@ -5,6 +5,8 @@
 #' 
 #' @return The list passed as pp argument with toExtract and processingMeta slots filled
 .viAction <- function(vi, pp) {
+    # Get variable from bfastSpatial package environment
+    VEGETATION_INDICES <- bfastSpatial.env$VEGETATION_INDICES
     # Build vi pattern
     viPattern = sprintf('.*sr_(%s)\\.(tif|grd)$', vi)
     if(any(grepl(pattern = viPattern, x = pp$unpackedBands))) {
@@ -144,14 +146,14 @@
     return(r)
 }
 
-# Function to be passed to overlay for data cleaning (masking)
-.clean <- function(x, y) {
-    x[!(y %in% pp$keep)] <- NA
-    return(x)
-}
-
 #' @importFrom raster extent overlay raster writeRaster dataType
 .process <- function(pp, vi){
+    # Function to be passed to overlay for data cleaning (masking)
+    # Needs to be defined within .process for having access to pp$keep (function environment)
+    .clean <- function(x, y) {
+        x[!(y %in% pp$keep)] <- NA
+        return(x)
+    }
     # Also includes cropping and masking
     # Prepare extent
     e <- pp$e
@@ -177,14 +179,17 @@
         writeRaster(r_out, filename = pp$processingMeta[[vi]]$filename, datatype = pp$processingMeta[[vi]]$datatype, overwrite=pp$overwrite)
     } else { # Does not need processing
         # Crop
-        vi_sub <- .crop(pp$processingMeta[[vi]]$vi_file, pp$e)
+        r_out <- .crop(pp$processingMeta[[vi]]$vi_file, pp$e)
+        datatype <- dataType(r_out)
         # Mask
         if(!is.null(pp$mask)){
             mask_sub <- .crop(pp$mask, pp$e)
-            r_out <- overlay(x=vi_sub, y=mask_sub, fun=.clean)
+            r_out <- overlay(x=r_out, y=mask_sub, fun=.clean)
+        } else {
+            
         }
         # Write to disk
-        writeRaster(r_out, filename = pp$processingMeta[[vi]]$filename, datatype = dataType(vi_sub), overwrite=pp$overwrite)
+        writeRaster(r_out, filename = pp$processingMeta[[vi]]$filename, datatype = datatype, overwrite=pp$overwrite)
     }
 }
 
