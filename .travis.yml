@@ -1,9 +1,9 @@
 language: r
 sudo: required
-dist: xenial 
+dist: trusty
 
 addons:
-    apt:
-        packages:
-            - libgdal-dev
-            - libproj-dev
+  apt:
+    packages:
+      - libgdal-dev
+      - libproj-dev
