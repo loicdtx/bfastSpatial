@@ -8,7 +8,7 @@
     # Get variable from bfastSpatial package environment
     VEGETATION_INDICES <- bfastSpatial.env$VEGETATION_INDICES
     # Build vi pattern
-    viPattern = sprintf('.*sr_(%s)\\.(tif|grd)$', vi)
+    viPattern = sprintf('.*(sr|bt)_(%s)\\.(tif|grd)$', vi)
     if(any(grepl(pattern = viPattern, x = pp$unpackedBands))) {
         # check if vi is directly present in unpackedBand
         processingMeta <- list(vi = vi,
