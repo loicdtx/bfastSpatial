@@ -34,6 +34,8 @@
 #' 
 #' \code{returnLayers} can be used to specify which \code{bfasmonitor} results to return. Regardless of which parameters are assigned, the output layers will always follow the order: \code{c("breakpoint", "magnitude", "error", "history", "r.squared", "adj.r.squared", "coefficients")}. This is important if \code{mc.cores} is set to be greater than 1, since this causes the layer names in the output brick to be lost, so it is important to know which layers have been requested and in which order they will be exported. Note that if "coefficients" is included, the output will include the following: "(Intercept)" and any trend and/or harmonic coefficients depending on the values of \code{formula} and \code{order}.
 #' 
+#' Running \code{bfmSpatial} with \code{mc.cores > 1} on Windows operating systems requires the \code{snow} package to be installed.
+#' 
 #' @author Loic Dutrieux and Ben DeVries
 #' @import bfast
 #' @import parallel
@@ -70,6 +72,7 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
                        history = c("ROC", "BP", "all"),
                        type = "OLS-MOSUM", h = 0.25, end = 10, level = 0.05, mc.cores=1, returnLayers = c("breakpoint", "magnitude", "error"), sensor=NULL, ...) {
     
+    s <- NULL
     if(is.character(x)) {
         x <- brick(x)
     }
@@ -166,8 +169,21 @@ bfmSpatial <- function(x, dates=NULL, pptype='irregular', start, monend=NULL,
             res <- c(res, coefficients)
         return(res)
     }
-    
-    out <- mc.calc(x=x, fun=fun, mc.cores=mc.cores, ...)
+    # CLuster for windows
+    if(.Platform$OS.type == 'windows' & mc.cores > 1) {
+        if (!requireNamespace("snow")) {
+            stop("you need to install the \"snow\" package for parallel processing on windows")
+        }
+        cl <- makeCluster(mc.cores, 'SOCK')
+        clusterExport(cl=cl, varlist=c('sensor', 's', 'dates', 'pptype', 'monend',
+                                    'start', 'formula', 'order', 'lag', 'slag',
+                                    'history', 'type', 'h', 'end', 'level',
+                                    'returnLayers', 'coef_len'), envir=environment())
+        out <- clusterR(x=x, fun=calc, args = list(fun=fun), cl=cl, ...)
+        stopCluster(cl=cl)
+    } else {
+        out <- mc.calc(x=x, fun=fun, mc.cores=mc.cores, ...)
+    }
     
     return(out)
 }
